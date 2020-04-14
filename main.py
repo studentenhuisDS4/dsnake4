@@ -6,7 +6,7 @@ class game(object):
     starting_length = 0
     starting_position = []
     s = None
-    current_floor = 0
+    current_floor = 1
     number_of_floors = 2
 
     def __init__(self, s_x, s_y):
@@ -37,9 +37,56 @@ class game(object):
             self.map.walls[0].pop()
             print("Tropen Door OPENED!")
 
+    def climbing_stairs(self, stair_identifier):
+        stair_from = []
+        stair_to = []
+        next_floor = 0
+
+        stair_length = 0
+
+        for stair in self.map.stairs[self.current_floor]:
+            if stair[2] == stair_identifier:
+                stair_from = stair
+        if self.current_floor != 0:
+            for stair in self.map.stairs[self.current_floor - 1]:
+                if stair[2] == stair_identifier:
+                    stair_to = stair
+                    next_floor = self.current_floor - 1
+        elif self.current_floor != self.number_of_floors - 1:
+            for stair in self.map.stairs[self.current_floor + 1]:
+                if stair[2] == stair_identifier:
+                    stair_to = stair
+                    next_floor = self.current_floor + 1
+
+        stair_length = stair_to[1][abs(stair_to[3][1])] - stair_to[0][abs(stair_to[3][1])]
+        
+        print(stair_length)
+
+        for i in range(stair_length):
+            self.s.body.insert(0, (stair[0][0] + i*stair[3][0], stair[0][1] + i*stair[3][1], next_floor))
+            if self.s.body[-1] in self.s.undigested_food:
+                self.s.complete_digestion(self.s.body[-1])
+                last_pos = self.s.body[-1]
+            else:
+                last_pos = self.s.body.pop()
+            if last_pos in self.s.turns:
+                self.s.turns.pop(last_pos)
+            if len(list(dict.fromkeys(self.s.body))) != len(self.s.body):
+                pygame.time.delay(500)
+                g.reset(50, 20)
+                return
+        self.s.dirnx, self.s.dirny = (stair_to[3])
+        self.current_floor = next_floor
+            
+        
+
+
+        return
+
     def reset(self, s_x, s_y):
         self.current_floor = 0
         self.starting_length = 3
+        self.starting_position = []
         for i in range(self.starting_length):
             self.starting_position.append((s_x, s_y + i, self.current_floor))
 
@@ -49,7 +96,7 @@ class game(object):
         self.keys_used = [0]*len(self.keys_used)
         self.map = map(self,self.current_floor)
         self.points = 0
-        self.s.reset()
+        self.s.reset(self)
         self.map.reset(self)
 
 
@@ -58,10 +105,11 @@ class map(object):
     stairs = [[],[]]
     food = []
     floor = 1
-    def __init__(self, g, f = 1):
+    def __init__(self, g, f = 0):
         self.floor = f
         self.init_first_floor()
         self.init_second_floor()
+        self.init_stairs()
         self.init_food(g)
 
     def init_first_floor(self):
@@ -84,8 +132,8 @@ class map(object):
         self.walls[0].append([(90, 25), (90, 40), 1])
         self.walls[0].append([(90, 45), (90, 60), 1])
         self.walls[0].append([(93, 42), (104, 42), 0])
-        self.walls[0].append([(75,30), (75, 56), 1])
-        self.walls[0].append([(75,57), (75, 60), 1])
+        self.walls[0].append([(75, 30), (75, 56), 1])
+        self.walls[0].append([(75, 57), (75, 60), 1])
         self.walls[0].append([(90, 25), (95, 25), 0])
         self.walls[0].append([(98, 25), (104, 25), 0])
         self.walls[0].append([(45, 30), (45, 37), 1])
@@ -96,6 +144,9 @@ class map(object):
         self.walls[0].append([(20, 45), (20, 50), 1])
         self.walls[0].append([(20, 54), (20, 60), 1])
         self.walls[0].append([(25, 30), (25, 45), 1])
+
+        self.walls[0].append([(56,27), (59,27), 0])
+        self.walls[0].append([(59,27), (59,30), 1])
 
         self.walls[0].append([(12, 10), (19, 10), 0])
     def init_second_floor(self):
@@ -140,7 +191,8 @@ class map(object):
     def init_stairs(self):
         self.stairs = [[],[]]
 
-        self.stairs[0].append([(42,27),(44,29),0])
+        self.stairs[0].append([(56,28),(59,30),0,(-1,0)])
+        self.stairs[1].append([(55,1),(58,3),0,(0,1)])
 
     def init_food(self, g):
         self.food = []
@@ -154,7 +206,6 @@ class map(object):
         if len(argv) == 0:
             f_type = list(g.food_types.keys())[r.randint(0, len(g.food_types)-1)]
             floor = r.randint(0, g.number_of_floors-1)
-            print(floor)
         elif len(argv) == 1 and type(argv) == type(""):
             f_type = argv
         elif len(argv) == 1 and type(argv) == type(1):
@@ -166,17 +217,23 @@ class map(object):
         while not_legal:
             row = r.randint(0, g.rows-1)
             col = r.randint(0, g.columns-1)
-            not_legal = self.is_food_not_legal(g, (col, row))
+            not_legal = self.is_food_not_legal(g, (col, row, floor))
         self.add_food(food(f_type, (col, row, floor), g))
 
     def is_food_not_legal(self, g, pos):
-        for wall in self.walls[g.current_floor]:
+        for wall in self.walls[pos[2]]:
             direction = wall[2]
             for block in range(wall[1][direction] - wall[0][direction]):
                 i = wall[0][0] + (1 - direction)*block
                 j = wall[0][1] + direction*block
-                if (i, j) == pos:
+                if (i, j) == (pos[0], pos[1]):
                     return True
+        for stair in self.stairs[pos[2]]:
+            for i in range(stair[1][0] - stair[0][0]):
+                for j in range(stair[1][1] - stair[0][1]):
+                    if (stair[0][0] + i, stair[0][1] + j) == (pos[0], pos[1]):
+                        return True
+
         for f in self.food:
             if f.position == pos:
                 return True
@@ -198,6 +255,7 @@ class map(object):
     def reset(self, g):
         self.init_first_floor()
         self.init_second_floor()
+        self.init_stairs()
         self.init_food(g)
 
     def draw(self, surface, g):
@@ -208,19 +266,21 @@ class map(object):
             for block in range(wall[1][direction] - wall[0][direction]):
                 i = wall[0][0] + (1 - direction)*block
                 j = wall[0][1] + direction*block
-                pygame.draw.rect(surface, (255, 255, 255),
-                                 (i*dis+1, j*dis+1, dis-1, dis-1))
+                pygame.draw.rect(surface, (255, 255, 255), (i*dis+1, j*dis+1, dis-1, dis-1))
+
+        for stair in self.stairs[g.current_floor]:
+            for i in range(stair[1][0] - stair[0][0]):
+                for j in range(stair[1][1] - stair[0][1]):
+                    pygame.draw.rect(surface, (14, 37, 255), ((i+stair[0][0])*dis+1, (j+stair[0][1])*dis+1, dis-1, dis-1))
 
         for f in self.food:
             i = f.position[0]
             j = f.position[1]
             if f.position[2] == g.current_floor:
                 pygame.draw.rect(surface, f.color, (i*dis+1, j*dis+1, dis-1, dis-1))
+
+        g.s.draw(surface,g)
         
-        for stair in self.stairs[g.current_floor]:
-            for i in range(stair[1][0] - stair[0][0]):
-                for j in range(stair[1][1] - stair[0][1]):
-                    pygame.draw.rect(surface, (14, 37, 255), ((i+stair[0][0])*dis+1, (j+stair[0][1])*dis+1, dis-1, dis-1))
 
 
 class food(object):
@@ -290,6 +350,8 @@ class snake(object):
         
         #check for stairs
         #TODO
+        self.stair_climbing(g)
+
 
         self.body.insert(0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
 
@@ -323,16 +385,19 @@ class snake(object):
                 g.map.remove_food(g, f.position)
                 g.points += f.points
                 for i in range(min(f.block_parts, len(self.body))):
-                #for i in range(len(self.body)):
-                    self.undigested_food[0].append(self.body[i])
-                    self.undigested_food[1].append(g.current_floor)
+                    self.undigested_food.append(self.body[i])
 
+    def stair_climbing(self,g):
+        for stair in g.map.stairs[g.current_floor]:
+            for i in range(stair[1][0] - stair[0][0]):
+                for j in range(stair[1][1] - stair[0][1]):
+                    if (stair[0][0] + i, stair[0][1] + j,g.current_floor) == self.body[0]:
+                        g.climbing_stairs(stair[2])
 
     def complete_digestion(self, pos):
         for i in range(len(self.undigested_food)):
             if self.undigested_food[i] == pos:
-                self.undigested_food[0].pop(i)
-                self.undigested_food[1].pop(i)
+                self.undigested_food.pop(i)
                 return
 
     def collision_with_walls(self, g):
@@ -346,10 +411,13 @@ class snake(object):
         return False
 
     def reset(self, g):
-        self.body = g.starting_position
+        self.body = []
+        for i in range(g.starting_length):
+            self.body.append(g.starting_position[i])
         self.turns = {}
         self.dirnx = 0
         self.dirny = -1
+        self.undigested_food = []
 
     def draw(self, surface, g):
         dis = g.width/g.columns
@@ -365,12 +433,12 @@ class snake(object):
             i = self.body[part][0]
             j = self.body[part][1]
             #pygame.draw.rect(surface, (0,255, 0), (i*dis+1,j*dis+1, dis-2, dis-2))
-            surface.blit(textsurface, (i*dis+2, j*dis-1))
+            if self.body[part][2] == g.current_floor:
+                surface.blit(textsurface, (i*dis+2, j*dis-1))
 
 
 def redrawWindow(surface, g):
     surface.fill((0, 0, 0))
-    g.s.draw(surface, g)
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, surface)
 
@@ -431,4 +499,4 @@ while True:
     clock.tick(15)
     g.s.move(g)
     redrawWindow(window, g)
-    print(g.s.body)
+    #print(g.s.body)

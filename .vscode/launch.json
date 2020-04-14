@@ -1,0 +1,6 @@
+{
+    "configurations": [
+        {"name":"Python: Module","type":"python","request":"launch","module":"main"}
+        
+    ]
+}

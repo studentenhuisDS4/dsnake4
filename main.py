@@ -366,11 +366,7 @@ class snake(object):
         
         #check for stairs
         climbed = self.stair_climbing(g)
-
-
-        # check for stairs
-        # TODO
-        self.stair_climbing(g)
+        
         self.body.insert(
             0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
 

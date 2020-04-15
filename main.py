@@ -6,7 +6,7 @@ class game(object):
     starting_length = 0
     starting_position = []
     s = None
-    current_floor = 1
+    current_floor = 0
     number_of_floors = 2
 
     def __init__(self, s_x, s_y):
@@ -57,13 +57,10 @@ class game(object):
                 if stair[2] == stair_identifier:
                     stair_to = stair
                     next_floor = self.current_floor + 1
-
         stair_length = stair_to[1][abs(stair_to[3][1])] - stair_to[0][abs(stair_to[3][1])]
-        
-        print(stair_length)
 
         for i in range(stair_length):
-            self.s.body.insert(0, (stair[0][0] + i*stair[3][0], stair[0][1] + i*stair[3][1], next_floor))
+            self.s.body.insert(0, (stair_to[0][0] + i*stair_to[3][0], stair_to[0][1] + i*stair_to[3][1], next_floor))
             if self.s.body[-1] in self.s.undigested_food:
                 self.s.complete_digestion(self.s.body[-1])
                 last_pos = self.s.body[-1]
@@ -75,11 +72,9 @@ class game(object):
                 pygame.time.delay(500)
                 g.reset(50, 20)
                 return
+            self.s.food_eating(self)
         self.s.dirnx, self.s.dirny = (stair_to[3])
         self.current_floor = next_floor
-            
-        
-
 
         return
 
@@ -137,7 +132,7 @@ class map(object):
         self.walls[0].append([(90, 25), (95, 25), 0])
         self.walls[0].append([(98, 25), (104, 25), 0])
         self.walls[0].append([(45, 30), (45, 37), 1])
-        self.walls[0].append([(45, 41), (45, 49), 1])
+        self.walls[0].append([(45, 41), (45, 50), 1])
         self.walls[0].append([(45, 54), (45, 60), 1])
         self.walls[0].append([(0, 45), (21, 45), 0])
         self.walls[0].append([(25, 45), (45, 45), 0])
@@ -188,11 +183,15 @@ class map(object):
         self.walls[1].append([(78, 30), (95, 30), 0])
         self.walls[1].append([(99, 30), (104, 30), 0])
         self.walls[1].append([(88, 30), (88, 50), 1])
+
     def init_stairs(self):
         self.stairs = [[],[]]
 
         self.stairs[0].append([(56,28),(59,30),0,(-1,0)])
         self.stairs[1].append([(55,1),(58,3),0,(0,1)])
+
+        self.stairs[0].append([(42,46),(45,49),1,(0,1)])
+        self.stairs[1].append([(37,10),(40,13),1,(0,1)])
 
     def init_food(self, g):
         self.food = []
@@ -324,6 +323,7 @@ class snake(object):
     def move(self, g):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                #TODO catch exeption if game already quit
                 pygame.quit()
 
             keys = pygame.key.get_pressed()
@@ -349,8 +349,8 @@ class snake(object):
                     self.turns[self.body[0]] = [self.dirnx, self.dirny, self.body[0][2]]
         
         #check for stairs
-        #TODO
-        self.stair_climbing(g)
+        climbed = self.stair_climbing(g)
+
 
 
         self.body.insert(0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
@@ -378,13 +378,16 @@ class snake(object):
         # check if the snake ate food
         self.food_eating(g)
 
+        return climbed
+
     def food_eating(self, g):
         for f in g.map.food:
             if f.position == self.body[0]:
                 g.eating_food(f.food_type)
                 g.map.remove_food(g, f.position)
                 g.points += f.points
-                for i in range(min(f.block_parts, len(self.body))):
+                #for i in range(min(f.block_parts), len(self.body)):
+                for i in range(len(self.body)):
                     self.undigested_food.append(self.body[i])
 
     def stair_climbing(self,g):
@@ -393,6 +396,8 @@ class snake(object):
                 for j in range(stair[1][1] - stair[0][1]):
                     if (stair[0][0] + i, stair[0][1] + j,g.current_floor) == self.body[0]:
                         g.climbing_stairs(stair[2])
+                        return True
+        return False
 
     def complete_digestion(self, pos):
         for i in range(len(self.undigested_food)):
@@ -497,6 +502,9 @@ clock = pygame.time.Clock()
 while True:
     pygame.time.delay(50)
     clock.tick(15)
-    g.s.move(g)
+    climbed = g.s.move(g)
     redrawWindow(window, g)
+    if climbed:
+        pygame.time.delay(400)
+
     #print(g.s.body)

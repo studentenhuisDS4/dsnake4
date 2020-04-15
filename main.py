@@ -25,16 +25,21 @@ def redrawWindow(surface, g, nickname):
     for f_type in g.food_types:
         pygame.draw.rect(
             surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
-        food_eaten = g.font.render(
-            "x " + str(g.food_types[f_type]), False, (255, 255, 255))
+        if f_type == "main_obj":
+            food_eaten = g.font.render(
+                "x " + str(g.food_types[f_type]) + "/" + str(g.main_obj_total), False, (255, 255, 255))
+        else:
+            food_eaten = g.font.render(
+                "x " + str(g.food_types[f_type]), False, (255, 255, 255))
         surface.blit(food_eaten, (g.width + 70, 90 + counter))
         counter += 40
 
-    next_object = g.font.render("Next Object is in:", False, (255, 255, 255))
-    surface.blit(next_object, (g.width + 20, 90 + counter))
-    counter += 40
-    next_object = g.font.render(g.main_obj_locations[g.main_obj_collected], False, (255, 255, 255))
-    surface.blit(next_object, (g.width + 20, 90 + counter))
+    if g.main_obj_collected != g.main_obj_total:
+        next_object = g.font.render("Next Object is in:", False, (255, 255, 255))
+        surface.blit(next_object, (g.width + 20, 90 + counter))
+        counter += 40
+        next_object = g.font.render(g.main_obj_locations[g.main_obj_collected], False, (255, 255, 255))
+        surface.blit(next_object, (g.width + 20, 90 + counter))
 
 
     pygame.display.update()
@@ -85,8 +90,9 @@ def connect_server():
 #print("Highscores: ", client.load_highscores())
 
 #https://github.com/studentenhuisDS4/ds4reboot/blob/develop/user/api/serializers/snake_highscore.py
-x = 100
-y = 100
+
+x = 500
+y = 200
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 
@@ -143,6 +149,11 @@ while not done:
 
     pygame.display.flip()
     clock.tick(30)
+
+x = 100
+y = 100
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 
 window = pygame.display.set_mode((g.width + 250, g.height))
 

@@ -21,29 +21,32 @@ class Snake(object):
                 pygame.quit()
 
             keys = pygame.key.get_pressed()
-            for key in keys:
-                if keys[pygame.K_LEFT] and self.dirny != 0:
-                    self.dirnx = -1
-                    self.dirny = 0
-                    self.turns[self.body[0]] = [
-                        self.dirnx, self.dirny, self.body[0][2]]
+            
+            if sum(keys) > 1:
+                print("HAllo")
 
-                elif keys[pygame.K_RIGHT] and self.dirny != 0:
-                    self.dirnx = 1
-                    self.dirny = 0
-                    self.turns[self.body[0]] = [
-                        self.dirnx, self.dirny, self.body[0][2]]
+            if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.dirny != 0:
+                self.dirnx = -1
+                self.dirny = 0
+                self.turns[self.body[0]] = [
+                    self.dirnx, self.dirny, self.body[0][2]]
 
-                elif keys[pygame.K_UP] and self.dirnx != 0:
-                    self.dirnx = 0
-                    self.dirny = -1
-                    self.turns[self.body[0]] = [
-                        self.dirnx, self.dirny, self.body[0][2]]
+            elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and self.dirny != 0:
+                self.dirnx = 1
+                self.dirny = 0
+                self.turns[self.body[0]] = [
+                    self.dirnx, self.dirny, self.body[0][2]]
 
-                elif keys[pygame.K_DOWN] and self.dirnx != 0:
-                    self.dirnx = 0
-                    self.dirny = 1
-                    self.turns[self.body[0]] = [self.dirnx, self.dirny, self.body[0][2]]
+            elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.dirnx != 0:
+                self.dirnx = 0
+                self.dirny = -1
+                self.turns[self.body[0]] = [
+                    self.dirnx, self.dirny, self.body[0][2]]
+
+            elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.dirnx != 0:
+                self.dirnx = 0
+                self.dirny = 1
+                self.turns[self.body[0]] = [self.dirnx, self.dirny, self.body[0][2]]
         
         #check for stairs
         climbed = self.stair_climbing(g)

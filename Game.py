@@ -12,7 +12,7 @@ class Game(object):
     s = None
     current_floor = 0
     number_of_floors = 3
-    main_obj_total = 5
+    main_obj_total = 0
     main_obj = []
     main_obj_collected = 0
     main_obj_locations = []
@@ -46,10 +46,52 @@ class Game(object):
         self.main_obj_locations.append("Andrea's Room")
         self.main_obj.append(Food("main_obj", (95,30,2), self))
         self.main_obj_locations.append("Marcus' Room")
+        self.main_obj.append(Food("main_obj", (98,35,0), self))
+        self.main_obj_locations.append("Daan's Room")
         self.main_obj.append(Food("main_obj", (8,10,1), self))
         self.main_obj_locations.append("Cork's Room")
-        self.main_obj.append(Food("main_obj", (95,35,0), self))
-        self.main_obj_locations.append("Daan's Room")
+        self.main_obj.append(Food("main_obj", (12,30,2), self))
+        self.main_obj_locations.append("Marloes' Room")
+        self.main_obj.append(Food("main_obj", (78,40,1), self))
+        self.main_obj_locations.append("Janis' Room")
+        self.main_obj.append(Food("main_obj", (10,52,0), self))
+        self.main_obj_locations.append("Sven's Room")
+        self.main_obj.append(Food("main_obj", (40,10,2), self))
+        self.main_obj_locations.append("Jerry's Room")
+        self.main_obj.append(Food("main_obj", (98,52,0), self))
+        self.main_obj_locations.append("Hannele's Room")
+        self.main_obj.append(Food("main_obj", (88,8,1), self))
+        self.main_obj_locations.append("Jeffrey's Room")
+
+        merels_room = r.randint(1,2)
+        if merels_room == 1:
+            self.main_obj.append(Food("main_obj", (21,8,1), self))
+            self.main_obj_locations.append("Merel's Lower Room")
+        else:
+            self.main_obj.append(Food("main_obj", (44,30,2), self))
+            self.main_obj_locations.append("Merel's Upper Room")
+
+        self.main_obj.append(Food("main_obj", (70,48,2), self))
+        self.main_obj_locations.append("Lotte's Room")
+        self.main_obj.append(Food("main_obj", (13,37,0), self))
+        self.main_obj_locations.append("Ben's Room")
+        self.main_obj.append(Food("main_obj", (11,40,1), self))
+        self.main_obj_locations.append("Miel's Room")
+        self.main_obj.append(Food("main_obj", (97,40,1), self))
+        self.main_obj_locations.append("Luuk's Room")
+        self.main_obj.append(Food("main_obj", (14,10,2), self))
+        self.main_obj_locations.append("Quentin's Room")
+        self.main_obj.append(Food("main_obj", (55,25,1), self))
+        self.main_obj_locations.append("The GR")
+        self.main_obj.append(Food("main_obj", (50,45,0), self))
+        self.main_obj_locations.append("The Kitchen")
+        self.main_obj.append(Food("main_obj", (53,55,1), self))
+        self.main_obj_locations.append("The Front Yard")
+        self.main_obj.append(Food("main_obj", (52,15,0), self))
+        self.main_obj_locations.append("The Binnenplaats")
+
+
+        self.main_obj_total = len(self.main_obj)
 
     def eating_food(self, f):
         self.food_types[f.food_type] += 1

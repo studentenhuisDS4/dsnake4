@@ -245,9 +245,13 @@ class Map(object):
                     if (stair.top_left[0] + i, stair.top_left[1] + j) == (pos[0], pos[1]):
                         return True
 
+        for f in g.main_obj:
+            if f.position == pos:
+                return True
         for f in self.food:
             if f.position == pos:
                 return True
+                
         for snake_block in g.s.body:
             if snake_block == pos:
                 return True

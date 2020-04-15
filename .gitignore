@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Dont upload .pickle files (our token file f.e.)
+**/*.pickle

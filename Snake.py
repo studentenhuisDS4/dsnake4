@@ -21,6 +21,7 @@ class Snake(object):
             if event.type == pygame.QUIT:
                 #TODO catch exeption if game already quit
                 pygame.quit()
+                exit()
 
             keys = pygame.key.get_pressed()
 

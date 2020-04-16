@@ -153,10 +153,11 @@ class Game(object):
                 self.map.add_random_food(self, "krant", 1)
                 self.map.add_random_food(self, "krant", 1)
                 self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 2, "l")
+                self.map.add_random_food(self, "krant", 2, "l")
                 self.map.add_random_food(self, "krant", 2, "r")
                 self.map.add_random_food(self, "krant", 2, "r")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.krant_to_get = 11
+                self.krant_to_get = 12
         elif self.keys_used[3] == 0:
             if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 10: 
                 self.food_types["krant"] = 0

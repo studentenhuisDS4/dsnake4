@@ -138,9 +138,9 @@ def get_login():
         clock.tick(30)
     return username, password
 def get_nickname():
-    window = pygame.display.set_mode((280, 100))
+    window = pygame.display.set_mode((325, 100))
     font = pygame.font.SysFont('Consolas', 28)
-    input_box = pygame.Rect(30, 50, 155, 32)
+    input_box = pygame.Rect(30, 50, 320, 32)
     color_inactive = pygame.Color('lightskyblue3')
     color_active = pygame.Color('dodgerblue2')
     color = color_inactive
@@ -212,15 +212,13 @@ def pause(s, g):
             print(paused)
 
 
-def connect_server(u, p):
-    client = ServerClient()
-    # Login with credentials, auto-saves pickle file with token. DONT SAVE THIS STEP TO GIT.
-    client.authenticate(username = u,password = p)
-    # Login by loading pickle file, no-brainer and quite neat.
-    #client.authenticate()
-    return client
-
-#https://github.com/studentenhuisDS4/ds4reboot/blob/develop/user/api/serializers/snake_highscore.py
+def connect_server(client, *argv):
+    success = False
+    if len(argv) == 0:
+        success = client.authenticate()
+    else:
+        success = client.authenticate(argv[0], argv[1])
+    return success
 
 x = 500
 y = 200
@@ -233,21 +231,31 @@ pygame.font.init()
 g = Game(100, 20)
 clock = pygame.time.Clock()
 
+
 username = ""
 password = ""
 nickname = ""
 
-while username == "" or password == "":
-    username, password = get_login()
-    if username == 420:
-        exit()
+connected = False
+
+
+client = ServerClient()
+connected = connect_server(client)
+
+if not connected:
+    while username == "" or password == "":
+        username, password = get_login()
+        if username == 420:
+            exit()
+    connected = connect_server(client, username, password)
+
 
 while nickname == "":
     nickname = get_nickname()
     if nickname == 420:
         exit()
 
-client = connect_server(username, password)
+local_scores_file = open("Local_scores.txt", "a")
 
 x = 100
 y = 100
@@ -263,11 +271,14 @@ while True:
     pygame.time.delay(50)
     clock.tick(15)
     climbed, score, game_ended = g.s.move(g)
-    redrawWindow(window, g, nickname)
     if game_ended:
         g.reset(100, 20)
-        print(score)
-        #push highscore
+        if connected:
+            client.add_highscore(nickname, score)
+        local_scores_file.write(nickname + " " + str(score) + "\n")
+        score = 0
+        game_ended = False
+    redrawWindow(window, g, nickname)
     if climbed:
         pygame.time.delay(400)
 

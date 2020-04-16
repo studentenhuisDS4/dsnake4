@@ -8,7 +8,7 @@ class ServerClient(object):
         Class to manage data from server concerning authentication and highscores.
     """
 
-    SERVER_API_BASE = 'http://localhost:8000/api/v1/'
+    SERVER_API_BASE = 'https://ds4.nl/api/v1/'
 
     SERVER_LOGIN = SERVER_API_BASE + 'auth-jwt/'
     SERVER_SNAKE_HIGHSCORES = SERVER_API_BASE + 'snake-highscore/'

@@ -97,11 +97,24 @@ def get_login():
                 # Change the current color of the input box.
             if event.type == pygame.KEYDOWN:
                 if active != 0:
-                    if event.key == pygame.K_RETURN:
-                        if username != "" and password != "":
+                    if event.key == pygame.K_TAB:
+                        if active == 1:
+                            active = 2
+                            password_color = color_active
+                            username_color = color_inactive
+                        elif active == 2:
+                            active = 1
+                            password_color = color_inactive
+                            username_color = color_active
+                    elif event.key == pygame.K_RETURN:
+                        if active == 1:
+                            active = 2
+                            password_color = color_active
+                            username_color = color_inactive
+                        elif username != "" and password != "":
                             done = True
                         else:
-                            print("Error")
+                            print("Error: Username or Password not inserted")
 
                     elif event.key == pygame.K_BACKSPACE:
                         if active == 1:
@@ -137,7 +150,7 @@ def get_login():
         pygame.display.flip()
         clock.tick(30)
     return username, password
-def get_nickname():
+def get_nickname(nick):
     window = pygame.display.set_mode((325, 100))
     font = pygame.font.SysFont('Consolas', 28)
     input_box = pygame.Rect(30, 50, 320, 32)
@@ -145,7 +158,7 @@ def get_nickname():
     color_active = pygame.Color('dodgerblue2')
     color = color_inactive
     active = False
-    nickname = ''
+    nickname = nick
     done = False
 
     while not done:
@@ -249,9 +262,21 @@ if not connected:
             exit()
     connected = connect_server(client, username, password)
 
+temp_nickname = ""
+local_scores_read = None
+try: 
+    local_scores_read = open("Local_scores.txt", "r")
+    first_line = local_scores_read.readline()
+    w = first_line.split()
+    w.pop()
+    temp_nickname = ' '.join(w)
+    local_scores_read.close()
+except:
+    local_scores_read = None
+
 
 while nickname == "":
-    nickname = get_nickname()
+    nickname = get_nickname(temp_nickname)
     if nickname == 420:
         exit()
 

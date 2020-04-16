@@ -5,11 +5,11 @@ verify_ssl = true
 
 [dev-packages]
 pypiwin32 = "*"
+pyinstaller = "*"
 
 [packages]
 pygame = "==1.9.6"
 requests = "*"
-pyinstaller = "*"
 
 [requires]
 python_version = "3.7"

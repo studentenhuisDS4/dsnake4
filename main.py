@@ -99,7 +99,10 @@ y = 200
 
 os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
 
+pygame.init()
 pygame.font.init()
+
+sorted(pygame.font.get_fonts())
 
 g = Game(100, 20)
 clock = pygame.time.Clock()

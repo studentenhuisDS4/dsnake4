@@ -198,13 +198,12 @@ class Game(object):
                 self.s.body.pop()
             if len(list(dict.fromkeys(self.s.body))) != len(self.s.body):
                 pygame.time.delay(500)
-                self.reset(50, 20)
-                return
+                return True
             self.s.food_eating(self)
         self.s.dirnx, self.s.dirny = (stair_to.direction)
         self.current_floor = next_floor
 
-        return
+        return False
 
     def reset(self, s_x, s_y):
         self.current_floor = 0

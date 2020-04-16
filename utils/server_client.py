@@ -20,6 +20,30 @@ class ServerClient(object):
         logged_in = None
         loaded_highscores = []
 
+    def add_highscore(self):
+        try:
+            if self.logged_in:
+                # Add authentication
+                response = requests.add(self.SERVER_SNAKE_HIGHSCORES + "/add/", headers=self.get_token_header(self.token))
+
+                if response.status_code == 200:
+                    loaded_highscores = response.json()
+                    return loaded_highscores
+                elif response.status_code == 401:
+                    print(
+                        "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
+                else:
+                    print(
+                        "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})" \
+                            .format(response.status_code, response))
+            else:
+                print("WARN: can't retrieve snake highscores without successful login.")
+
+        except Exception as e:
+            print(
+                "ERROR: exception occurred while fetching high-scores from server API: {}".format(e))
+        return None
+
     def load_highscores(self):
         # Load snake highscores from the server API, but only if logged in.
         try:

@@ -16,6 +16,7 @@ class Snake(object):
 
     def move(self, g):
         climbed = False
+        points = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 #TODO catch exeption if game already quit
@@ -41,8 +42,11 @@ class Snake(object):
             break
         
         #check for stairs
-        climbed = self.stair_climbing(g)
-        
+        climbed, game_ended = self.stair_climbing(g)
+
+        if game_ended:
+            return climbed, g.points, True
+
         self.body.insert(
             0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
 
@@ -55,17 +59,17 @@ class Snake(object):
         # check for self-collisions
         if len(list(dict.fromkeys(self.body))) != len(self.body):
             pygame.time.delay(500)
-            g.reset(100, 20)
+            return climbed, g.points, True
 
         # check for collisions with walls
         if self.collision_with_walls(g):
             pygame.time.delay(500)
-            g.reset(100, 20)
+            return climbed, g.points, True
 
         # check if the snake ate food
         self.food_eating(g)
 
-        return climbed
+        return climbed, g.points, False
 
     def food_eating(self, g):
         for f in g.map.food:
@@ -78,9 +82,8 @@ class Snake(object):
             for i in range(stair.bottom_right[0] - stair.top_left[0]):
                 for j in range(stair.bottom_right[1] - stair.top_left[1]):
                     if (stair.top_left[0] + i, stair.top_left[1] + j, g.current_floor) == self.body[0]:
-                        g.climbing_stairs(stair.identifier)
-                        return True
-        return False
+                        return True, g.climbing_stairs(stair.identifier)
+        return False, False
 
     def complete_digestion(self, pos):
         for i in range(len(self.undigested_food)):

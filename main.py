@@ -6,7 +6,7 @@ from Game import Game
 from Map_Objects import *
 from Snake import Snake
 from Food import Food
-from utils.server_client import ServerClient
+#from utils.server_client import ServerClient
 
 #from utils.server_client import ServerClient
 
@@ -28,6 +28,9 @@ def redrawWindow(surface, g, nickname):
         if f_type == "main_obj":
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]) + "/" + str(g.main_obj_total), False, (255, 255, 255))
+        elif f_type == "krant":
+            food_eaten = g.font.render(
+                "x " + str(g.food_types[f_type]) + "/" + str(g.krant_to_get), False, (255, 255, 255))
         else:
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]), False, (255, 255, 255))

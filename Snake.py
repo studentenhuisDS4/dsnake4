@@ -1,9 +1,9 @@
 import pygame as pygame
 import random as r
+from copy import deepcopy
 
 class Snake(object):
     body = []
-    turns = {}
 
     undigested_food = []
 
@@ -15,38 +15,30 @@ class Snake(object):
         self.font = pygame.font.SysFont('Consolas', 13)
 
     def move(self, g):
+        climbed = False
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 #TODO catch exeption if game already quit
                 pygame.quit()
 
             keys = pygame.key.get_pressed()
-            
-            if sum(keys) > 1:
-                print("HAllo")
 
             if (keys[pygame.K_LEFT] or keys[pygame.K_a]) and self.dirny != 0:
                 self.dirnx = -1
                 self.dirny = 0
-                self.turns[self.body[0]] = [
-                    self.dirnx, self.dirny, self.body[0][2]]
 
             elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]) and self.dirny != 0:
                 self.dirnx = 1
                 self.dirny = 0
-                self.turns[self.body[0]] = [
-                    self.dirnx, self.dirny, self.body[0][2]]
 
             elif (keys[pygame.K_UP] or keys[pygame.K_w]) and self.dirnx != 0:
                 self.dirnx = 0
                 self.dirny = -1
-                self.turns[self.body[0]] = [
-                    self.dirnx, self.dirny, self.body[0][2]]
 
             elif (keys[pygame.K_DOWN] or keys[pygame.K_s]) and self.dirnx != 0:
                 self.dirnx = 0
                 self.dirny = 1
-                self.turns[self.body[0]] = [self.dirnx, self.dirny, self.body[0][2]]
+            break
         
         #check for stairs
         climbed = self.stair_climbing(g)
@@ -56,12 +48,9 @@ class Snake(object):
 
         if self.body[-1] in self.undigested_food:
             self.complete_digestion(self.body[-1])
-            last_pos = self.body[-1]
+            self.body[-1]
         else:
-            last_pos = self.body.pop()
-
-        if last_pos in self.turns:
-            self.turns.pop(last_pos)
+            self.body.pop()
 
         # check for self-collisions
         if len(list(dict.fromkeys(self.body))) != len(self.body):
@@ -105,7 +94,7 @@ class Snake(object):
             for block in range(wall.finish[direction] - wall.start[direction]):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
-                if self.body[0] == (i, j, g.current_floor):
+                if self.body[0] == (i, j, g.current_floor) and wall.visible:
                     return True
         return False
 
@@ -113,7 +102,6 @@ class Snake(object):
         self.body = []
         for i in range(g.starting_length):
             self.body.append(g.starting_position[i])
-        self.turns = {}
         self.dirnx = -1
         self.dirny = 0
         self.undigested_food = []

@@ -22,7 +22,7 @@ class Food(object):
             self.points = 10
             self.block_parts = 1
         elif food_type == "krant":
-            self.points = -5
+            self.points = 0
             self.block_parts = 0
         elif food_type == "main_obj":
             self.points = 100

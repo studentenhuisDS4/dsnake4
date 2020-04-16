@@ -1,6 +1,20 @@
 {
+    "version": "0.2.0",
     "configurations": [
-        {"name":"Python: Module","type":"python","request":"launch","module":"main"}
-        
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Launch Chrome against localhost",
+            "sourceMaps": true,
+            "url": "http://localhost:8080",
+            "webRoot": "${workspaceRoot}",
+            "preLaunchTask": "npmServe"
+        },
+        {
+            "name":"Python: Module",
+            "type":"python",
+            "request":"launch",
+            "module":"main"
+        }
     ]
 }

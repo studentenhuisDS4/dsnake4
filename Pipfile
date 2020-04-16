@@ -8,6 +8,7 @@ verify_ssl = true
 [packages]
 pygame = "==1.9.6"
 requests = "*"
+pyinstaller = "*"
 
 [requires]
 python_version = "3.7"

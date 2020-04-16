@@ -4,6 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pypiwin32 = "*"
 
 [packages]
 pygame = "==1.9.6"

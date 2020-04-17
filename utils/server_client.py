@@ -1,6 +1,7 @@
 import requests
 import os
 import pickle
+import pprint
 
 
 class ServerClient(object):
@@ -20,12 +21,40 @@ class ServerClient(object):
         logged_in = None
         loaded_highscores = []
 
+    def add_highscore(self, nickname, score):
+        try:
+            if self.logged_in:
+                # Add authentication
+                input_data = {'score': score, 'nickname': nickname}
+                response = requests.post(
+                    self.SERVER_SNAKE_HIGHSCORES + "add/",
+                    headers=self.get_token_header(self.login_token),
+                    json=input_data
+                )
+                if response.status_code == 200:
+                    return None
+                elif response.status_code == 401:
+                    print(
+                        "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
+                else:
+                    print(
+                        "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})"
+                        .format(response.status_code, response))
+            else:
+                print("WARN: can't push snake highscores without successful login.")
+
+        except Exception as e:
+            print(
+                "ERROR: exception occurred while pushing high-scores from server API: {}".format(e))
+        return None
+
     def load_highscores(self):
         # Load snake highscores from the server API, but only if logged in.
         try:
             if self.logged_in:
                 # Add authentication
-                response = requests.get(self.SERVER_SNAKE_HIGHSCORES, headers=self.get_token_header(self.token))
+                response = requests.get(
+                    self.SERVER_SNAKE_HIGHSCORES, headers=self.get_token_header(self.login_token))
 
                 if response.status_code == 200:
                     loaded_highscores = response.json()
@@ -35,8 +64,8 @@ class ServerClient(object):
                         "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
                 else:
                     print(
-                        "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})" \
-                            .format(response.status_code, response))
+                        "WARN: request was responded with unhandled response code for highscores, status-code: {} (response: {})"
+                        .format(response.status_code, response))
             else:
                 print("WARN: can't retrieve snake highscores without successful login.")
 
@@ -56,16 +85,17 @@ class ServerClient(object):
             try:
                 json_result = result.json()
                 if 'token' in json_result.keys():
-                    self.token = result.json()['token']
+                    self.login_token = result.json()['token']
                 if result.status_code == 200:
-                    if self.dump_token_pickle(token=self.token) is None:
+                    if self.dump_token_pickle(token=self.login_token) is None:
                         print(
                             "ERROR: authentication could not save token as pickle. Another error must have occurred.")
                     else:
                         self.logged_in = True
                         print("INFO: Authentication saved for next start.")
                 elif result.status_code == 401:
-                    print("ERROR: authentication failed, wrong credentials. Deleting token, if any.")
+                    print(
+                        "ERROR: authentication failed, wrong credentials. Deleting token, if any.")
                     self.clean_signin()
                 elif result.status_code == 500:
                     print("ERROR: authentication failed, internal server error.")

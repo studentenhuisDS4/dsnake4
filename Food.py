@@ -1,6 +1,7 @@
 import pygame as pygame
 import random as r
 
+
 class Food(object):
     food_type = ""
     points = 0

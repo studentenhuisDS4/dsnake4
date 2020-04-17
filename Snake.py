@@ -2,6 +2,7 @@ import pygame as pygame
 import random as r
 from copy import deepcopy
 
+
 class Snake(object):
     body = []
 
@@ -19,7 +20,7 @@ class Snake(object):
         points = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                #TODO catch exeption if game already quit
+                # TODO catch exeption if game already quit
                 pygame.quit()
                 exit()
 
@@ -41,8 +42,8 @@ class Snake(object):
                 self.dirnx = 0
                 self.dirny = 1
             break
-        
-        #check for stairs
+
+        # check for stairs
         climbed, game_ended = self.stair_climbing(g)
 
         if game_ended:

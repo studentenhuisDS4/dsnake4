@@ -155,7 +155,8 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
                     elif active == 2:
                         username, password = get_login(window)
                         if username != 420:
-                            connected = connect_server(client, username, password)
+                            connected = connect_server(
+                                client, username, password)
                     elif active == 3:
                         if nickname != "":
                             nickname = get_nickname(window, nickname)
@@ -207,22 +208,30 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
         quit_surface = font.render("QUIT", True, quit_color)
 
         if connected:
-            loggedin_success_surface = font.render("Logged in", True, color_active)
+            loggedin_success_surface = font.render(
+                "Logged in", True, color_active)
         else:
-            loggedin_success_surface = font.render("Not logged in", True, color_active)
-        
-        if nickname != "":
-            playingas_surface = font.render("Playing as: " + nickname, True, color_active)
-            window.blit(playingas_surface, (nickname_box.x + nickname_box.width + 15, nickname_box.y+5))
+            loggedin_success_surface = font.render(
+                "Not logged in", True, color_active)
 
+        if nickname != "":
+            playingas_surface = font.render(
+                "Playing as: " + nickname, True, color_active)
+            window.blit(playingas_surface, (nickname_box.x +
+                                            nickname_box.width + 15, nickname_box.y+5))
 
         window.blit(menu_surface, (menu_x, 20))
 
-        window.blit(play_surface, (play_box.x + play_box.width/2 - play_surface.get_width()/2 , play_box.y+5))
-        window.blit(login_surface, (login_box.x + login_box.width/2 - login_surface.get_width()/2, login_box.y+5))
-        window.blit(loggedin_success_surface, (login_box.x + login_box.width + 15, login_box.y+5))
-        window.blit(nickname_surface, (nickname_box.x + nickname_box.width/2 - nickname_surface.get_width()/2, nickname_box.y+5))
-        window.blit(quit_surface, (quit_box.x + quit_box.width/2 - quit_surface.get_width()/2, quit_box.y+5))
+        window.blit(play_surface, (play_box.x + play_box.width /
+                                   2 - play_surface.get_width()/2, play_box.y+5))
+        window.blit(login_surface, (login_box.x + login_box.width /
+                                    2 - login_surface.get_width()/2, login_box.y+5))
+        window.blit(loggedin_success_surface, (login_box.x +
+                                               login_box.width + 15, login_box.y+5))
+        window.blit(nickname_surface, (nickname_box.x + nickname_box.width /
+                                       2 - nickname_surface.get_width()/2, nickname_box.y+5))
+        window.blit(quit_surface, (quit_box.x + quit_box.width /
+                                   2 - quit_surface.get_width()/2, quit_box.y+5))
 
         pygame.draw.rect(window, play_color, play_box, 2)
         pygame.draw.rect(window, login_color, login_box, 2)
@@ -230,7 +239,6 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
         pygame.draw.rect(window, quit_color, quit_box, 2)
         pygame.display.flip()
         clock.tick(30)
-
 
 
 def get_login(window):
@@ -328,6 +336,8 @@ def get_login(window):
         pygame.display.flip()
         clock.tick(30)
     return username, password
+
+
 def get_nickname(window, nick):
     (w, h) = (g.width + 250, g.height)
     font = pygame.font.SysFont('Consolas', 28)
@@ -408,6 +418,7 @@ def connect_server(client, *argv):
         success = client.authenticate(argv[0], argv[1])
     return success
 
+
 pygame.init()
 pygame.font.init()
 
@@ -441,11 +452,10 @@ local_scores_file = open("Local_scores.txt", "a")
 connected = False
 
 client = ServerClient()
-
-
 connected = connect_server(client)
 
-connected, status, nickname = menu(window=window, client=client, g=g, nick=temp_nickname, connected=connected)
+connected, status, nickname = menu(
+    window=window, client=client, g=g, nick=temp_nickname, connected=connected)
 
 score = 0
 game_ended = False

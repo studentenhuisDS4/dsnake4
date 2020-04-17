@@ -3,28 +3,31 @@ import random as r
 
 from Food import Food
 
+
 class Wall(object):
     floor = 0
-    start = (0,0)
-    finish = (0,0)
+    start = (0, 0)
+    finish = (0, 0)
     direction = 0
-    status = "visible" #visible/invisible/see_through
+    status = "visible"  # visible/invisible/see_through
     breakable = True
 
-    def __init__(self, floor, start, finish, direction, status = "visible", breakable = True):
+    def __init__(self, floor, start, finish, direction, status="visible", breakable=True):
         self.floor = floor
         self.start = start
         self.finish = finish
         self.direction = direction
         self.status = status
         self.breakable = breakable
+
+
 class Stair(object):
     floor = 0
-    top_left = (0,0)
-    bottom_right = (0,0)
+    top_left = (0, 0)
+    bottom_right = (0, 0)
     identifier = 0
-    direction = (0,0)
-    climb_start = (0,0)
+    direction = (0, 0)
+    climb_start = (0, 0)
 
     def __init__(self, floor, top_left, bottom_right, identifier, direction, climb_start):
         self.floor = floor
@@ -33,6 +36,7 @@ class Stair(object):
         self.identifier = identifier
         self.direction = direction
         self.climb_start = climb_start
+
 
 class Map(object):
     walls = []
@@ -61,10 +65,10 @@ class Map(object):
 
     def init_first_floor(self):
         # contour walls
-        self.walls.append(Wall(0, (0, 0), (104, 0), 0, breakable = False))
-        self.walls.append(Wall(0, (104, 0), (104, 60), 1, breakable = False))
-        self.walls.append(Wall(0, (0, 59), (104, 59), 0, breakable = False))
-        self.walls.append(Wall(0, (0, 0), (0, 59), 1, breakable = False))
+        self.walls.append(Wall(0, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(0, (104, 0), (104, 60), 1, breakable=False))
+        self.walls.append(Wall(0, (0, 59), (104, 59), 0, breakable=False))
+        self.walls.append(Wall(0, (0, 0), (0, 59), 1, breakable=False))
 
         self.walls.append(Wall(0, (0, 10), (12, 10), 0))
         self.walls.append(Wall(0, (19, 10), (30, 10), 0))
@@ -92,33 +96,34 @@ class Map(object):
         self.walls.append(Wall(0, (20, 54), (20, 60), 1))
         self.walls.append(Wall(0, (25, 30), (25, 45), 1))
 
-        #protecting stairs
-        self.walls.append(Wall(0, (56, 27), (59, 27), 0, breakable = False))
-        self.walls.append(Wall(0, (59, 27), (59, 30), 1, breakable = False))
-        self.walls.append(Wall(0, (55, 30), (60, 30), 0, breakable = False))
-        #Binnenplaats stair wall
-        self.walls.append(Wall(0, (55, 27), (55, 30), 1, breakable = False))
+        # protecting stairs
+        self.walls.append(Wall(0, (56, 27), (59, 27), 0, breakable=False))
+        self.walls.append(Wall(0, (59, 27), (59, 30), 1, breakable=False))
+        self.walls.append(Wall(0, (55, 30), (60, 30), 0, breakable=False))
+        # Binnenplaats stair wall
+        self.walls.append(Wall(0, (55, 27), (55, 30), 1, breakable=False))
         self.bin_stair_wall = len(self.walls) - 1
-        
-        self.walls.append(Wall(0, (42, 49), (45, 49), 0, breakable = False))
-        self.walls.append(Wall(0, (41, 45), (46, 45), 0, breakable = False))
-        self.walls.append(Wall(0, (45, 46), (45, 50), 1, breakable = False))
-        #Grot stair wall
-        self.walls.append(Wall(0, (41, 46), (41, 50), 1, breakable = False))
+
+        self.walls.append(Wall(0, (42, 49), (45, 49), 0, breakable=False))
+        self.walls.append(Wall(0, (41, 45), (46, 45), 0, breakable=False))
+        self.walls.append(Wall(0, (45, 46), (45, 50), 1, breakable=False))
+        # Grot stair wall
+        self.walls.append(Wall(0, (41, 46), (41, 50), 1, breakable=False))
         self.grot1_stair_wall = len(self.walls) - 1
 
-        #Front yard corridor
+        # Front yard corridor
         self.walls.append(Wall(0, (1, 24), (3, 24), 0))
 
-        #Tropen wall
-        self.walls.append(Wall(0, (12, 1), (19, 1), 0, breakable = False))
+        # Tropen wall
+        self.walls.append(Wall(0, (12, 1), (19, 1), 0, breakable=False))
         self.tropen_wall = len(self.walls) - 1
+
     def init_second_floor(self):
         # contour walls
-        self.walls.append(Wall(1, (0, 0), (104, 0), 0, breakable = False))
-        self.walls.append(Wall(1, (104, 0), (104, 60), 1, breakable = False))
-        self.walls.append(Wall(1, (0, 59), (104, 59), 0, breakable = False))
-        self.walls.append(Wall(1, (0, 0), (0, 59), 1, breakable = False))
+        self.walls.append(Wall(1, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(1, (104, 0), (104, 60), 1, breakable=False))
+        self.walls.append(Wall(1, (0, 59), (104, 59), 0, breakable=False))
+        self.walls.append(Wall(1, (0, 0), (0, 59), 1, breakable=False))
 
         self.walls.append(Wall(1, (0, 50), (6, 50), 0))
         self.walls.append(Wall(1, (9, 50), (35, 50), 0))
@@ -152,47 +157,48 @@ class Map(object):
         self.walls.append(Wall(1, (99, 30), (104, 30), 0))
         self.walls.append(Wall(1, (88, 30), (88, 50), 1))
 
-        #protecting stairs
-        self.walls.append(Wall(1, (54, 1), (54, 3), 1, breakable = False))
-        self.walls.append(Wall(1, (58, 1), (58, 3), 1, breakable = False))
-        #GR stair wall
-        self.walls.append(Wall(1, (54, 3), (59, 3), 0, breakable = False))
+        # protecting stairs
+        self.walls.append(Wall(1, (54, 1), (54, 3), 1, breakable=False))
+        self.walls.append(Wall(1, (58, 1), (58, 3), 1, breakable=False))
+        # GR stair wall
+        self.walls.append(Wall(1, (54, 3), (59, 3), 0, breakable=False))
         self.gr_stair_wall = len(self.walls) - 1
-        
-        self.walls.append(Wall(1, (36, 9), (40, 9), 0, breakable = False))
-        self.walls.append(Wall(1, (36, 9), (36, 13), 1, breakable = False))
-        self.walls.append(Wall(1, (40, 9), (40, 14), 1, breakable = False))
-        #Grot stair wall
-        self.walls.append(Wall(1, (36, 13), (40, 13), 0, breakable = False))
+
+        self.walls.append(Wall(1, (36, 9), (40, 9), 0, breakable=False))
+        self.walls.append(Wall(1, (36, 9), (36, 13), 1, breakable=False))
+        self.walls.append(Wall(1, (40, 9), (40, 14), 1, breakable=False))
+        # Grot stair wall
+        self.walls.append(Wall(1, (36, 13), (40, 13), 0, breakable=False))
         self.grot2_stair_wall = len(self.walls) - 1
-        
-        self.walls.append(Wall(1, (1, 23), (4, 23), 0, breakable = False))
-        self.walls.append(Wall(1, (1, 27), (4, 27), 0, breakable = False))
-        #Floor1 stair wall
-        self.walls.append(Wall(1, (4, 23), (4, 28), 1, breakable = False))
+
+        self.walls.append(Wall(1, (1, 23), (4, 23), 0, breakable=False))
+        self.walls.append(Wall(1, (1, 27), (4, 27), 0, breakable=False))
+        # Floor1 stair wall
+        self.walls.append(Wall(1, (4, 23), (4, 28), 1, breakable=False))
         self.floor1_stair_wall = len(self.walls) - 1
-        
-        self.walls.append(Wall(1, (101, 20), (104, 20), 0, breakable = False))
-        self.walls.append(Wall(1, (101, 24), (104, 24), 0, breakable = False))
-        #Schuur stair wall
-        self.walls.append(Wall(1, (100, 20), (100, 25), 1, breakable = False))
+
+        self.walls.append(Wall(1, (101, 20), (104, 20), 0, breakable=False))
+        self.walls.append(Wall(1, (101, 24), (104, 24), 0, breakable=False))
+        # Schuur stair wall
+        self.walls.append(Wall(1, (100, 20), (100, 25), 1, breakable=False))
         self.schuur1_stair_wall = len(self.walls) - 1
 
-        #Front yard wall
-        self.walls.append(Wall(1, (0, 50), (104, 50), 0, breakable = False))
+        # Front yard wall
+        self.walls.append(Wall(1, (0, 50), (104, 50), 0, breakable=False))
         self.front_yard_wall = len(self.walls) - 1
+
     def init_third_floor(self):
         # contour walls
-        self.walls.append(Wall(2, (0, 0), (104, 0), 0, breakable = False))
-        self.walls.append(Wall(2, (104, 0), (104, 60), 1, breakable = False))
-        self.walls.append(Wall(2, (0, 59), (104, 59), 0, breakable = False))
-        self.walls.append(Wall(2, (0, 0), (0, 59), 1, breakable = False))
+        self.walls.append(Wall(2, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(2, (104, 0), (104, 60), 1, breakable=False))
+        self.walls.append(Wall(2, (0, 59), (104, 59), 0, breakable=False))
+        self.walls.append(Wall(2, (0, 0), (0, 59), 1, breakable=False))
 
-        #dividing walls
-        self.walls.append(Wall(2, (55, 0), (55, 59), 1, breakable = False))
-        self.walls.append(Wall(2, (56, 0), (56, 59), 1, breakable = False))
+        # dividing walls
+        self.walls.append(Wall(2, (55, 0), (55, 59), 1, breakable=False))
+        self.walls.append(Wall(2, (56, 0), (56, 59), 1, breakable=False))
 
-        #left part
+        # left part
         self.walls.append(Wall(2, (28, 3), (28, 20), 1))
         self.walls.append(Wall(2, (0, 20), (24, 20), 0))
         self.walls.append(Wall(2, (33, 20), (55, 20), 0))
@@ -202,13 +208,12 @@ class Map(object):
         self.walls.append(Wall(2, (35, 50), (55, 50), 0))
         self.walls.append(Wall(2, (23, 20), (23, 28), 1))
         self.walls.append(Wall(2, (23, 33), (23, 50), 1))
-        
-        
+
         self.walls.append(Wall(2, (36, 20), (36, 25), 1))
         self.walls.append(Wall(2, (36, 29), (36, 38), 1))
         self.walls.append(Wall(2, (36, 38), (55, 38), 0))
 
-        #right part
+        # right part
         self.walls.append(Wall(2, (70, 25), (70, 28), 1))
         self.walls.append(Wall(2, (70, 31), (70, 40), 1))
         self.walls.append(Wall(2, (56, 25), (70, 25), 0))
@@ -217,39 +222,37 @@ class Map(object):
         self.walls.append(Wall(2, (85, 0), (85, 5), 1))
         self.walls.append(Wall(2, (85, 11), (85, 59), 1))
 
-        #protecting stairs
-        self.walls.append(Wall(2, (52, 42), (55, 42), 0, breakable = False))
-        self.walls.append(Wall(2, (52, 46), (55, 46), 0, breakable = False))
-        #Floor2 stair wall
-        self.walls.append(Wall(2, (51, 42), (51, 47), 1, breakable = False))
+        # protecting stairs
+        self.walls.append(Wall(2, (52, 42), (55, 42), 0, breakable=False))
+        self.walls.append(Wall(2, (52, 46), (55, 46), 0, breakable=False))
+        # Floor2 stair wall
+        self.walls.append(Wall(2, (51, 42), (51, 47), 1, breakable=False))
         self.floor2_stair_wall = len(self.walls) - 1
 
-        self.walls.append(Wall(2, (57, 10), (60, 10), 0, breakable = False))
-        self.walls.append(Wall(2, (57, 14), (60, 14), 0, breakable = False))
-        #Schuur stair wall
-        self.walls.append(Wall(2, (60, 10), (60, 15), 1, breakable = False))
+        self.walls.append(Wall(2, (57, 10), (60, 10), 0, breakable=False))
+        self.walls.append(Wall(2, (57, 14), (60, 14), 0, breakable=False))
+        # Schuur stair wall
+        self.walls.append(Wall(2, (60, 10), (60, 15), 1, breakable=False))
         self.schuur2_stair_wall = len(self.walls) - 1
-
-        
 
     def init_stairs(self):
         self.stairs = []
 
-        self.stairs.append(Stair(0, (56, 28), (59, 30), 0, (-1, 0), (58,28)))
-        self.stairs.append(Stair(1, (55, 1), (58, 3), 0, (0, 1), (56,1)))
+        self.stairs.append(Stair(0, (56, 28), (59, 30), 0, (-1, 0), (58, 28)))
+        self.stairs.append(Stair(1, (55, 1), (58, 3), 0, (0, 1), (56, 1)))
 
         self.stairs.append(Stair(0, (42, 46), (45, 49), 1, (-1, 0), (44, 47)))
-        self.stairs.append(Stair(1, (37, 10), (40, 13), 1, (0, 1), (38,10)))
+        self.stairs.append(Stair(1, (37, 10), (40, 13), 1, (0, 1), (38, 10)))
 
         self.stairs.append(Stair(1, (1, 24), (4, 27), 2, (1, 0), (1, 25)))
         self.stairs.append(Stair(2, (52, 43), (55, 46), 2, (-1, 0), (54, 44)))
 
-        self.stairs.append(Stair(1, (101, 21), (104, 24), 3, (-1, 0), (103, 22)))
+        self.stairs.append(
+            Stair(1, (101, 21), (104, 24), 3, (-1, 0), (103, 22)))
         self.stairs.append(Stair(2, (57, 11), (60, 14), 3, (1, 0), (57, 12)))
 
         self.stairs.append(Stair(0, (1, 25), (3, 30), 4, (1, 0), (1, 27)))
         self.stairs.append(Stair(1, (1, 51), (3, 59), 4, (1, 0), (1, 55)))
-
 
     def init_food(self, g):
         self.food = []
@@ -276,7 +279,7 @@ class Map(object):
         not_legal = True
         third_floor = ""
         if len(argv) == 0:
-            f_type = list(g.food_types.keys())[r.randint(0, 2)]               
+            f_type = list(g.food_types.keys())[r.randint(0, 2)]
             floor = r.randint(0, g.number_of_floors-1)
         elif len(argv) == 1 and type(argv) == type(""):
             f_type = argv
@@ -298,7 +301,7 @@ class Map(object):
                 not_legal = True
             elif third_floor == "l" and col > 54:
                 not_legal == True
-                
+
         self.add_food(Food(f_type, (col, row, floor), g))
 
     def is_food_not_legal(self, g, pos):
@@ -322,7 +325,7 @@ class Map(object):
         for f in self.food:
             if f.position == pos:
                 return True
-                
+
         for snake_block in g.s.body:
             if snake_block == pos:
                 return True
@@ -346,7 +349,7 @@ class Map(object):
 
         return stairs
 
-    def get_walls_at_floor(self, floor, draw = False):
+    def get_walls_at_floor(self, floor, draw=False):
         walls = []
         status_to_return = ["visible"]
         if draw:
@@ -364,7 +367,6 @@ class Map(object):
                 w.status = "see_through"
                 print(w.status)
 
-
     def get_sober(self):
         self.under_effect_of_weed = False
         for w in self.walls:
@@ -378,18 +380,22 @@ class Map(object):
         self.walls[self.gr_stair_wall].status = "invisible"
         self.walls[self.front_yard_wall].status = "invisible"
         print("Outside Stair OPENED!")
+
     def open_second_stair(self):
         self.walls[self.grot1_stair_wall].status = "invisible"
         self.walls[self.grot2_stair_wall].status = "invisible"
         print("Inside Stair OPENED!")
+
     def open_third_stair(self):
         self.walls[self.floor1_stair_wall].status = "invisible"
         self.walls[self.floor2_stair_wall].status = "invisible"
         print("Last Stair OPENED!")
+
     def open_schuur_stair(self):
         self.walls[self.schuur1_stair_wall].status = "invisible"
         self.walls[self.schuur2_stair_wall].status = "invisible"
         print("Schuur Stair OPENED!")
+
     def open_tropen(self):
         self.walls[self.tropen_wall].status = "invisible"
         print("Tropen OPENED!")
@@ -406,7 +412,7 @@ class Map(object):
     def draw(self, surface, g):
         dis = g.width/g.columns
 
-        for wall in self.get_walls_at_floor(g.current_floor, draw = True):
+        for wall in self.get_walls_at_floor(g.current_floor, draw=True):
             if wall.status != "invisible":
                 direction = wall.direction
                 for block in range(wall.finish[direction] - wall.start[direction]):
@@ -414,15 +420,16 @@ class Map(object):
                     j = wall.start[1] + direction*block
                     if wall.status == "visible":
                         pygame.draw.rect(surface, (255, 255, 255),
-                                    (i*dis+1, j*dis+1, dis-1, dis-1))
+                                         (i*dis+1, j*dis+1, dis-1, dis-1))
                     else:
                         pygame.draw.rect(surface, (255, 255, 255),
-                                    (i*dis+1, j*dis+1, dis-1, dis-1), int(dis/6))
+                                         (i*dis+1, j*dis+1, dis-1, dis-1), int(dis/6))
 
         for stair in self.get_stairs_at_floor(g.current_floor):
             for i in range(stair.bottom_right[0] - stair.top_left[0]):
                 for j in range(stair.bottom_right[1] - stair.top_left[1]):
-                    pygame.draw.rect(surface, (14, 37, 255), ((i+stair.top_left[0])*dis+1, (j+stair.top_left[1])*dis+1, dis-1, dis-1))
+                    pygame.draw.rect(surface, (14, 37, 255), ((
+                        i+stair.top_left[0])*dis+1, (j+stair.top_left[1])*dis+1, dis-1, dis-1))
 
         for f in self.food:
             i = f.position[0]

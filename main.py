@@ -8,10 +8,13 @@ from Snake import Snake
 from Food import Food
 from utils.server_client import ServerClient
 
+
 def redrawWindow(surface, g, nickname):
     surface.fill((0, 0, 0))
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, surface)
+
+    dis = g.width/g.columns
 
     nick = g.font.render(nickname, False, (255, 255, 255))
     surface.blit(nick, (g.width + 30, 10))
@@ -29,6 +32,12 @@ def redrawWindow(surface, g, nickname):
         elif f_type == "krant":
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]) + "/" + str(g.krant_to_get), False, (255, 255, 255))
+        elif f_type == "beer":
+            food_eaten = g.font.render(
+                "x " + str(g.food_types[f_type]) + "/" + str(g.beer_to_get), False, (255, 255, 255))
+        elif f_type == "weed":
+            food_eaten = g.font.render(
+                "x " + str(g.food_types[f_type]) + "/" + str(g.weed_to_get), False, (255, 255, 255))
         else:
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]), False, (255, 255, 255))
@@ -36,14 +45,21 @@ def redrawWindow(surface, g, nickname):
         counter += 40
 
     if g.main_obj_collected != g.main_obj_total:
-        next_object = g.font.render("Next Object is in:", False, (255, 255, 255))
+        next_object = g.font.render(
+            "Next Object is in:", False, (255, 255, 255))
         surface.blit(next_object, (g.width + 20, 90 + counter))
         counter += 40
-        next_object = g.font.render(g.main_obj_locations[g.main_obj_collected], False, (255, 255, 255))
+        next_object = g.font.render(
+            g.main_obj_locations[g.main_obj_collected], False, (255, 255, 255))
         surface.blit(next_object, (g.width + 20, 90 + counter))
 
+    if g.map.under_effect_of_weed:
+        for i in range(g.weed_counter):
+            pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
+                             (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
     pygame.display.update()
+
 
 def drawGrid(w, cols, surface):
     sizeBtwn = w // cols
@@ -57,7 +73,8 @@ def drawGrid(w, cols, surface):
         pygame.draw.line(surface, (100, 100, 100), (x, 0), (x, w))
         pygame.draw.line(surface, (100, 100, 100), (0, y), (w, y))
 
-# Epic Fail
+
+
 def get_login():
     window = pygame.display.set_mode((280, 300))
     font = pygame.font.SysFont('Consolas', 28)
@@ -65,9 +82,9 @@ def get_login():
     password_box = pygame.Rect(30, 120, 155, 32)
     color_inactive = pygame.Color('lightskyblue3')
     color_active = pygame.Color('dodgerblue2')
-    username_color = color_inactive
+    username_color = color_active
     password_color = color_inactive
-    active = 0
+    active = 1
     username = ''
     password = ''
     done = False
@@ -156,8 +173,8 @@ def get_nickname(nick):
     input_box = pygame.Rect(30, 50, 320, 32)
     color_inactive = pygame.Color('lightskyblue3')
     color_active = pygame.Color('dodgerblue2')
-    color = color_inactive
-    active = False
+    color = color_active
+    active = True
     nickname = nick
     done = False
 
@@ -181,7 +198,7 @@ def get_nickname(nick):
                         if nickname != "":
                             done = True
                         else:
-                            #Maybe give an error
+                            # Maybe give an error
                             print("Error")
 
                     elif event.key == pygame.K_BACKSPACE:
@@ -207,6 +224,8 @@ def get_nickname(nick):
 
     return nickname
 
+
+# Epic Fail
 def pause(s, g):
     paused = True
     while paused:
@@ -233,10 +252,11 @@ def connect_server(client, *argv):
         success = client.authenticate(argv[0], argv[1])
     return success
 
+
 x = 500
 y = 200
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x, y)
 
 pygame.init()
 pygame.font.init()
@@ -264,7 +284,7 @@ if not connected:
 
 temp_nickname = ""
 local_scores_read = None
-try: 
+try:
     local_scores_read = open("Local_scores.txt", "r")
     first_line = local_scores_read.readline()
     w = first_line.split()
@@ -285,7 +305,7 @@ local_scores_file = open("Local_scores.txt", "a")
 x = 100
 y = 100
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x,y)
+os.environ['SDL_VIDEO_WINDOW_POS'] = "%d,%d" % (x, y)
 
 window = pygame.display.set_mode((g.width + 250, g.height))
 
@@ -307,4 +327,4 @@ while True:
     if climbed:
         pygame.time.delay(400)
 
-    #print(g.s.body)
+    # print(g.s.body)

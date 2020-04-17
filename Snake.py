@@ -70,6 +70,9 @@ class Snake(object):
         # check if the snake ate food
         self.food_eating(g)
 
+        if g.weed_counter > 0:
+            g.reduce_weed_counter()
+
         return climbed, g.points, False
 
     def food_eating(self, g):
@@ -98,7 +101,7 @@ class Snake(object):
             for block in range(wall.finish[direction] - wall.start[direction]):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
-                if self.body[0] == (i, j, g.current_floor) and wall.visible:
+                if self.body[0] == (i, j, g.current_floor):
                     return True
         return False
 

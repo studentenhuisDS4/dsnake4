@@ -19,6 +19,12 @@ class Game(object):
     main_obj_locations = []
 
     krant_to_get = 0
+    beer_to_get = 10
+    beer_blocks_loss = 15
+
+    weed_to_get = 10
+    weed_time_effect = 105
+    weed_counter = 0
 
     def __init__(self, s_x, s_y):
         self.starting_length = 3
@@ -98,8 +104,11 @@ class Game(object):
         self.main_obj_total = len(self.main_obj)
 
     def eating_food(self, f):
-        self.food_types[f.food_type] += 1
-        self.points += f.points
+
+        if not self.map.under_effect_of_weed or f.food_type != "weed":
+            self.food_types[f.food_type] += 1
+            self.points += f.points
+
         
 
         for i in range(min(f.block_parts, len(self.s.body))):
@@ -109,8 +118,6 @@ class Game(object):
             self.main_obj_collected += 1
             if self.main_obj_collected != self.main_obj_total:
                 self.map.food.append(self.main_obj[self.main_obj_collected])
-        elif f.food_type != "krant":
-            self.map.add_random_food(self)
         else:
             self.map.add_random_food(self)
 
@@ -164,6 +171,14 @@ class Game(object):
                 self.keys_used[3] = 1
                 self.map.open_second_stair()
 
+        if self.food_types["beer"] == self.beer_to_get:
+            for i in range (beer_blocks_loss):
+                if len(self.s.body) > 3:
+                    self.s.body.pop()
+            self.food_types["beer"] = 0
+        if self.food_types["weed"] == self.weed_to_get and not self.map.under_effect_of_weed:
+            self.weed_counter = self.weed_time_effect
+            self.map.get_high()
 
         self.map.remove_food(self, f)
 
@@ -206,6 +221,13 @@ class Game(object):
 
         return False
 
+    def reduce_weed_counter(self):
+        self.weed_counter -= 1
+        if self.weed_counter == 0:
+            self.map.get_sober()
+            self.food_types["weed"] = 0
+        print(self.weed_counter)
+
     def reset(self, s_x, s_y):
         self.current_floor = 0
         self.main_obj_collected = 0
@@ -215,5 +237,6 @@ class Game(object):
 
         self.keys_used = [0]*len(self.keys_used)
         self.points = 0
+        self.weed_counter = 0
         self.s.reset(self)
         self.map.reset(self)

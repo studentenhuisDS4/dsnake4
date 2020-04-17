@@ -1,7 +1,6 @@
 import requests
 import os
 import pickle
-import pprint
 
 
 class ServerClient(object):

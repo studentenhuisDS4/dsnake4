@@ -9,7 +9,7 @@ from Food import Food
 from utils.server_client import ServerClient
 
 
-def redraw_game_window(surface, g, nickname):
+def redraw_game_window(surface, g, nickname, cc_image):
     surface.fill((0, 0, 0))
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, g.rows, surface)
@@ -38,6 +38,16 @@ def redraw_game_window(surface, g, nickname):
         elif f_type == "weed":
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]) + "/" + str(g.weed_to_get), False, (255, 255, 255))
+        elif f_type == "coffie":
+            if g.coffie_lives_obtained < g.coffie_total_lives:
+                food_eaten = g.font.render(
+                    "x " + str(g.food_types[f_type]) + "/" + str(g.coffie_to_get[g.coffie_lives_obtained]), False, (255, 255, 255))
+            else:
+                food_eaten = g.font.render(
+                    "x " + str(g.food_types[f_type]), False, (255, 255, 255))
+            for i in range(g.coffie_lives_obtained-g.coffie_lives_used):
+                surface.blit(cc_image, (g.width + 150 + i*30, 80 + counter))
+
         else:
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]), False, (255, 255, 255))
@@ -462,6 +472,7 @@ game_ended = False
 if status == "quit":
     exit()
 elif status == "play":
+    coffie_cup_image = pygame.image.load("coffie_cup.png")
     while True:
         pygame.time.delay(50)
         clock.tick(15)
@@ -473,6 +484,6 @@ elif status == "play":
             local_scores_file.write(nickname + " " + str(score) + "\n")
             score = 0
             game_ended = False
-        redraw_game_window(window, g, nickname)
+        redraw_game_window(window, g, nickname, coffie_cup_image)
         if climbed:
             pygame.time.delay(400)

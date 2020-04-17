@@ -60,8 +60,12 @@ class Snake(object):
 
         # check for self-collisions
         if len(list(dict.fromkeys(self.body))) != len(self.body):
-            pygame.time.delay(500)
-            return climbed, g.points, True
+            if g.use_life():
+                pygame.time.delay(500)
+                return False, g.points, False
+            else:
+                pygame.time.delay(500)
+                return climbed, g.points, True
 
         # check for collisions with walls
         if self.collision_with_walls(g):
@@ -103,6 +107,12 @@ class Snake(object):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
                 if self.body[0] == (i, j, g.current_floor):
+                    if g.use_life():
+                        pygame.time.delay(500)
+                        return False
+                    else:
+                        pygame.time.delay(500)
+                        return True
                     return True
         return False
 

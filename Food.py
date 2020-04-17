@@ -21,7 +21,7 @@ class Food(object):
             self.block_parts = 1
         elif food_type == "weed":
             self.points = 10
-            self.block_parts = 1
+            self.block_parts = 0
         elif food_type == "krant":
             self.points = 0
             self.block_parts = 0

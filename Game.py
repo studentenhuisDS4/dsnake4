@@ -19,12 +19,18 @@ class Game(object):
     main_obj_locations = []
 
     krant_to_get = 0
+
     beer_to_get = 10
     beer_blocks_loss = 15
 
     weed_to_get = 10
     weed_time_effect = 105
     weed_counter = 0
+
+    coffie_to_get = [10, 20, 30, 0]
+    coffie_total_lives = 3
+    coffie_lives_obtained = 0
+    coffie_lives_used = 0
 
     def __init__(self, s_x, s_y):
         self.starting_length = 3
@@ -177,6 +183,9 @@ class Game(object):
         if self.food_types["weed"] == self.weed_to_get and not self.map.under_effect_of_weed:
             self.weed_counter = self.weed_time_effect
             self.map.get_high()
+        if self.food_types["coffie"] == self.coffie_to_get[self.coffie_lives_obtained] and self.coffie_lives_obtained < 3:
+            self.food_types["coffie"] = 0
+            self.coffie_lives_obtained += 1
 
         self.map.remove_food(self, f)
 
@@ -213,8 +222,12 @@ class Game(object):
             else:
                 self.s.body.pop()
             if len(list(dict.fromkeys(self.s.body))) != len(self.s.body):
-                pygame.time.delay(500)
-                return True
+                if self.use_life():
+                    pygame.time.delay(500)
+                    return False
+                else:
+                    pygame.time.delay(500)
+                    return True
             self.s.food_eating(self)
         self.s.dirnx, self.s.dirny = (stair_to.direction)
         self.current_floor = next_floor
@@ -227,6 +240,22 @@ class Game(object):
             self.map.get_sober()
             self.food_types["weed"] = 0
 
+    def use_life(self):
+        if self.coffie_lives_obtained - self.coffie_lives_used > 0:
+            self.coffie_lives_used += 1
+            self.points = max(self.points - self.coffie_lives_used * 300, 0) 
+            
+            snake_len = len(self.s.body)
+            self.current_floor = 0
+            self.s.reset(self)
+            self.s.body = []
+            for i in range(snake_len):
+                self.s.body.append(
+                    (self.starting_position[0][0] + i, self.starting_position[0][1], self.current_floor))
+            return True
+        else:
+            return False
+
     def reset(self, s_x, s_y):
         self.current_floor = 0
         self.main_obj_collected = 0
@@ -237,5 +266,7 @@ class Game(object):
         self.keys_used = [0]*len(self.keys_used)
         self.points = 0
         self.weed_counter = 0
+        self.coffie_lives_obtained = 0
+        self.coffie_lives_used = 0
         self.s.reset(self)
         self.map.reset(self)

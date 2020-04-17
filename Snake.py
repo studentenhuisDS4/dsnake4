@@ -2,6 +2,7 @@ import pygame as pygame
 import random as r
 from copy import deepcopy
 
+
 class Snake(object):
     body = []
 
@@ -19,7 +20,7 @@ class Snake(object):
         points = 0
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                #TODO catch exeption if game already quit
+                # TODO catch exeption if game already quit
                 pygame.quit()
                 exit()
 
@@ -41,8 +42,8 @@ class Snake(object):
                 self.dirnx = 0
                 self.dirny = 1
             break
-        
-        #check for stairs
+
+        # check for stairs
         climbed, game_ended = self.stair_climbing(g)
 
         if game_ended:
@@ -59,8 +60,12 @@ class Snake(object):
 
         # check for self-collisions
         if len(list(dict.fromkeys(self.body))) != len(self.body):
-            pygame.time.delay(500)
-            return climbed, g.points, True
+            if g.use_life():
+                pygame.time.delay(500)
+                return False, g.points, False
+            else:
+                pygame.time.delay(500)
+                return climbed, g.points, True
 
         # check for collisions with walls
         if self.collision_with_walls(g):
@@ -69,6 +74,9 @@ class Snake(object):
 
         # check if the snake ate food
         self.food_eating(g)
+
+        if g.weed_counter > 0:
+            g.reduce_weed_counter()
 
         return climbed, g.points, False
 
@@ -98,7 +106,13 @@ class Snake(object):
             for block in range(wall.finish[direction] - wall.start[direction]):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
-                if self.body[0] == (i, j, g.current_floor) and wall.visible:
+                if self.body[0] == (i, j, g.current_floor):
+                    if g.use_life():
+                        pygame.time.delay(500)
+                        return False
+                    else:
+                        pygame.time.delay(500)
+                        return True
                     return True
         return False
 

@@ -1,5 +1,6 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="help-page">
+    <h1>The. Game. Is. On</h1>
+    <p>Find highscores on <a href="https://ds4.nl">ds4.nl</a></p>
   </div>
 </template>

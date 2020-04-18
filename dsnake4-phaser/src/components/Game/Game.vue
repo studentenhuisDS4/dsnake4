@@ -1,22 +1,34 @@
 <template>
   <div>
-    <span>Message:{{ msg }}</span>
-    <div id="content"></div>
+    <h2>{{ title }}</h2>
+    <div :id="canvasIdentifier"></div>
   </div>
 </template>
 
 <script lang="ts">
+
 import { Component, Prop, Vue } from "vue-property-decorator";
-import { SnakeGame, gameConfig } from "./Game";
+import { launchGame } from "./GameConfig";
+
 @Component
 export default class Game extends Vue {
-  @Prop() private msg!: string;
-  private game: SnakeGame;
+  @Prop() private title!: string;
+  private canvasIdentifier = "gameCanvas";
+  private game!: Phaser.Game;
 
   constructor() {
     super();
-    this.game = new SnakeGame(gameConfig);
-    console.log(this.game.canvas);
+    console.log("GAME - started");
+  }
+
+  mounted() {
+    console.log("GAME - mounted");
+    this.game = launchGame(this.canvasIdentifier);
+  }
+
+  destroyed() {
+    console.log("GAME - Destroy called");
+    this.game.destroy(true);
   }
 }
 </script>

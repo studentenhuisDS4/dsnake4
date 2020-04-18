@@ -99,6 +99,10 @@ def redraw_game_window(surface, g, nickname, images=[]):
             pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
                              (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
+    surface.blit(images[7], (g.width + 10, 120 + counter))
+    surface.blit(images[8], (g.width + 10, 160 + counter))
+    surface.blit(images[9], (g.width + 10, 200 + counter))
+    surface.blit(images[10], (g.width + 10, 240 + counter))
     pygame.display.update()
 
 
@@ -796,13 +800,19 @@ local_scores_file = open("Local_scores.txt", "a")
 
 images = []
 
-images.append(pygame.image.load("coffie_cup.png"))
-images.append(pygame.image.load("beer_bottle.png"))
-images.append(pygame.image.load("beer_bottle_gray.png"))
-images.append(pygame.image.load("newspaper.png"))
-images.append(pygame.image.load("newspaper_gray.png"))
-images.append(pygame.transform.scale(images[3], (int(images[3].get_rect().size[0]*1.5), int(images[3].get_rect().size[1]*1.5))))
-images.append(pygame.transform.scale(images[4], (int(images[4].get_rect().size[0]*1.5), int(images[4].get_rect().size[1]*1.5))))
+images.append(pygame.image.load("images/coffie_cup.png"))
+images.append(pygame.image.load("images/beer_bottle.png"))
+images.append(pygame.image.load("images/beer_bottle_gray.png"))
+images.append(pygame.image.load("images/newspaper.png"))
+images.append(pygame.image.load("images/newspaper_gray.png"))
+images.append(pygame.transform.scale(images[3], (int(
+    images[3].get_rect().size[0]*1.5), int(images[3].get_rect().size[1]*1.5))))
+images.append(pygame.transform.scale(images[4], (int(
+    images[4].get_rect().size[0]*1.5), int(images[4].get_rect().size[1]*1.5))))
+images.append(pygame.transform.scale(pygame.image.load("images/weed.png"), (16,32)))
+images.append(pygame.image.load("images/Andrea_Chess_knight.png"))
+images.append(pygame.transform.scale(pygame.image.load("images/GR_gustav.png"), (30,30)))
+images.append(pygame.transform.scale(pygame.image.load("images/friespixelart.png"), (23,30)))
 connected = False
 
 client = ServerClient()

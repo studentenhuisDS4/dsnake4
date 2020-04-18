@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import { SnakeMainScene } from './SnakeMainScene';
 
 export const scaleFactor = 1.2;
-export const ZOOM = 0.5;
+export const ZOOM = 1;
 export const SW = 1300 * scaleFactor / ZOOM;
 export const SH = 600 * scaleFactor / ZOOM;
 const gameConfig: Phaser.Types.Core.GameConfig = {
@@ -17,7 +17,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     },
     resolution: window.devicePixelRatio,
     render: {
-        antialiasGL: true
+        antialiasGL: true,
+        antialias: true,
+        roundPixels: false,
+
     },
     physics: {
         default: 'arcade',

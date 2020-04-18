@@ -10,30 +10,50 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 export class SnakeMainScene extends Phaser.Scene {
     // private square!: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
     // private square2!: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
+    // TARGET: 105 by 60 cell grid
 
     private width: number;
     private height: number;
+    private cellsX: number = 105;
+    private cellsY: number = 60;
+    private cellWidth!: number;
+    private cellHeight!: number;
 
     constructor() {
         super(sceneConfig);
-        this.width = SW;
+        this.width = SW * 0.8;
         this.height = SH;
     }
 
     public create() {
-        const grid = this.add.grid(this.width *0.6/ 2, this.height / 2, this.width + 1, this.height + 1, this.width*0.6/80, this.height/60, 0x000000, 1, 0x333333);
-        console.log(this.width, this.width/24*80, this.height/24)
+        this.cellWidth = this.width / this.cellsX;
+        this.cellHeight = this.height / this.cellsY;
+        const grid = this.add.grid(
+            this.width / 2, this.height / 2,
+            this.width + 1, this.height + 1,
+            this.cellWidth, this.cellHeight,
+            0x000000, 1, 0x222222, 0.9);
 
+        console.log(this.cellHeight);
         let defaultTextStyle = {
-            fontSize: 24,
-            fontStyle: 'bold',
+            fontSize: this.cellHeight,
+            fontStyle: 'normal',
             fontFamily: 'Consolas',
+            color: "#42b983"
         };
-        const delta = 15;
-        this.add.text(delta*4, 50, "D", defaultTextStyle);
-        this.add.text(delta*3, 50, "S", defaultTextStyle);
-        this.add.text(delta*2, 50, "S", defaultTextStyle);
-        this.add.text(delta*1, 50, "4", defaultTextStyle);
+        let delta = this.cellWidth;
+        let i = 1;
+        for (let j = 0; j < 12; j++) {
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "D", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "S", defaultTextStyle);
+            this.add.text(delta * i++ + 3, (j + 3) * delta, "4", defaultTextStyle);
+        }
+
         console.log("SNAKE SCENE - started");
     }
 

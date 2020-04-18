@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2>{{ title }}</h2>
+    <h2 class="green-title">{{ title }}</h2>
     <div :id="canvasIdentifier"></div>
   </div>
 </template>
@@ -21,6 +21,10 @@ export default class Game extends Vue {
     console.log("GAME - started");
   }
 
+  created() {
+    console.log("GAME - created");
+  }
+
   mounted() {
     console.log("GAME - mounted");
     this.game = launchGame(this.canvasIdentifier);
@@ -32,3 +36,9 @@ export default class Game extends Vue {
   }
 }
 </script>
+
+<style scoped>
+div {
+  font-family: 'Consolas';
+}
+</style>

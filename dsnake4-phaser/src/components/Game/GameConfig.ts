@@ -1,15 +1,23 @@
 import * as Phaser from 'phaser';
 import { SnakeMainScene } from './SnakeMainScene';
 
+export const scaleFactor = 1.2;
+export const ZOOM = 0.5;
+export const SW = 1300 * scaleFactor / ZOOM;
+export const SH = 600 * scaleFactor / ZOOM;
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: 'Sample',
 
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     scene: SnakeMainScene,
-
+    width: SW,
+    height: SH,
     scale: {
-        width: 800,
-        height: 600,
+        zoom: ZOOM
+    },
+    resolution: window.devicePixelRatio,
+    render: {
+        antialiasGL: true
     },
     physics: {
         default: 'arcade',
@@ -17,14 +25,13 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
             debug: true,
         },
     },
-
+    backgroundColor: '#DDDDDD',
     parent: undefined,
-    backgroundColor: '#000000',
+    // backgroundColor: '#000000',
 };
 
 function launchGame(containerId: string) {
     gameConfig.parent = containerId;
-    gameConfig.backgroundColor = '#DDD';
     return new Phaser.Game(gameConfig);
 }
 

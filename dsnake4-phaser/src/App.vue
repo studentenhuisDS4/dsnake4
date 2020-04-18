@@ -10,6 +10,9 @@
 </template>
 
 <style lang="scss">
+html, body {
+  background-color: #111;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,5 +32,9 @@
       color: #42b983;
     }
   }
+}
+
+.green-title {
+  color: #42b983;
 }
 </style>

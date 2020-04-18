@@ -365,7 +365,6 @@ class Map(object):
         for w in self.walls:
             if w.breakable and w.status == "visible":
                 w.status = "see_through"
-                print(w.status)
 
     def get_sober(self):
         self.under_effect_of_weed = False

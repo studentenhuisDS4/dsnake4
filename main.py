@@ -14,15 +14,19 @@ def redraw_game_window(surface, g, nickname, images=[]):
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, g.rows, surface)
 
+    text_color = pygame.Color('green1')
+
     dis = g.width/g.columns
 
-    nick = g.font.render(nickname, False, (255, 255, 255))
+    nick = g.font.render(nickname, False, text_color)
     surface.blit(nick, (g.width + 30, 10))
 
-    points = g.font.render(str(g.points) + " points", False, (255, 255, 255))
+    points = g.font.render(str(g.points) + " points", False, text_color)
     surface.blit(points, (g.width + 30, 40))
     counter = 0
 
+    if g.current_floor == 2:
+        surface.blit(images[12], (861, 431))
     for f_type in g.food_types:
         if f_type == "main_obj":
             pygame.draw.rect(
@@ -81,17 +85,17 @@ def redraw_game_window(surface, g, nickname, images=[]):
             pygame.draw.rect(
                 surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
             food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]), False, (255, 255, 255))
+                "x " + str(g.food_types[f_type]), False, text_color)
             surface.blit(food_eaten, (g.width + 70, 90 + counter))
         counter += 40
 
     if g.main_obj_collected != g.main_obj_total:
         next_object = g.font.render(
-            "Next Object is in:", False, (255, 255, 255))
+            "Next Object is in:", False, text_color)
         surface.blit(next_object, (g.width + 20, 90 + counter))
         counter += 40
         next_object = g.font.render(
-            g.main_obj_locations[g.main_obj_collected], False, (255, 255, 255))
+            g.main_obj_locations[g.main_obj_collected], False, text_color)
         surface.blit(next_object, (g.width + 20, 90 + counter))
 
     if g.map.under_effect_of_weed:
@@ -99,10 +103,6 @@ def redraw_game_window(surface, g, nickname, images=[]):
             pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
                              (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
-    surface.blit(images[7], (g.width + 10, 120 + counter))
-    surface.blit(images[8], (g.width + 10, 160 + counter))
-    surface.blit(images[9], (g.width + 10, 200 + counter))
-    surface.blit(images[10], (g.width + 10, 240 + counter))
     pygame.display.update()
 
 
@@ -197,7 +197,7 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
                     exit()
                     return connected, "quit", ""
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if active == 1:
                         return connected, "play", nickname
                     elif active == 2:
@@ -510,7 +510,7 @@ def pause_menu(window=None, g=None):
                     quit_color = color_active
                     choice = "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if active == 1:
                         choice = "resume"
                     elif active == 2:
@@ -661,7 +661,7 @@ def game_ended_menu(window=None, g=None, connected=False, client=None, nickname=
                     quit_color = color_active
                     choice = "quit"
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                     if active == 1:
                         if not pushed:
                             pushed = True
@@ -809,10 +809,17 @@ images.append(pygame.transform.scale(images[3], (int(
     images[3].get_rect().size[0]*1.5), int(images[3].get_rect().size[1]*1.5))))
 images.append(pygame.transform.scale(images[4], (int(
     images[4].get_rect().size[0]*1.5), int(images[4].get_rect().size[1]*1.5))))
-images.append(pygame.transform.scale(pygame.image.load("images/weed.png"), (16,32)))
+images.append(pygame.transform.scale(
+    pygame.image.load("images/weed.png"), (16, 32)))
 images.append(pygame.image.load("images/Andrea_Chess_knight.png"))
-images.append(pygame.transform.scale(pygame.image.load("images/GR_gustav.png"), (30,30)))
-images.append(pygame.transform.scale(pygame.image.load("images/friespixelart.png"), (23,30)))
+images.append(pygame.transform.scale(
+    pygame.image.load("images/GR_gustav.png"), (30, 30)))
+images.append(pygame.transform.scale(
+    pygame.image.load("images/friespixelart.png"), (23, 30)))
+images.append(pygame.transform.scale(
+    pygame.image.load("images/JarnoTrekker2.png"), (30, 30)))
+images.append(pygame.transform.scale(pygame.image.load(
+    "images/Marcus_Painting.jpeg"), (179, 159)))
 connected = False
 
 client = ServerClient()

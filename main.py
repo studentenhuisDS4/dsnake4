@@ -98,6 +98,9 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
     password = ""
     nickname = ""
 
+    if nick != "":
+        nickname = nick
+
     rect_x = w/2 - 156/2
 
     menu_surface = menu_font.render("MENU", True, color_active)
@@ -210,7 +213,7 @@ def menu(window=None, client=None, g=None, nick="", connected=False):
                         active = 3
                         quit_color = color_inactive
                         nickname_color = color_active
-        window.fill((30, 30, 30))
+        window.fill((0, 0, 0))
 
         play_surface = font.render("PLAY", True, play_color)
         login_surface = font.render("LOG IN", True, login_color)
@@ -323,7 +326,7 @@ def get_login(window):
                         elif active == 2:
                             password += event.unicode
 
-        window.fill((30, 30, 30))
+        window.fill((0, 0, 0))
         # Render the current text.
         username_surface = font.render(username, True, username_color)
         password_surface = font.render("*"*len(password), True, password_color)
@@ -382,7 +385,7 @@ def get_nickname(window, nick):
                     else:
                         nickname += event.unicode
 
-        window.fill((30, 30, 30))
+        window.fill((0, 0, 0))
         # Render the current text.
         txt_surface = font.render(nickname, True, color)
         # Resize the box if the text is too long.
@@ -402,22 +405,144 @@ def get_nickname(window, nick):
 
 
 # Epic Fail
-def pause(s, g):
-    paused = True
-    while paused:
+def pause_menu(window=None, g=None):
+    (w, h) = pygame.display.get_surface().get_size()
+    choice = ""
+    font = pygame.font.SysFont('Consolas', 28)
+    pause_font = pygame.font.SysFont('Consolas', 60)
+    color_inactive = pygame.Color('darkgreen')
+    color_active = pygame.Color('green1')
+    active = 1
+
+    transparency = 150
+
+    choice = ""
+
+    rect_x = g.width/2 - 156/2
+
+    pause_surface = pause_font.render("PAUSE", True, color_active)
+
+    pause_x = g.width/2 - pause_surface.get_width()/2
+
+    resume_box = pygame.Rect(rect_x, 100, 156, 32)
+    resume_color = color_active
+    resume_surface = font.render("RESUME", True, resume_color)
+    restart_box = pygame.Rect(rect_x, 170, 156, 32)
+    restart_color = color_inactive
+    restart_surface = font.render("RESTART", True, restart_color)
+    main_menu_box = pygame.Rect(rect_x, 240, 156, 32)
+    main_menu_color = color_inactive
+    main_menu_surface = font.render("MAIN MENU", True, main_menu_color)
+    quit_box = pygame.Rect(rect_x, 310, 156, 32)
+    quit_color = color_inactive
+    quit_surface = font.render("QUIT", True, quit_color)
+    background_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+    pygame.draw.rect(background_surface, (0, 0, 0, transparency),
+                     background_surface.get_rect())
+    window.blit(background_surface, (0, 0))
+
+    while choice == "":
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if resume_box.collidepoint(event.pos):
+                    active = 1
+                    resume_color = color_active
+                    restart_color = color_inactive
+                    main_menu_color = color_inactive
+                    quit_color = color_inactive
+                    choice = "resume"
 
-            keys = pygame.key.get_pressed()
+                elif restart_box.collidepoint(event.pos):
+                    active = 2
+                    resume_color = color_inactive
+                    restart_color = color_active
+                    main_menu_color = color_inactive
+                    quit_color = color_inactive
+                    choice = "restart"
+                elif main_menu_box.collidepoint(event.pos):
+                    active = 3
+                    resume_color = color_inactive
+                    restart_color = color_inactive
+                    main_menu_color = color_active
+                    quit_color = color_inactive
+                    choice = "main_menu"
+                elif quit_box.collidepoint(event.pos):
+                    active = 4
+                    resume_color = color_inactive
+                    restart_color = color_inactive
+                    main_menu_color = color_inactive
+                    quit_color = color_active
+                    choice = "quit"
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if active == 1:
+                        choice = "resume"
+                    elif active == 2:
+                        choice = "restart"
+                    elif active == 3:
+                        choice = "main_menu"
+                    elif active == 4:
+                        choice = "quit"
+                elif event.key == pygame.K_DOWN:
+                    if active == 1:
+                        active = 2
+                        resume_color = color_inactive
+                        restart_color = color_active
+                    elif active == 2:
+                        active = 3
+                        restart_color = color_inactive
+                        main_menu_color = color_active
+                    elif active == 3:
+                        active = 4
+                        main_menu_color = color_inactive
+                        quit_color = color_active
+                    elif active == 4:
+                        active = 1
+                        quit_color = color_inactive
+                        resume_color = color_active
+                elif event.key == pygame.K_UP:
+                    if active == 1:
+                        active = 4
+                        resume_color = color_inactive
+                        quit_color = color_active
+                    elif active == 2:
+                        active = 1
+                        restart_color = color_inactive
+                        resume_color = color_active
+                    elif active == 3:
+                        active = 2
+                        main_menu_color = color_inactive
+                        restart_color = color_active
+                    elif active == 4:
+                        active = 3
+                        quit_color = color_inactive
+                        main_menu_color = color_active
 
-            for key in keys:
-                if keys[pygame.K_q]:
-                    paused = False
-        clock.tick(5)
-        redraw_game_window(window, s, g)
-        if paused == False:
-            print(paused)
+        resume_surface = font.render("RESUME", True, resume_color)
+        restart_surface = font.render("RESTART", True, restart_color)
+        main_menu_surface = font.render("MAIN MENU", True, main_menu_color)
+        quit_surface = font.render("QUIT", True, quit_color)
+
+        window.blit(pause_surface, (pause_x, 20))
+
+        window.blit(resume_surface, (resume_box.x + resume_box.width /
+                                     2 - resume_surface.get_width()/2, resume_box.y+5))
+        window.blit(restart_surface, (restart_box.x + restart_box.width /
+                                      2 - restart_surface.get_width()/2, restart_box.y+5))
+        window.blit(main_menu_surface, (main_menu_box.x + main_menu_box.width /
+                                        2 - main_menu_surface.get_width()/2, main_menu_box.y+5))
+        window.blit(quit_surface, (quit_box.x + quit_box.width /
+                                   2 - quit_surface.get_width()/2, quit_box.y+5))
+
+        pygame.draw.rect(window, resume_color, resume_box, 2)
+        pygame.draw.rect(window, restart_color, restart_box, 2)
+        pygame.draw.rect(window, main_menu_color, main_menu_box, 2)
+        pygame.draw.rect(window, quit_color, quit_box, 2)
+        pygame.display.update()
+        clock.tick(30)
+    return choice
 
 
 def connect_server(client, *argv):
@@ -464,26 +589,40 @@ connected = False
 client = ServerClient()
 connected = connect_server(client)
 
-connected, status, nickname = menu(
-    window=window, client=client, g=g, nick=temp_nickname, connected=connected)
+while True:
+    connected, status, nickname = menu(
+        window=window, client=client, g=g, nick=temp_nickname, connected=connected)
 
-score = 0
-game_ended = False
-if status == "quit":
-    exit()
-elif status == "play":
-    coffie_cup_image = pygame.image.load("coffie_cup.png")
-    while True:
-        pygame.time.delay(50)
-        clock.tick(15)
-        climbed, score, game_ended = g.s.move(g)
-        if game_ended:
-            g.reset(100, 20)
-            if connected:
-                client.add_highscore(nickname, score)
-            local_scores_file.write(nickname + " " + str(score) + "\n")
-            score = 0
-            game_ended = False
-        redraw_game_window(window, g, nickname, coffie_cup_image)
-        if climbed:
-            pygame.time.delay(400)
+    score = 0
+    game_ended = False
+    paused = False
+    if status == "quit":
+        exit()
+    elif status == "play":
+        coffie_cup_image = pygame.image.load("coffie_cup.png")
+        while True:
+            pygame.time.delay(50)
+            clock.tick(15)
+            climbed, score, game_ended, paused = g.s.move(g)
+            if game_ended:
+                g.reset(100, 20)
+                if connected:
+                    client.add_highscore(nickname, score)
+                local_scores_file.write(nickname + " " + str(score) + "\n")
+                score = 0
+                game_ended = False
+            redraw_game_window(window, g, nickname, coffie_cup_image)
+            if paused:
+                choice = pause_menu(window=window, g=g)
+                if choice == "resume":
+                    choice = ""
+                elif choice == "restart":
+                    g.reset(100, 20)
+                elif choice == "main_menu":
+                    g.reset(100, 20)
+                    break
+                elif choice == "quit":
+                    exit()
+
+            if climbed:
+                pygame.time.delay(400)

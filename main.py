@@ -9,7 +9,7 @@ from Food import Food
 from utils.server_client import ServerClient
 
 
-def redraw_game_window(surface, g, nickname, cc_image):
+def redraw_game_window(surface, g, nickname, images=[]):
     surface.fill((0, 0, 0))
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, g.rows, surface)
@@ -19,26 +19,54 @@ def redraw_game_window(surface, g, nickname, cc_image):
     nick = g.font.render(nickname, False, (255, 255, 255))
     surface.blit(nick, (g.width + 30, 10))
 
-    points = g.font.render(str(g.points), False, (255, 255, 255))
+    points = g.font.render(str(g.points) + " points", False, (255, 255, 255))
     surface.blit(points, (g.width + 30, 40))
     counter = 0
 
     for f_type in g.food_types:
-        pygame.draw.rect(
-            surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
         if f_type == "main_obj":
+            pygame.draw.rect(
+                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]) + "/" + str(g.main_obj_total), False, (255, 255, 255))
+            surface.blit(food_eaten, (g.width + 70, 90 + counter))
         elif f_type == "krant":
-            food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]) + "/" + str(g.krant_to_get), False, (255, 255, 255))
+            if g.krant_to_get > 6:
+                krant_in_a_line = int(g.krant_to_get / 2)
+                line = 0
+                for i in range(g.krant_to_get):
+                    line = int(i / krant_in_a_line)
+                    if i < g.food_types["krant"]:
+                        surface.blit(
+                            images[3], (g.width + 30 + (i - line*(krant_in_a_line))*25, 74 + counter + 16*line))
+                    else:
+                        surface.blit(
+                            images[4], (g.width + 30 + (i - line*(krant_in_a_line))*25, 74 + counter + 16*line))
+            else:
+                for i in range(g.krant_to_get):
+                    if i < g.food_types["krant"]:
+                        surface.blit(
+                            images[5], (g.width + 30 + i*35, 85 + counter))
+                    else:
+                        surface.blit(
+                            images[6], (g.width + 30 + i*35, 85 + counter))
         elif f_type == "beer":
-            food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]) + "/" + str(g.beer_to_get), False, (255, 255, 255))
+            for i in range(g.beer_to_get):
+                if i < g.food_types["beer"]:
+                    surface.blit(
+                        images[1], (g.width + 30 + i*20, 74 + counter))
+                else:
+                    surface.blit(
+                        images[2], (g.width + 30 + i*20, 74 + counter))
         elif f_type == "weed":
+            pygame.draw.rect(
+                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]) + "/" + str(g.weed_to_get), False, (255, 255, 255))
+            surface.blit(food_eaten, (g.width + 70, 90 + counter))
         elif f_type == "coffie":
+            pygame.draw.rect(
+                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
             if g.coffie_lives_obtained < g.coffie_total_lives:
                 food_eaten = g.font.render(
                     "x " + str(g.food_types[f_type]) + "/" + str(g.coffie_to_get[g.coffie_lives_obtained]), False, (255, 255, 255))
@@ -46,12 +74,15 @@ def redraw_game_window(surface, g, nickname, cc_image):
                 food_eaten = g.font.render(
                     "x " + str(g.food_types[f_type]), False, (255, 255, 255))
             for i in range(g.coffie_lives_obtained-g.coffie_lives_used):
-                surface.blit(cc_image, (g.width + 150 + i*30, 80 + counter))
+                surface.blit(images[0], (g.width + 150 + i*30, 80 + counter))
+            surface.blit(food_eaten, (g.width + 70, 90 + counter))
 
         else:
+            pygame.draw.rect(
+                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
             food_eaten = g.font.render(
                 "x " + str(g.food_types[f_type]), False, (255, 255, 255))
-        surface.blit(food_eaten, (g.width + 70, 90 + counter))
+            surface.blit(food_eaten, (g.width + 70, 90 + counter))
         counter += 40
 
     if g.main_obj_collected != g.main_obj_total:
@@ -404,7 +435,6 @@ def get_nickname(window, nick):
     return nickname
 
 
-# Epic Fail
 def pause_menu(window=None, g=None):
     (w, h) = pygame.display.get_surface().get_size()
     choice = ""
@@ -414,7 +444,7 @@ def pause_menu(window=None, g=None):
     color_active = pygame.Color('green1')
     active = 1
 
-    transparency = 150
+    transparency = 175
 
     choice = ""
 
@@ -545,12 +575,192 @@ def pause_menu(window=None, g=None):
     return choice
 
 
+def game_ended_menu(window=None, g=None, connected=False, client=None, nickname="", score=0):
+    (w, h) = pygame.display.get_surface().get_size()
+    choice = ""
+    font = pygame.font.SysFont('Consolas', 28)
+    game_over_font = pygame.font.SysFont('Consolas', 60)
+    score_font = pygame.font.SysFont('Consolas', 40)
+    color_inactive = pygame.Color('darkgreen')
+    color_active = pygame.Color('green1')
+    active = 1
+
+    choice = ""
+
+    rect_x = w/2 - 156/2
+
+    game_over_surface = game_over_font.render("GAME OVER", True, color_active)
+    score_surface = score_font.render(
+        nickname + ": " + str(score) + " points", True, color_active)
+
+    game_over_x = w/2 - game_over_surface.get_width()/2
+    score_x = w/2 - score_surface.get_width()/2
+
+    push_score_box = pygame.Rect(rect_x, 170, 156, 32)
+    push_score_color = color_active
+    push_score_surface = font.render("POST SCORE", True, push_score_color)
+    retry_box = pygame.Rect(rect_x, 240, 156, 32)
+    retry_color = color_inactive
+    retry_surface = font.render("REPLAY", True, retry_color)
+    main_menu_box = pygame.Rect(rect_x, 310, 156, 32)
+    main_menu_color = color_inactive
+    main_menu_surface = font.render("MAIN MENU", True, main_menu_color)
+    quit_box = pygame.Rect(rect_x, 380, 156, 32)
+    quit_color = color_inactive
+    quit_surface = font.render("QUIT", True, quit_color)
+
+    if not connected:
+        pushed = True
+        success = False
+        active = 2
+        push_score_color = color_inactive
+        retry_color = color_active
+    else:
+        pushed = False
+        success = False
+
+    while choice == "":
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if push_score_box.collidepoint(event.pos):
+                    if not pushed:
+                        pushed = True
+                        if connected:
+                            success = client.add_highscore(nickname, score)
+                        active = 2
+                        push_score_color = color_inactive
+                        retry_color = color_active
+                        main_menu_color = color_inactive
+                        quit_color = color_inactive
+
+                elif retry_box.collidepoint(event.pos):
+                    active = 2
+                    push_score_color = color_inactive
+                    retry_color = color_active
+                    main_menu_color = color_inactive
+                    quit_color = color_inactive
+                    choice = "retry"
+                elif main_menu_box.collidepoint(event.pos):
+                    active = 3
+                    push_score_color = color_inactive
+                    retry_color = color_inactive
+                    main_menu_color = color_active
+                    quit_color = color_inactive
+                    choice = "main_menu"
+                elif quit_box.collidepoint(event.pos):
+                    active = 4
+                    push_score_color = color_inactive
+                    retry_color = color_inactive
+                    main_menu_color = color_inactive
+                    quit_color = color_active
+                    choice = "quit"
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN:
+                    if active == 1:
+                        if not pushed:
+                            pushed = True
+                            if connected:
+                                success = client.add_highscore(nickname, score)
+                        active = 2
+                        push_score_color = color_inactive
+                        retry_color = color_active
+                    elif active == 2:
+                        choice = "retry"
+                    elif active == 3:
+                        choice = "main_menu"
+                    elif active == 4:
+                        choice = "quit"
+                elif event.key == pygame.K_DOWN:
+                    if active == 1:
+                        active = 2
+                        push_score_color = color_inactive
+                        retry_color = color_active
+                    elif active == 2:
+                        active = 3
+                        retry_color = color_inactive
+                        main_menu_color = color_active
+                    elif active == 3:
+                        active = 4
+                        main_menu_color = color_inactive
+                        quit_color = color_active
+                    elif active == 4:
+                        if pushed:
+                            active = 2
+                            quit_color = color_inactive
+                            retry_color = color_active
+                        else:
+                            active = 1
+                            quit_color = color_inactive
+                            push_score_color = color_active
+                elif event.key == pygame.K_UP:
+                    if active == 1:
+                        active = 4
+                        push_score_color = color_inactive
+                        quit_color = color_active
+                    elif active == 2:
+                        if pushed:
+                            active = 4
+                            retry_color = color_inactive
+                            quit_color = color_active
+                        else:
+                            active = 1
+                            retry_color = color_inactive
+                            push_score_color = color_active
+                    elif active == 3:
+                        active = 2
+                        main_menu_color = color_inactive
+                        retry_color = color_active
+                    elif active == 4:
+                        active = 3
+                        quit_color = color_inactive
+                        main_menu_color = color_active
+        window.fill((0, 0, 0))
+        if pushed and success:
+            push_score_surface = font.render(
+                "SCORE POSTED", True, push_score_color)
+        elif pushed and not connected:
+            push_score_surface = font.render(
+                "CANNOT POST SCORE", True, push_score_color)
+        elif pushed and not success:
+            push_score_surface = font.render(
+                "FAILED TO POST SCORE", True, push_score_color)
+        else:
+            push_score_surface = font.render(
+                "POST SCORE", True, push_score_color)
+        retry_surface = font.render("REPLAY", True, retry_color)
+        main_menu_surface = font.render("MAIN MENU", True, main_menu_color)
+        quit_surface = font.render("QUIT", True, quit_color)
+
+        window.blit(game_over_surface, (game_over_x, 20))
+        window.blit(score_surface, (score_x, 100))
+
+        window.blit(push_score_surface, (push_score_box.x + push_score_box.width /
+                                         2 - push_score_surface.get_width()/2, push_score_box.y+5))
+        window.blit(retry_surface, (retry_box.x + retry_box.width /
+                                    2 - retry_surface.get_width()/2, retry_box.y+5))
+        window.blit(main_menu_surface, (main_menu_box.x + main_menu_box.width /
+                                        2 - main_menu_surface.get_width()/2, main_menu_box.y+5))
+        window.blit(quit_surface, (quit_box.x + quit_box.width /
+                                   2 - quit_surface.get_width()/2, quit_box.y+5))
+
+        if not pushed:
+            pygame.draw.rect(window, push_score_color, push_score_box, 2)
+        pygame.draw.rect(window, retry_color, retry_box, 2)
+        pygame.draw.rect(window, main_menu_color, main_menu_box, 2)
+        pygame.draw.rect(window, quit_color, quit_box, 2)
+        pygame.display.update()
+        clock.tick(30)
+    return choice
+
+
 def connect_server(client, *argv):
     success = False
-    if len(argv) == 0:
-        success = client.authenticate()
-    else:
+    if len(argv) == 2:
         success = client.authenticate(argv[0], argv[1])
+    else:
+        success = client.authenticate()
     return success
 
 
@@ -584,6 +794,15 @@ except:
     local_scores_read = None
 local_scores_file = open("Local_scores.txt", "a")
 
+images = []
+
+images.append(pygame.image.load("coffie_cup.png"))
+images.append(pygame.image.load("beer_bottle.png"))
+images.append(pygame.image.load("beer_bottle_gray.png"))
+images.append(pygame.image.load("newspaper.png"))
+images.append(pygame.image.load("newspaper_gray.png"))
+images.append(pygame.transform.scale(images[3], (int(images[3].get_rect().size[0]*1.5), int(images[3].get_rect().size[1]*1.5))))
+images.append(pygame.transform.scale(images[4], (int(images[4].get_rect().size[0]*1.5), int(images[4].get_rect().size[1]*1.5))))
 connected = False
 
 client = ServerClient()
@@ -599,29 +818,39 @@ while True:
     if status == "quit":
         exit()
     elif status == "play":
-        coffie_cup_image = pygame.image.load("coffie_cup.png")
         while True:
             pygame.time.delay(50)
             clock.tick(15)
             climbed, score, game_ended, paused = g.s.move(g)
             if game_ended:
                 g.reset(100, 20)
-                if connected:
-                    client.add_highscore(nickname, score)
                 local_scores_file.write(nickname + " " + str(score) + "\n")
+                choice = game_ended_menu(
+                    window=window, g=g, client=client, connected=connected, nickname=nickname, score=score)
+                if choice == "retry":
+                    choice = ""
+                elif choice == "main_menu":
+                    choice = ""
+                    break
+                elif choice == "quit":
+                    choice = ""
+                    exit()
                 score = 0
                 game_ended = False
-            redraw_game_window(window, g, nickname, coffie_cup_image)
+            redraw_game_window(window, g, nickname, images)
             if paused:
                 choice = pause_menu(window=window, g=g)
                 if choice == "resume":
                     choice = ""
                 elif choice == "restart":
+                    choice = ""
                     g.reset(100, 20)
                 elif choice == "main_menu":
+                    choice = ""
                     g.reset(100, 20)
                     break
                 elif choice == "quit":
+                    choice = ""
                     exit()
 
             if climbed:

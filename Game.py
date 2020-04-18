@@ -243,8 +243,6 @@ class Game(object):
     def use_life(self):
         if self.coffie_lives_obtained - self.coffie_lives_used > 0:
             self.coffie_lives_used += 1
-            self.points = max(self.points - self.coffie_lives_used * 300, 0) 
-            
             snake_len = len(self.s.body)
             self.current_floor = 0
             self.s.reset(self)

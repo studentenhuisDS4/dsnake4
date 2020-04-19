@@ -1,6 +1,7 @@
 import pygame as pygame
 import random as r
 
+
 class Food(object):
     food_type = ""
     points = 0
@@ -17,10 +18,10 @@ class Food(object):
             self.block_parts = 1
         elif food_type == "beer":
             self.points = 10
-            self.block_parts = 2
+            self.block_parts = 1
         elif food_type == "weed":
             self.points = 10
-            self.block_parts = 1
+            self.block_parts = 0
         elif food_type == "krant":
             self.points = 0
             self.block_parts = 0

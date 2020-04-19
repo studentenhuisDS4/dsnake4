@@ -1,3 +1,4 @@
 {
-    "python.pythonPath": "C:\\Users\\d.zwart\\.virtualenvs\\dsnake4-CvLmRYzM\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Users\\andre\\miniconda3\\python.exe",
+    "git.ignoreLimitWarning": true
 }

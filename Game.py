@@ -7,11 +7,12 @@ from Food import Food
 
 
 class Game(object):
-    starting_length = 0
+    starting_length = 3
+    starting_floor = 0
     starting_position = []
     s = None
     current_floor = 0
-    number_of_floors = 3
+    number_of_floors = 4
 
     main_obj_total = 0
     main_obj = []
@@ -33,7 +34,7 @@ class Game(object):
     coffie_lives_used = 0
 
     def __init__(self, s_x, s_y):
-        self.starting_length = 3
+        self.current_floor = self.starting_floor
         for i in range(self.starting_length):
             self.starting_position.append((s_x + i, s_y, self.current_floor))
 
@@ -42,7 +43,7 @@ class Game(object):
         self.columns = 105
         self.rows = 60
 
-        self.number_of_keys = 4
+        self.number_of_keys = 5
         self.keys_used = [0]*self.number_of_keys
 
         self.font = pygame.font.SysFont('Consolas', 20)
@@ -55,6 +56,7 @@ class Game(object):
         self.init_main_obj()
         self.s = Snake(self)
         self.map = Map(self)
+        self.map.open_tropen
 
     def init_main_obj(self):
         self.main_obj.append(Food("main_obj", (35, 38, 0), self))
@@ -65,7 +67,7 @@ class Game(object):
         self.main_obj_locations.append("The Kitchen")
         self.main_obj.append(Food("main_obj", (31, 40, 1), self))
         self.main_obj_locations.append("Margot's Room")
-        self.main_obj.append(Food("main_obj", (95, 30, 2), self))
+        self.main_obj.append(Food("main_obj", (95, 20, 2), self))
         self.main_obj_locations.append("Marcus' Room")
         self.main_obj.append(Food("main_obj", (8, 10, 1), self))
         self.main_obj_locations.append("Cork's Room")
@@ -104,8 +106,18 @@ class Game(object):
         self.main_obj_locations.append("Luuk's Room")
         self.main_obj.append(Food("main_obj", (14, 10, 2), self))
         self.main_obj_locations.append("Quentin's Room")
-        self.main_obj.append(Food("main_obj", (52, 15, 0), self))
+        self.main_obj.append(Food("main_obj", (53, 15, 0), self))
         self.main_obj_locations.append("The Binnenplaats")
+        self.main_obj.append(Food("main_obj", (71, 8, 3), self))
+        self.main_obj_locations.append("Ilse's Room")
+        self.main_obj.append(Food("main_obj", (28, 48, 3), self))
+        self.main_obj_locations.append("Charlie's Room")
+        self.main_obj.append(Food("main_obj", (34, 8, 3), self))
+        self.main_obj_locations.append("Jarno's Room")
+        self.main_obj.append(Food("main_obj", (78, 46, 3), self))
+        self.main_obj_locations.append("Fenna's Room")
+        self.main_obj.append(Food("main_obj", (28, 26, 3), self))
+        self.main_obj_locations.append("David's Room")
 
         self.main_obj_total = len(self.main_obj)
 
@@ -170,10 +182,32 @@ class Game(object):
                 self.map.add_random_food(self, "krant", 2, "r")
                 self.krant_to_get = 12
         elif self.keys_used[3] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 10:
+            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 11:
                 self.food_types["krant"] = 0
                 self.keys_used[3] = 1
                 self.map.open_second_stair()
+                self.map.add_random_food(self, "krant", 0)
+                self.map.add_random_food(self, "krant", 0)
+                self.map.add_random_food(self, "krant", 0)
+                self.map.add_random_food(self, "krant", 0)
+                self.map.add_random_food(self, "krant", 0)
+                self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 1)
+                self.map.add_random_food(self, "krant", 2, "l")
+                self.map.add_random_food(self, "krant", 2, "l")
+                self.map.add_random_food(self, "krant", 2, "l")
+                self.map.add_random_food(self, "krant", 2, "r")
+                self.map.add_random_food(self, "krant", 2, "r")
+                self.map.add_random_food(self, "krant", 2, "r")
+                self.krant_to_get = 16
+        elif self.keys_used[4] == 0:
+            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 21:
+                self.food_types["krant"] = 0
+                self.keys_used[4] = 1
+                self.map.open_tropen()
 
         if self.food_types["beer"] == self.beer_to_get:
             for i in range(self.beer_blocks_loss):
@@ -190,8 +224,8 @@ class Game(object):
         self.map.remove_food(self, f)
 
     def climbing_stairs(self, stair_identifier):
-        stair_from = []
-        stair_to = []
+        stair_from = None
+        stair_to = None
         next_floor = 0
 
         stair_length = 0
@@ -199,16 +233,12 @@ class Game(object):
         for stair in self.map.get_stairs_at_floor(self.current_floor):
             if stair.identifier == stair_identifier:
                 stair_from = stair
-        if self.current_floor != 0:
-            for stair in self.map.get_stairs_at_floor(self.current_floor - 1):
-                if stair.identifier == stair_identifier:
-                    stair_to = stair
-                    next_floor = self.current_floor - 1
-        if self.current_floor != self.number_of_floors - 1 and stair_to == []:
-            for stair in self.map.get_stairs_at_floor(self.current_floor + 1):
-                if stair.identifier == stair_identifier:
-                    stair_to = stair
-                    next_floor = self.current_floor + 1
+        for i in range(self.number_of_floors):
+            if i != stair_from.floor:
+                for stair in self.map.get_stairs_at_floor(i):
+                    if stair.identifier == stair_identifier:
+                        stair_to = stair
+                        next_floor = i
 
         stair_length = stair_to.bottom_right[abs(
             stair_to.direction[1])] - stair_to.top_left[abs(stair_to.direction[1])]
@@ -243,8 +273,6 @@ class Game(object):
     def use_life(self):
         if self.coffie_lives_obtained - self.coffie_lives_used > 0:
             self.coffie_lives_used += 1
-            self.points = max(self.points - self.coffie_lives_used * 300, 0) 
-            
             snake_len = len(self.s.body)
             self.current_floor = 0
             self.s.reset(self)
@@ -257,7 +285,7 @@ class Game(object):
             return False
 
     def reset(self, s_x, s_y):
-        self.current_floor = 0
+        self.current_floor = self.starting_floor
         self.main_obj_collected = 0
 
         for i in list(self.food_types.keys()):

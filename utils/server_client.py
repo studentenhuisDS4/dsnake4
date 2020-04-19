@@ -31,7 +31,7 @@ class ServerClient(object):
                     json=input_data
                 )
                 if response.status_code == 200:
-                    return None
+                    return True
                 elif response.status_code == 401:
                     print(
                         "ERROR: server did not accept the login token provided (401 NOT_AUTH code)")
@@ -45,7 +45,7 @@ class ServerClient(object):
         except Exception as e:
             print(
                 "ERROR: exception occurred while pushing high-scores from server API: {}".format(e))
-        return None
+        return False
 
     def load_highscores(self):
         # Load snake highscores from the server API, but only if logged in.

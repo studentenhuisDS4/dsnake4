@@ -60,12 +60,14 @@ class Map(object):
         self.init_first_floor()
         self.init_second_floor()
         self.init_third_floor()
+        self.init_tropen()
         self.init_stairs()
         self.init_food(g)
 
     def init_first_floor(self):
         # contour walls
-        self.walls.append(Wall(0, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(0, (0, 0), (13, 0), 0, breakable=False))
+        self.walls.append(Wall(0, (18, 0), (104, 0), 0, breakable=False))
         self.walls.append(Wall(0, (104, 0), (104, 60), 1, breakable=False))
         self.walls.append(Wall(0, (0, 59), (104, 59), 0, breakable=False))
         self.walls.append(Wall(0, (0, 0), (0, 59), 1, breakable=False))
@@ -221,6 +223,8 @@ class Map(object):
 
         self.walls.append(Wall(2, (85, 0), (85, 5), 1))
         self.walls.append(Wall(2, (85, 11), (85, 59), 1))
+        
+        self.walls.append(Wall(2, (85, 42), (105, 42), 0))
 
         # protecting stairs
         self.walls.append(Wall(2, (52, 42), (55, 42), 0, breakable=False))
@@ -234,6 +238,29 @@ class Map(object):
         # Schuur stair wall
         self.walls.append(Wall(2, (60, 10), (60, 15), 1, breakable=False))
         self.schuur2_stair_wall = len(self.walls) - 1
+
+    def init_tropen(self):
+        # contour walls
+        self.walls.append(Wall(3, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(3, (104, 0), (104, 60), 1, breakable=False))
+        self.walls.append(Wall(3, (0, 59), (104, 59), 0, breakable=False))
+        self.walls.append(Wall(3, (0, 0), (0, 59), 1, breakable=False))
+
+        # dividing walls
+        self.walls.append(Wall(3, (15, 0), (15, 59), 1, breakable=False))
+        self.walls.append(Wall(3, (90, 0), (90, 59), 1, breakable=False))
+
+        self.walls.append(Wall(3, (15, 15), (40, 15), 0))
+        self.walls.append(Wall(3, (45, 15), (70, 15), 0))
+        self.walls.append(Wall(3, (75, 15), (90, 15), 0))
+        self.walls.append(Wall(3, (40, 15), (40, 20), 1))
+        self.walls.append(Wall(3, (40, 24), (40, 42), 1))
+        self.walls.append(Wall(3, (40, 46), (40, 59), 1))
+        self.walls.append(Wall(3, (17, 37), (40, 37), 0))
+        self.walls.append(Wall(3, (53, 3), (53, 15), 1))
+        self.walls.append(Wall(3, (65, 35), (89, 35), 0))
+        self.walls.append(Wall(3, (65, 35), (65, 44), 1))
+        self.walls.append(Wall(3, (65, 48), (65, 59), 1))
 
     def init_stairs(self):
         self.stairs = []
@@ -254,6 +281,9 @@ class Map(object):
         self.stairs.append(Stair(0, (1, 25), (3, 30), 4, (1, 0), (1, 27)))
         self.stairs.append(Stair(1, (1, 51), (3, 59), 4, (1, 0), (1, 55)))
 
+        self.stairs.append(Stair(0, (13, 0), (18, 1), 5, (0, 1), (15, 1)))
+        self.stairs.append(Stair(3, (41, 58), (65, 59), 5, (0, -1), (53, 58)))
+
     def init_food(self, g):
         self.food = []
         self.add_random_food(g, "krant", 0)
@@ -271,6 +301,9 @@ class Map(object):
         self.add_random_food(g, "coffie", 2)
         self.add_random_food(g, "beer", 2)
         self.add_random_food(g, "weed", 2)
+        self.add_random_food(g, "coffie", 3)
+        self.add_random_food(g, "beer", 3)
+        self.add_random_food(g, "weed", 3)
 
         g.krant_to_get = 5
         self.add_food(g.main_obj[0])
@@ -299,8 +332,12 @@ class Map(object):
             not_legal = self.is_food_not_legal(g, (col, row, floor))
             if third_floor == "r" and col < 58:
                 not_legal = True
+            elif third_floor == "r" and col > 85 and row > 42:
+                not_legal = True
             elif third_floor == "l" and col > 54:
-                not_legal == True
+                not_legal = True
+            if floor == 3 and (col < 15 or col > 90):
+                not_legal = True
 
         self.add_food(Food(f_type, (col, row, floor), g))
 
@@ -404,6 +441,7 @@ class Map(object):
         self.init_first_floor()
         self.init_second_floor()
         self.init_third_floor()
+        self.init_tropen()
         self.init_stairs()
         self.init_food(g)
         self.under_effect_of_weed = False

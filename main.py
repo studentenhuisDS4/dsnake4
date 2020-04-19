@@ -1,4 +1,5 @@
 import pygame as pygame
+from pygame.sprite import Sprite
 import random as r
 import os
 
@@ -7,6 +8,14 @@ from Map_Objects import *
 from Snake import Snake
 from Food import Food
 from utils.server_client import ServerClient
+
+class Main_Objects(Sprite):
+    def __init__(self):
+        Sprite.__init__(self)
+        self.image = pygame.Surface((50, 50))
+        self.image.fill((0,0,0))
+        self.rect = self.image.get_rect()
+
 
 
 def redraw_game_window(surface, g, nickname, images=[]):
@@ -436,7 +445,10 @@ def get_nickname(window, nick):
         pygame.display.flip()
         clock.tick(30)
 
-    return nickname
+    if len(nickname) < 2 or len(nickname) > 100:
+        return nick
+    else:
+        return nickname
 
 
 def pause_menu(window=None, g=None):
@@ -784,7 +796,7 @@ clock = pygame.time.Clock()
 
 username = ""
 password = ""
-nickname = ""
+nickname = "Housemate"
 temp_nickname = ""
 local_scores_read = None
 try:
@@ -792,7 +804,7 @@ try:
     first_line = local_scores_read.readline()
     w = first_line.split()
     w.pop()
-    temp_nickname = ' '.join(w)
+    nickname = ' '.join(w)
     local_scores_read.close()
 except:
     local_scores_read = None
@@ -827,7 +839,7 @@ connected = connect_server(client)
 
 while True:
     connected, status, nickname = menu(
-        window=window, client=client, g=g, nick=temp_nickname, connected=connected)
+        window=window, client=client, g=g, nick=nickname, connected=connected)
 
     score = 0
     game_ended = False

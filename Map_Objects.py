@@ -342,7 +342,7 @@ class Map(object):
         self.add_food(Food(f_type, (col, row, floor), g))
 
     def is_food_not_legal(self, g, pos):
-        for wall in self.get_walls_at_floor(pos[2]):
+        for wall in self.get_walls_at_floor(pos[2], draw=True):
             if wall.status != "invisible":
                 direction = wall.direction
                 for block in range(wall.finish[direction] - wall.start[direction]):
@@ -363,9 +363,8 @@ class Map(object):
             if f.position == pos:
                 return True
 
-        for snake_block in g.s.body:
-            if snake_block == pos:
-                return True
+        if pos in g.s.body:
+            return True
         return False
 
     def add_food(self, f):

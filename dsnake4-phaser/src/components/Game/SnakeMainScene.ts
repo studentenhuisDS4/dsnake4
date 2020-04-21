@@ -70,6 +70,22 @@ export class SnakeMainScene extends Phaser.Scene {
             event.preventDefault();
             this.snake.rotateRight();
         });
+        this.input.keyboard.on('keydown-' + 'UP', (event: any) => {
+            event.preventDefault();
+            this.snake.rotateUp();
+        });
+        this.input.keyboard.on('keydown-' + 'W', (event: any) => {
+            event.preventDefault();
+            this.snake.rotateUp();
+        });
+        this.input.keyboard.on('keydown-' + 'DOWN', (event: any) => {
+            event.preventDefault();
+            this.snake.rotateDown();
+        });
+        this.input.keyboard.on('keydown-' + 'S', (event: any) => {
+            event.preventDefault();
+            this.snake.rotateDown();
+        });
 
         this.timedEvent = this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
     }
@@ -89,8 +105,8 @@ export class SnakeMainScene extends Phaser.Scene {
 
     private renderSnakePart(part: BodyPart) {
         this.snake.bodyParts.forEach(part => {
-            const pixelX = (part.x - 1) * this.cellWidth;
-            const pixelY = (part.y - 1) * this.cellHeight;
+            const pixelX = (part.x - 1) * this.cellWidth + 1;
+            const pixelY = (part.y - 1) * this.cellHeight - 2;
             if (part.gameObject == null) {
                 part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), this.defaultTextStyle);
             }

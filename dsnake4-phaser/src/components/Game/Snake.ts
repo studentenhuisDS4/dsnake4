@@ -75,6 +75,7 @@ export class Snake {
                     break;
             }
             // Dont allow overflow of body part
+            // Andrea: Think this or should be an and
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
                     this.bodyParts.push(new BodyPart(xPart, yPart, 'Tail'));
@@ -87,20 +88,17 @@ export class Snake {
             }
         }
     }
-
     public rotateLeft() {
         switch (this.direction) {
             case 'Up':
                 this.direction = 'Left';
                 break;
             case 'Down':
-                this.direction = 'Right';
+                this.direction = 'Left';
                 break;
             case 'Right':
-                this.direction = 'Up';
                 break;
             case 'Left':
-                this.direction = 'Down';
                 break;
         }
     }
@@ -111,13 +109,41 @@ export class Snake {
                 this.direction = 'Right';
                 break;
             case 'Down':
-                this.direction = 'Left';
+                this.direction = 'Right';
+                break;
+            case 'Right':
+                break;
+            case 'Left':
+                break;
+        }
+    }
+
+    public rotateUp() {
+        switch (this.direction) {
+            case 'Up':
+                break;
+            case 'Down':
+                break;
+            case 'Right':
+                this.direction = 'Up';
+                break;
+            case 'Left':
+                this.direction = 'Up';
+                break;
+        }
+    }
+
+    public rotateDown() {
+        switch (this.direction) {
+            case 'Up':
+                break;
+            case 'Down':
                 break;
             case 'Right':
                 this.direction = 'Down';
                 break;
             case 'Left':
-                this.direction = 'Up';
+                this.direction = 'Down';
                 break;
         }
     }

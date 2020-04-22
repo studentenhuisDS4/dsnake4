@@ -2,7 +2,13 @@ import pygame
 
 
 class Spritesheet(object):
-    def __init__(self, filename):
+    def __init__(self, filename="", total_objects=None, objects_in_line=None, object_size=None):
+        if total_objects != None:
+            self.total_objects = total_objects
+        if objects_in_line != None:
+            self.objects_in_line = objects_in_line
+        if object_size != None:
+            self.object_size = object_size
         self.sheet = pygame.image.load(filename).convert()
     # Load a specific image from a specific rectangle
 
@@ -19,23 +25,3 @@ class Spritesheet(object):
 
     def images_at(self, rects, colorkey=None):
         return [self.image_at(rect, colorkey) for rect in rects]
-
-
-pygame.init()
-pygame.font.init()
-black = (0,0,0)
-white = (255,255,255)
-window = pygame.display.set_mode((250, 250))
-window.fill(white)
-
-s_sheet = Spritesheet("images/sprite_objects.png")
-
-sprite_rectancles = {"colored_beer": (0, 0, 11, 45),
-                    "gray_beer": (18, 0, 11, 45),
-                    "coffie_cup": (39, 9, 23, 28),
-                    "colored_krant": (71, 6, 22, 13),
-                    "gray_krant": (71, 27, 22, 13)}
-
-window.blit(s_sheet.image_at(sprite_rectancles["gray_krant"]), (15, 15))
-pygame.display.update()
-pygame.time.delay(1000)

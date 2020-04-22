@@ -1,0 +1,5 @@
+(0,0,0) void
+(255,255,255) breakable wall
+(255,0,0) unbreakable wall
+(0,0,255) stair
+

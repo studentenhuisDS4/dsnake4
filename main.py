@@ -1,5 +1,4 @@
 import pygame as pygame
-from pygame.sprite import Sprite
 import random as r
 import os
 
@@ -7,18 +6,12 @@ from Game import Game
 from Map_Objects import *
 from Snake import Snake
 from Food import Food
+from Sprites import Spritesheet
+from png_rendering import png_rendering
 from utils.server_client import ServerClient
 
-class Main_Objects(Sprite):
-    def __init__(self):
-        Sprite.__init__(self)
-        self.image = pygame.Surface((50, 50))
-        self.image.fill((0,0,0))
-        self.rect = self.image.get_rect()
 
-
-
-def redraw_game_window(surface, g, nickname, images=[]):
+def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
     surface.fill((0, 0, 0))
     g.map.draw(surface, g)
     drawGrid(g.width, g.columns, g.rows, surface)
@@ -35,7 +28,7 @@ def redraw_game_window(surface, g, nickname, images=[]):
     counter = 0
 
     if g.current_floor == 2:
-        surface.blit(images[12], (861, 431))
+        surface.blit(images[7], (861, 431))
     for f_type in g.food_types:
         if f_type == "main_obj":
             pygame.draw.rect(
@@ -106,11 +99,16 @@ def redraw_game_window(surface, g, nickname, images=[]):
         next_object = g.font.render(
             g.main_obj_locations[g.main_obj_collected], False, text_color)
         surface.blit(next_object, (g.width + 20, 90 + counter))
+    counter += 120
 
     if g.map.under_effect_of_weed:
         for i in range(g.weed_counter):
             pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
                              (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
+
+    for i in range(30):# range(g.main_obj_collected):
+        surface.blit(
+            mo_images[i], (g.width + 10 + (i % 5)*35, int(i/5)*35 + counter))
 
     pygame.display.update()
 
@@ -810,28 +808,55 @@ except:
     local_scores_read = None
 local_scores_file = open("Local_scores.txt", "a")
 
-images = []
+objects_images = []
+main_objects_images = []
 
-images.append(pygame.image.load("images/coffie_cup.png"))
-images.append(pygame.image.load("images/beer_bottle.png"))
-images.append(pygame.image.load("images/beer_bottle_gray.png"))
-images.append(pygame.image.load("images/newspaper.png"))
-images.append(pygame.image.load("images/newspaper_gray.png"))
-images.append(pygame.transform.scale(images[3], (int(
-    images[3].get_rect().size[0]*1.5), int(images[3].get_rect().size[1]*1.5))))
-images.append(pygame.transform.scale(images[4], (int(
-    images[4].get_rect().size[0]*1.5), int(images[4].get_rect().size[1]*1.5))))
-images.append(pygame.transform.scale(
-    pygame.image.load("images/weed.png"), (16, 32)))
-images.append(pygame.image.load("images/Andrea_Chess_knight.png"))
-images.append(pygame.transform.scale(
-    pygame.image.load("images/GR_gustav.png"), (30, 30)))
-images.append(pygame.transform.scale(
-    pygame.image.load("images/friespixelart.png"), (23, 30)))
-images.append(pygame.transform.scale(
-    pygame.image.load("images/JarnoTrekker2.png"), (30, 30)))
-images.append(pygame.transform.scale(pygame.image.load(
+game_objects_rect = {"colored_beer": (0, 0, 11, 45),
+                     "gray_beer": (18, 0, 11, 45),
+                     "coffie_cup": (39, 9, 23, 28),
+                     "colored_krant": (71, 6, 22, 13),
+                     "gray_krant": (71, 27, 22, 13)}
+game_objects_sheet = Spritesheet("images/sprite_objects.png")
+
+main_objects_sheet = Spritesheet(
+    "images/sprite_main_objects.png", total_objects=30, objects_in_line=5, object_size=(30, 30))
+
+objects_images.append(game_objects_sheet.image_at(
+    game_objects_rect["coffie_cup"]))
+objects_images.append(game_objects_sheet.image_at(
+    game_objects_rect["colored_beer"]))
+objects_images.append(game_objects_sheet.image_at(
+    game_objects_rect["gray_beer"]))
+objects_images.append(game_objects_sheet.image_at(
+    game_objects_rect["colored_krant"]))
+objects_images.append(game_objects_sheet.image_at(
+    game_objects_rect["gray_krant"]))
+objects_images.append(pygame.transform.scale(objects_images[3], (int(
+    objects_images[3].get_rect().size[0]*1.5), int(objects_images[3].get_rect().size[1]*1.5))))
+objects_images.append(pygame.transform.scale(objects_images[4], (int(
+    objects_images[4].get_rect().size[0]*1.5), int(objects_images[4].get_rect().size[1]*1.5))))
+objects_images.append(pygame.transform.scale(pygame.image.load(
     "images/Marcus_Painting.jpeg"), (179, 159)))
+objects_images.append(pygame.transform.scale(
+    pygame.image.load("images/weed.png"), (16, 32)))
+
+for i in range(main_objects_sheet.total_objects):
+    x = (i % main_objects_sheet.objects_in_line) * \
+        main_objects_sheet.object_size[0]
+    y = int(i/main_objects_sheet.objects_in_line) * \
+        main_objects_sheet.object_size[1]
+    (w, h) = main_objects_sheet.object_size
+    main_objects_images.append(main_objects_sheet.image_at((x, y, w, h)))
+
+
+# images.append(pygame.image.load("images/Andrea_Chess_knight.png"))
+# images.append(pygame.transform.scale(
+#     pygame.image.load("images/GR_gustav.png"), (30, 30)))
+# images.append(pygame.transform.scale(
+#     pygame.image.load("images/friespixelart.png"), (23, 30)))
+# images.append(pygame.transform.scale(
+#     pygame.image.load("images/JarnoTrekker2.png"), (30, 30)))
+
 connected = False
 
 client = ServerClient()
@@ -866,7 +891,8 @@ while True:
                     exit()
                 score = 0
                 game_ended = False
-            redraw_game_window(window, g, nickname, images)
+            redraw_game_window(window, g, nickname,
+                               objects_images, main_objects_images)
             if paused:
                 choice = pause_menu(window=window, g=g)
                 if choice == "resume":

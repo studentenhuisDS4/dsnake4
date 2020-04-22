@@ -7,6 +7,7 @@ from Map_Objects import *
 from Snake import Snake
 from Food import Food
 from Sprites import Spritesheet
+from png_rendering import png_rendering
 from utils.server_client import ServerClient
 
 

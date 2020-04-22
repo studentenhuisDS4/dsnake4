@@ -1,8 +1,11 @@
 import * as Phaser from 'phaser';
-import { scaleFactor as SW, SH } from '../GameConfig';
+import { SW, SH } from '../GameConfig';
 import { Snake, BodyPart } from '../Data/Snake';
 import { Map, MapVector, MapCell } from '../Data/Map';
 import { CELLS_X, CELLS_Y } from '../Data/Generics';
+import { JustDown } from '../imports';
+import { KeyBindings } from '../Data/KeyBindings';
+// import { Player } from '../GameObjects/Player';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -33,6 +36,7 @@ export class SnakeMainScene extends Phaser.Scene {
     // Snake game loop
     private timedEvent!: Phaser.Time.TimerEvent;
     private map!: Map;
+    inputKeys!: KeyBindings;
 
     constructor() {
         super(sceneConfig);
@@ -55,40 +59,20 @@ export class SnakeMainScene extends Phaser.Scene {
         this.renderSnake();
         this.renderGrid();
 
-        this.input.keyboard.on('keydown-' + 'LEFT', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateLeft();
-        });
-        this.input.keyboard.on('keydown-' + 'A', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateLeft();
-        });
-        this.input.keyboard.on('keydown-' + 'RIGHT', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateRight();
-        });
-        this.input.keyboard.on('keydown-' + 'D', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateRight();
-        });
-        this.input.keyboard.on('keydown-' + 'UP', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateUp();
-        });
-        this.input.keyboard.on('keydown-' + 'W', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateUp();
-        });
-        this.input.keyboard.on('keydown-' + 'DOWN', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateDown();
-        });
-        this.input.keyboard.on('keydown-' + 'S', (event: any) => {
-            event.preventDefault();
-            this.snake.rotateDown();
-        });
-
+        this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         this.timedEvent = this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
+    }
+
+    update() {
+        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
+            this.snake.rotateUp();
+        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
+            this.snake.rotateLeft();
+        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
+            this.snake.rotateDown();
+        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
+            this.snake.rotateRight();
+        }
     }
 
     private onTimedUpdate() {
@@ -114,9 +98,6 @@ export class SnakeMainScene extends Phaser.Scene {
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {
-                    if (cell.x > 10) {
-                        console.log(cell.x, cell.y);
-                    }
                     this.add.rectangle(
                         cell.x * this.cellWidth - this.cellWidth / 2,
                         cell.y * this.cellHeight - this.cellHeight / 2,

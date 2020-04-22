@@ -70,7 +70,7 @@ export class MapVector extends MapElement {
     }
 
     private validateLength(length: number) {
-        if (length != null && length > 0) {
+        if (length != null && length >= 0) {
             return true;
         } else {
             throw new Error("MapVector must have positive length (>1).");
@@ -157,12 +157,16 @@ export class Map {
         }
     }
 
-    public loadMapFromImage(imageMap: any) {
-        throw new Error("The loadMapFromImage function has not been implemented yet.");
-    }
+    // public loadMapFromImage(imageMap: any) {
+    //     throw new Error("The loadMapFromImage function has not been implemented yet.");
+    // }
 
     public clearChildren() {
         this.childElements = [];
+    }
+
+    public clear2DMap() {
+        this.Map2D = [];
     }
 
     public appendElement(element: MapElement) {

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { scaleFactor as SF, SW, SH } from '../GameConfig';
+import { scaleFactor as SW, SH } from '../GameConfig';
 import { Snake, BodyPart } from '../Data/Snake';
 import { Map, MapVector, MapCell } from '../Data/Map';
 import { CELLS_X, CELLS_Y } from '../Data/Generics';
@@ -97,17 +97,17 @@ export class SnakeMainScene extends Phaser.Scene {
     }
 
     private constructMapElements() {
-            this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Up'));
-            this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Down'));
-            this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Left'));
-            this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-            this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-            this.map.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
-            this.map.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
-    
-            // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
-            // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));
-            // this.loadMapFromImage(imageMap);
+        this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Up'));
+        this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Down'));
+        this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Left'));
+        this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
+        this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
+        this.map.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
+        this.map.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
+
+        // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
+        // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));
+        // this.loadMapFromImage(imageMap);
     }
 
     private renderMap() {
@@ -115,12 +115,12 @@ export class SnakeMainScene extends Phaser.Scene {
             .forEach(row => row
                 .forEach(cell => {
                     if (cell.x > 10) {
-                    console.log(cell.x, cell.y);
-                }
+                        console.log(cell.x, cell.y);
+                    }
                     this.add.rectangle(
                         cell.x * this.cellWidth - this.cellWidth / 2,
                         cell.y * this.cellHeight - this.cellHeight / 2,
-                        this.cellWidth-2, this.cellHeight-2,
+                        this.cellWidth - 2, this.cellHeight - 2,
                         0xEEEEEE);
                 }));
     }

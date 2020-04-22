@@ -131,3 +131,4 @@ dmypy.json
 
 # Dont upload .pickle files (our token file f.e.)
 **/*.pickle
+.vscode/settings.json

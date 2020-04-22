@@ -1,9 +1,5 @@
-type SnakeDirection = 'Up' | 'Right' | 'Left' | 'Down';
+import { Direction, CELLS_Y, CELLS_X } from './Generics';
 type BodyPartType = 'Head' | 'Body' | 'Tail';
-
-// TODO generalize later
-let cellsX: number = 80;
-let cellsY: number = 60;
 
 export class BodyPart {
     public x: number;
@@ -36,10 +32,10 @@ export class BodyPart {
 export class Snake {
     x: number;
     y: number;
-    direction: SnakeDirection;
+    direction: Direction;
     bodyParts!: BodyPart[];
 
-    constructor(initialLength: number, x: number, y: number, initialDirection: SnakeDirection = 'Up') {
+    constructor(initialLength: number, x: number, y: number, initialDirection: Direction = 'Up') {
         this.direction = initialDirection;
         this.x = x;
         this.y = y;
@@ -65,13 +61,13 @@ export class Snake {
                     resultY = yPart > 0 ? yPart-- : null;
                     break;
                 case 'Down':
-                    resultY = yPart < cellsY ? yPart-- : null;
+                    resultY = yPart < CELLS_Y ? yPart-- : null;
                     break;
                 case 'Right':
-                    resultX = xPart < cellsX ? xPart-- : null;
+                    resultX = xPart < CELLS_X ? xPart-- : null;
                     break;
                 case 'Left':
-                    resultX = xPart < cellsX ? xPart++ : null;
+                    resultX = xPart < CELLS_X ? xPart++ : null;
                     break;
             }
             // Dont allow overflow of body part
@@ -151,16 +147,16 @@ export class Snake {
     public moveSnake() {
         switch (this.direction) {
             case 'Up':
-                this.y < cellsY ? this.y-- : null;
+                this.y < CELLS_Y ? this.y-- : null;
                 break;
             case 'Down':
                 this.y > 0 ? this.y++ : null;
                 break;
             case 'Right':
-                this.x < cellsX ? this.x++ : null;
+                this.x < CELLS_X ? this.x++ : null;
                 break;
             case 'Left':
-                this.x < cellsX ? this.x-- : null;
+                this.x < CELLS_X ? this.x-- : null;
                 break;
         }
         let newX = this.x;

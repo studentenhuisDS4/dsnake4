@@ -28,6 +28,8 @@ export default class Game extends Vue {
   mounted() {
     console.log("GAME - mounted");
     this.game = launchGame(this.canvasIdentifier);
+    
+    // this.game.scene..restart();
   }
 
   destroyed() {

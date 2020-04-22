@@ -1,10 +1,9 @@
 import * as Phaser from 'phaser';
-import { SnakeMainScene } from './SnakeMainScene';
+import { SnakeMainScene } from './Scenes/SnakeMainScene';
 
-export const scaleFactor = 1;
 export const ZOOM = 1;
-export const SW = 1050 * scaleFactor / ZOOM;
-export const SH = 600 * scaleFactor / ZOOM;
+export const SW = 1050 / ZOOM;
+export const SH = 600 / ZOOM;
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: 'Sample',
 
@@ -32,9 +31,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
             //     debug: true,
         },
     },
-    backgroundColor: '#DDDDDD',
-    parent: undefined,
-    // backgroundColor: '#000000',
+    backgroundColor: '#000000',
+    parent: undefined
 };
 
 function launchGame(containerId: string) {

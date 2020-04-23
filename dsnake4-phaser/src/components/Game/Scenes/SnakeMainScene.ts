@@ -63,6 +63,11 @@ export class SnakeMainScene extends Phaser.Scene {
         this.timedEvent = this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
     }
 
+    preload() {
+        this.load.setPath('img/assets/');
+        this.load.image('logo','logo.png');
+    }
+
     update() {
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
             this.snake.rotateUp();
@@ -88,6 +93,8 @@ export class SnakeMainScene extends Phaser.Scene {
         this.map.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
         this.map.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
         this.map.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
+
+        this.add.image(400, 400, 'logo');
 
         // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
         // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));

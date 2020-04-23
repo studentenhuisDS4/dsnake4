@@ -17,7 +17,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 // Define speed of the snake (note GameConfig.fps.target = 25 limit)
 export const SnakeDelayMs: number = 100;
 
-export class SnakeMainScene extends Phaser.Scene {
+export class SnakeScene extends Phaser.Scene {
     // TARGET: 105 by 60 cell grid
 
     private width: number;

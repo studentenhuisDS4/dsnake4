@@ -5,6 +5,7 @@ import { Map, MapVector, MapCell } from '../Data/Map';
 import { CELLS_X, CELLS_Y } from '../Data/Generics';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
+import { getPixelsData, getPixelColorAt } from '@/components/extension';
 // import { Player } from '../GameObjects/Player';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -44,6 +45,11 @@ export class SnakeMainScene extends Phaser.Scene {
         this.height = SH;
     }
 
+    preload() {
+        this.load.setPath('img/assets/');
+        this.load.image('logo', 'logo.png');
+    }
+
     public create() {
         console.log("SNAKE SCENE - created");
 
@@ -59,13 +65,26 @@ export class SnakeMainScene extends Phaser.Scene {
         this.renderSnake();
         this.renderGrid();
 
+        // let image = getPixelsData(this.textures, "logo");
+        // console.log("image", image);
+        // if (image != null) {
+        //     // console.log("image data: ", image.);
+        //     // console.log(getPixelColorAt(image, 10, 10));
+        //     for (let i = 0; i < Math.min(image.width,CELLS_X); i++) {
+        //         for (let j = 0; j < Math.min(image.height,CELLS_Y); j++) {
+        //             // This is f'in heavy and inefficient to calculate
+        //             const pixelColor = getPixelColorAt(image, i, j);
+        //             this.add.rectangle(
+        //                 i * this.cellWidth - this.cellWidth / 2,
+        //                 j * this.cellHeight - this.cellHeight / 2,
+        //                 this.cellWidth - 2, this.cellHeight - 2,
+        //                 pixelColor.color32, 0.6);
+        //         }
+        //     }
+        // }
+
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         this.timedEvent = this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
-    }
-
-    preload() {
-        this.load.setPath('img/assets/');
-        this.load.image('logo','logo.png');
     }
 
     update() {
@@ -94,7 +113,7 @@ export class SnakeMainScene extends Phaser.Scene {
         this.map.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
         this.map.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
 
-        this.add.image(400, 400, 'logo');
+        // this.add.image(400, 400, 'logo');
 
         // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
         // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));

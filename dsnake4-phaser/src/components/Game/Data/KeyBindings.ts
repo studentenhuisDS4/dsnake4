@@ -1,4 +1,4 @@
-import { KEY } from './../imports';
+import { KEY } from '../imports';
 
 export class KeyBindings {
     /* Optimalization to handle keys easily */

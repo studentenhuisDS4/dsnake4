@@ -56,7 +56,7 @@ export class MenuScene extends Phaser.Scene {
                     console.log("Changing scene to GAME");
 
                     // Fade-out camera
-                    this.cameras.main.fade(250,0,0,0);
+                    this.cameras.main.fade(400,0,0,0);
                     this.scene.transition({
                         target: "Game",
                         duration: 500,

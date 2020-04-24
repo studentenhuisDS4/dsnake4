@@ -129,17 +129,34 @@ export class Map {
     }
 
     public constructMap() {
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Up'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Down'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Left'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
+        const offsetX = 30;
+        const offsetY = 30;
+        this.appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Up'));
+        this.appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Down'));
+        this.appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Left'));
+        this.appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Right'));
+        // this.appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Stairs'), 30, 'Right'));
+        // this.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
+        // this.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
+    }
 
-        // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
-        // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));
-        // this.loadMapFromImage(imageMap);
+    public checkCollision(x: number, y: number): MapCellType {
+        if (x <= 0 || x >= CELLS_X) {
+            console.log('hit x wall', x);
+            return 'Wall';
+        }
+        if (y <= 0 || y >= CELLS_Y) {
+            console.log('hit y wall', x);
+            return 'Wall';
+        }
+        if (this.Map2D[x] == null || this.Map2D[x][y] == null) {
+            return 'Void';
+        }
+        return this.Map2D[x][y].type;
+    }
+
+    public getMapCell(x: number, y: number) {
+        return this.Map2D[x][y];
     }
 
     // This function performs the pre-processing to get an 2D-Array of cells in `this.Map2D`

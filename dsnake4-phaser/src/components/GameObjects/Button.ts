@@ -6,14 +6,14 @@ export class Button extends GameObjects.Text {
 
         this.setInteractive()
             .setFill('#42b983')
-            .setAlpha(0.6)
+            .setAlpha(0.8)
             .setOrigin(0.5, 0.5)
             .on('pointerover', () => {
                 this.setAlpha(1)
                     .setScale(1.05, 1.05);
             })
             .on('pointerout', () => {
-                this.setAlpha(0.6)
+                this.setAlpha(0.8)
                     .setScale(1, 1);
             });
     }

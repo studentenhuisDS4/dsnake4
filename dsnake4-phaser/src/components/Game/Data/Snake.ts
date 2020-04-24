@@ -32,7 +32,7 @@ export class BodyPart {
 export class Snake {
     x: number;
     y: number;
-    direction: Direction;
+    private direction: Direction;
     bodyParts!: BodyPart[];
 
     constructor(initialLength: number, x: number, y: number, initialDirection: Direction = 'Up') {
@@ -44,15 +44,15 @@ export class Snake {
         this.generateSnake(initialLength);
     }
 
-    private emptySnake() {
+    public emptySnake() {
         this.bodyParts = [];
     }
 
-    private generateSnake(length: number) {
+    public generateSnake(length: number) {
         let xPart = this.x;
         let yPart = this.y;
+
         this.bodyParts.push(new BodyPart(xPart, yPart, 'Head'));
-        // console.log("Rendering snake");
         for (let i = 0; i < length - 1; i++) {
             let resultX;
             let resultY;
@@ -70,8 +70,8 @@ export class Snake {
                     resultX = xPart < CELLS_X ? xPart++ : null;
                     break;
             }
+
             // Dont allow overflow of body part
-            // Andrea: Think this or should be an and
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
                     this.bodyParts.push(new BodyPart(xPart, yPart, 'Tail'));
@@ -84,6 +84,7 @@ export class Snake {
             }
         }
     }
+
     public rotateLeft() {
         switch (this.direction) {
             case 'Up':
@@ -91,10 +92,6 @@ export class Snake {
                 break;
             case 'Down':
                 this.direction = 'Left';
-                break;
-            case 'Right':
-                break;
-            case 'Left':
                 break;
         }
     }
@@ -107,19 +104,11 @@ export class Snake {
             case 'Down':
                 this.direction = 'Right';
                 break;
-            case 'Right':
-                break;
-            case 'Left':
-                break;
         }
     }
 
     public rotateUp() {
         switch (this.direction) {
-            case 'Up':
-                break;
-            case 'Down':
-                break;
             case 'Right':
                 this.direction = 'Up';
                 break;
@@ -131,10 +120,6 @@ export class Snake {
 
     public rotateDown() {
         switch (this.direction) {
-            case 'Up':
-                break;
-            case 'Down':
-                break;
             case 'Right':
                 this.direction = 'Down';
                 break;

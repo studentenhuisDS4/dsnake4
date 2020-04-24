@@ -3,6 +3,7 @@ import { SW, SH } from '../GameConfig';
 import { MapController } from '../Data/MapController';
 import { CELLS_X, CELLS_Y } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
+import { Scene } from 'phaser';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -41,28 +42,28 @@ export class SnakeScene extends Phaser.Scene {
         this.cellHeight = this.height / CELLS_Y;
     }
 
-    preload() {
+    public preload() {
         this.load.setPath('img/assets/');
         this.load.image('logo', 'logo.png');
     }
 
     public create() {
         console.log("SNAKE SCENE - created");
-        this.mapController = new MapController(this, this.cellWidth, this.cellHeight);
+        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight);
 
         // Priority : layering
         this.renderGrid();
         this.mapController.setup();
-        this.mapController.render();
 
-        this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
     }
 
-    update() {
-        this.mapController.checkInput();
+    public update() {
+        // Propagate input
+        this.mapController.onSceneUpdate();
     }
 
+    // Control over MapController's updates
     private onTimedUpdate() {
         this.mapController.timedUpdate();
 
@@ -71,7 +72,7 @@ export class SnakeScene extends Phaser.Scene {
 
             this.scene.pause();
             setTimeout(() => {
-                this.scene.restart()
+                this.scene.restart();
             }, 1000);
         }
     }

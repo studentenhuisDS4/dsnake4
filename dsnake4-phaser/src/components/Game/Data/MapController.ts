@@ -33,12 +33,16 @@ export class MapController {
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
 
-    setup() {
+    public setup() {
+        console.log("Controller setup");
         this.inputKeys = this.scene.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
+
+        this.constructMap();
+        this.renderMap();
         this.renderSnake();
     }
 
-    checkInput() {
+    public onSceneUpdate() {
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
             this.snake.rotateUp();
         } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
@@ -50,21 +54,12 @@ export class MapController {
         }
     }
 
-    checkSnakeCollision() {
-        console.log("Snake checked at ", this.snake.x, this.snake.y);
+    public checkSnakeCollision() {
         return this.map.checkCollision(this.snake.x, this.snake.y) == 'Wall';
     }
 
-    timedUpdate() {
+    public timedUpdate() {
         this.snake.moveSnake();
-        this.renderSnake();
-    }
-
-    render() {
-        console.log("Controller start");
-        this.constructMap();
-
-        this.renderMap();
         this.renderSnake();
     }
 

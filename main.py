@@ -27,69 +27,12 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
     surface.blit(points, (g.width + 30, 40))
     counter = 0
 
-    if g.current_floor == 2:
-        surface.blit(images[7], (861, 431))
-    for f_type in g.food_types:
-        if f_type == "main_obj":
-            pygame.draw.rect(
-                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
-            food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]) + "/" + str(g.main_obj_total), False, (255, 255, 255))
-            surface.blit(food_eaten, (g.width + 70, 90 + counter))
-        elif f_type == "krant":
-            if g.krant_to_get > 6:
-                krant_in_a_line = int(g.krant_to_get / 2)
-                line = 0
-                for i in range(g.krant_to_get):
-                    line = int(i / krant_in_a_line)
-                    if i < g.food_types["krant"]:
-                        surface.blit(
-                            images[3], (g.width + 30 + (i - line*(krant_in_a_line))*25, 74 + counter + 16*line))
-                    else:
-                        surface.blit(
-                            images[4], (g.width + 30 + (i - line*(krant_in_a_line))*25, 74 + counter + 16*line))
-            else:
-                for i in range(g.krant_to_get):
-                    if i < g.food_types["krant"]:
-                        surface.blit(
-                            images[5], (g.width + 30 + i*35, 85 + counter))
-                    else:
-                        surface.blit(
-                            images[6], (g.width + 30 + i*35, 85 + counter))
-        elif f_type == "beer":
-            for i in range(g.beer_to_get):
-                if i < g.food_types["beer"]:
-                    surface.blit(
-                        images[1], (g.width + 30 + i*20, 74 + counter))
-                else:
-                    surface.blit(
-                        images[2], (g.width + 30 + i*20, 74 + counter))
-        elif f_type == "weed":
-            pygame.draw.rect(
-                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
-            food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]) + "/" + str(g.weed_to_get), False, (255, 255, 255))
-            surface.blit(food_eaten, (g.width + 70, 90 + counter))
-        elif f_type == "coffie":
-            pygame.draw.rect(
-                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
-            if g.coffie_lives_obtained < g.coffie_total_lives:
-                food_eaten = g.font.render(
-                    "x " + str(g.food_types[f_type]) + "/" + str(g.coffie_to_get[g.coffie_lives_obtained]), False, (255, 255, 255))
-            else:
-                food_eaten = g.font.render(
-                    "x " + str(g.food_types[f_type]), False, (255, 255, 255))
-            for i in range(g.coffie_lives_obtained-g.coffie_lives_used):
-                surface.blit(images[0], (g.width + 150 + i*30, 80 + counter))
-            surface.blit(food_eaten, (g.width + 70, 90 + counter))
-
-        else:
-            pygame.draw.rect(
-                surface, g.food_colors[f_type], (g.width + 30, 85 + counter, 25, 25))
-            food_eaten = g.font.render(
-                "x " + str(g.food_types[f_type]), False, text_color)
-            surface.blit(food_eaten, (g.width + 70, 90 + counter))
-        counter += 40
+    pygame.draw.rect(
+        surface, g.food_colors['main_obj'], (g.width + 30, 85 + counter, 25, 25))
+    food_eaten = g.font.render(
+        "x " + str(g.main_obj_collected) + "/" + str(g.main_obj_total), False, (255, 255, 255))
+    surface.blit(food_eaten, (g.width + 70, 90 + counter))
+    counter += 60
 
     if g.main_obj_collected != g.main_obj_total:
         next_object = g.font.render(
@@ -99,14 +42,14 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
         next_object = g.font.render(
             g.main_obj_locations[g.main_obj_collected], False, text_color)
         surface.blit(next_object, (g.width + 20, 90 + counter))
-    counter += 120
+        counter += 120
 
-    if g.map.under_effect_of_weed:
-        for i in range(g.weed_counter):
-            pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
-                             (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
+    # if g.map.under_effect_of_weed:
+    #     for i in range(g.weed_counter):
+    #         pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
+    #                          (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
-    for i in range(30):# range(g.main_obj_collected):
+    for i in range(g.main_obj_collected):
         surface.blit(
             mo_images[i], (g.width + 10 + (i % 5)*35, int(i/5)*35 + counter))
 
@@ -875,7 +818,7 @@ while True:
         while True:
             pygame.time.delay(50)
             clock.tick(15)
-            climbed, score, game_ended, paused = g.s.move(g)
+            climbed, score, game_ended, paused = g.move_snake()
             if game_ended:
                 g.reset(100, 20)
                 local_scores_file.write(nickname + " " + str(score) + "\n")

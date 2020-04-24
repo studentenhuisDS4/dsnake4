@@ -286,33 +286,47 @@ class Map(object):
 
     def init_food(self, g):
         self.food = []
-        self.add_random_food(g, "krant", 0)
-        self.add_random_food(g, "krant", 0)
-        self.add_random_food(g, "krant", 0)
-        self.add_random_food(g, "krant", 0)
-        self.add_random_food(g, "krant", 0)
 
         self.add_random_food(g, "coffie", 0)
         self.add_random_food(g, "beer", 0)
         self.add_random_food(g, "weed", 0)
+        self.add_random_food(g, "krant", 0)
+        self.add_random_food(g, "coffie", 0)
+        self.add_random_food(g, "beer", 0)
+        self.add_random_food(g, "weed", 0)
+        self.add_random_food(g, "krant", 0)
         self.add_random_food(g, "coffie", 1)
         self.add_random_food(g, "beer", 1)
         self.add_random_food(g, "weed", 1)
+        self.add_random_food(g, "krant", 1)
+        self.add_random_food(g, "coffie", 1)
+        self.add_random_food(g, "beer", 1)
+        self.add_random_food(g, "weed", 1)
+        self.add_random_food(g, "krant", 1)
         self.add_random_food(g, "coffie", 2)
         self.add_random_food(g, "beer", 2)
         self.add_random_food(g, "weed", 2)
+        self.add_random_food(g, "krant", 2)
+        self.add_random_food(g, "coffie", 2)
+        self.add_random_food(g, "beer", 2)
+        self.add_random_food(g, "weed", 2)
+        self.add_random_food(g, "krant", 2)
         self.add_random_food(g, "coffie", 3)
         self.add_random_food(g, "beer", 3)
         self.add_random_food(g, "weed", 3)
+        self.add_random_food(g, "krant", 3)
+        self.add_random_food(g, "coffie", 3)
+        self.add_random_food(g, "beer", 3)
+        self.add_random_food(g, "weed", 3)
+        self.add_random_food(g, "krant", 3)
 
-        g.krant_to_get = 5
         self.add_food(g.main_obj[0])
 
     def add_random_food(self, g, *argv):
         not_legal = True
         third_floor = ""
         if len(argv) == 0:
-            f_type = list(g.food_types.keys())[r.randint(0, 2)]
+            f_type = list(g.food_colors.keys())[r.randint(0, 3)]
             floor = r.randint(0, g.number_of_floors-1)
         elif len(argv) == 1 and type(argv) == type(""):
             f_type = argv
@@ -327,17 +341,9 @@ class Map(object):
             third_floor = argv[2]
 
         while not_legal:
-            row = r.randint(0, g.rows-1)
             col = r.randint(0, g.columns-1)
+            row = r.randint(0, g.rows-1)
             not_legal = self.is_food_not_legal(g, (col, row, floor))
-            if third_floor == "r" and col < 58:
-                not_legal = True
-            elif third_floor == "r" and col > 85 and row > 42:
-                not_legal = True
-            elif third_floor == "l" and col > 54:
-                not_legal = True
-            if floor == 3 and (col < 15 or col > 90):
-                not_legal = True
 
         self.add_food(Food(f_type, (col, row, floor), g))
 
@@ -362,6 +368,9 @@ class Map(object):
         for f in self.food:
             if f.position == pos:
                 return True
+
+        if pos[2] == 3 and (pos[0] > 90 or pos[1] < 15):
+            return True
 
         if pos in g.s.body:
             return True
@@ -424,7 +433,7 @@ class Map(object):
     def open_third_stair(self):
         self.walls[self.floor1_stair_wall].status = "invisible"
         self.walls[self.floor2_stair_wall].status = "invisible"
-        print("Last Stair OPENED!")
+        print("Upstairs OPENED!")
 
     def open_schuur_stair(self):
         self.walls[self.schuur1_stair_wall].status = "invisible"
@@ -443,6 +452,11 @@ class Map(object):
         self.init_tropen()
         self.init_stairs()
         self.init_food(g)
+        self.open_tropen()
+        self.open_first_stair()
+        self.open_schuur_stair()
+        self.open_second_stair()
+        self.open_third_stair()
         self.under_effect_of_weed = False
 
     def draw(self, surface, g):

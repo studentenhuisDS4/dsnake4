@@ -17,14 +17,14 @@ class Food(object):
             self.points = 20
             self.block_parts = 1
         elif food_type == "beer":
-            self.points = 10
+            self.points = 20
             self.block_parts = 1
         elif food_type == "weed":
-            self.points = 10
-            self.block_parts = 0
+            self.points = 20
+            self.block_parts = 1
         elif food_type == "krant":
-            self.points = 0
-            self.block_parts = 0
+            self.points = 20
+            self.block_parts = 1
         elif food_type == "main_obj":
             self.points = 100
             self.block_parts = 5

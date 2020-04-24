@@ -76,11 +76,11 @@ class Snake(object):
                 letter = '4'
             else:
                 letter = 'S'
-            textsurface = self.font.render(letter, False, (0, 255, 0))
             i = self.body[part][0]
             j = self.body[part][1]
             #pygame.draw.rect(surface, (0,255, 0), (i*dis+1,j*dis+1, dis-2, dis-2))
             if self.body[part][2] == g.current_floor:
+                textsurface = self.font.render(letter, False, (0, 255, 0))
                 pygame.draw.rect(surface, (0, 0, 0),
-                                 (i*dis+1, j*dis+1, dis-1, dis-1))
+                                (i*dis+1, j*dis+1, dis-1, dis-1))
                 surface.blit(textsurface, (i*dis+2, j*dis-1))

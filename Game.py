@@ -92,6 +92,8 @@ class Game(object):
         return climbed, self.points, False, False
 
     def init_main_obj(self):
+        self.main_obj = []
+        self.main_obj_locations = []
         self.main_obj.append(Food("main_obj", (35, 38, 0), self))
         self.main_obj_locations.append("Andrea's Room")
         self.main_obj.append(Food("main_obj", (78, 40, 1), self))
@@ -212,7 +214,6 @@ class Game(object):
                         
                         for i in range(stair_length):
                             self.s.move()
-                            print(self.s.body)
 
                             # check for self-collisions
                             if self.s.self_collision():
@@ -253,9 +254,11 @@ class Game(object):
     def reset(self, s_x, s_y):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
+        self.init_main_obj()
         
         self.points = 0
         self.lives_obtained = 0
         self.lives_used = 0
         self.s.reset(self)
         self.map.reset(self)
+

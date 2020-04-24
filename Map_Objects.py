@@ -223,8 +223,6 @@ class Map(object):
 
         self.walls.append(Wall(2, (85, 0), (85, 5), 1))
         self.walls.append(Wall(2, (85, 11), (85, 59), 1))
-        
-        self.walls.append(Wall(2, (85, 42), (105, 42), 0))
 
         # protecting stairs
         self.walls.append(Wall(2, (52, 42), (55, 42), 0, breakable=False))
@@ -348,14 +346,15 @@ class Map(object):
         self.add_food(Food(f_type, (col, row, floor), g))
 
     def is_food_not_legal(self, g, pos):
+
         for wall in self.get_walls_at_floor(pos[2], draw=True):
-            if wall.status != "invisible":
-                direction = wall.direction
-                for block in range(wall.finish[direction] - wall.start[direction]):
-                    i = wall.start[0] + (1 - direction)*block
-                    j = wall.start[1] + direction*block
-                    if (i, j) == (pos[0], pos[1]):
-                        return True
+            direction = wall.direction
+            for block in range(wall.finish[direction] - wall.start[direction]):
+                i = wall.start[0] + (1 - direction)*block
+                j = wall.start[1] + direction*block
+                if (i, j) == (pos[0], pos[1]):
+                    return True
+
         for stair in self.get_stairs_at_floor(pos[2]):
             for i in range(stair.bottom_right[0] - stair.top_left[0]):
                 for j in range(stair.bottom_right[1] - stair.top_left[1]):
@@ -369,7 +368,7 @@ class Map(object):
             if f.position == pos:
                 return True
 
-        if pos[2] == 3 and (pos[0] > 90 or pos[1] < 15):
+        if pos[2] == 3 and (pos[0] > 90 or pos[0] < 15):
             return True
 
         if pos in g.s.body:

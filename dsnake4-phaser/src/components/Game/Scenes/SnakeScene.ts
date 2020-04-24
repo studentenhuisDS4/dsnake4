@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { Snake, BodyPart } from '../Data/Snake';
-import { Map, MapVector, MapCell } from '../Data/Map';
+import { MapVector, MapCell } from '../Data/MapElements';
+import { MapController } from '../Data/MapController';
 import { CELLS_X, CELLS_Y } from '../Data/Generics';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
@@ -33,7 +34,7 @@ export class SnakeScene extends Phaser.Scene {
 
     // Snake game loop
     private timedEvent!: Phaser.Time.TimerEvent;
-    private map!: Map;
+    private map!: MapController;
     inputKeys!: KeyBindings;
 
     constructor() {
@@ -53,7 +54,7 @@ export class SnakeScene extends Phaser.Scene {
         this.cellWidth = this.width / CELLS_X;
         this.cellHeight = this.height / CELLS_Y;
 
-        this.map = new Map();
+        this.map = new MapController();
         this.map.flattenMap();
         this.constructMapElements();
         this.snake = new Snake(15, 16, 3, 'Right');

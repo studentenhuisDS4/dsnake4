@@ -1,6 +1,4 @@
-import { Direction, CELLS_X, CELLS_Y } from './Generics';
-
-export type MapCellType = 'Wall' | 'Pickup' | 'Stairs' | 'Void';
+import { Direction, CELLS_X, CELLS_Y, MapCellType } from './Generics';
 
 export class MapCell {
     /* 

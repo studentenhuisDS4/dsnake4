@@ -32,7 +32,7 @@ export class BodyPart {
 export class Snake {
     x: number;
     y: number;
-    private direction: Direction;
+    direction: Direction;
     bodyParts!: BodyPart[];
 
     constructor(initialLength: number, x: number, y: number, initialDirection: Direction = 'Up') {

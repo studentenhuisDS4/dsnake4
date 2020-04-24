@@ -1,14 +1,14 @@
 import * as Phaser from 'phaser';
-import { SnakeMainScene } from './Scenes/SnakeMainScene';
+import { SnakeScene } from './Scenes/SnakeScene';
+import { MenuScene } from './Scenes/MenuScene';
 
 export const ZOOM = 1;
 export const SW = 1050 / ZOOM;
 export const SH = 600 / ZOOM;
 const gameConfig: Phaser.Types.Core.GameConfig = {
-    title: 'Sample',
-
+    title: 'DSnake4',
     type: Phaser.AUTO,
-    scene: SnakeMainScene,
+    scene: [MenuScene, SnakeScene],
     width: SW,
     height: SH,
     fps: {

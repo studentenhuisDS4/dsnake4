@@ -1,4 +1,4 @@
-import { Direction, CELLS_X, CELLS_Y, MapCellType } from './Generics';
+import { Direction, CELLS_X, CELLS_Y, MapCellType, MapLevel } from '../Generics';
 
 export class MapCell {
     /* 

@@ -1,9 +1,9 @@
-import { MapVector, MapCell } from './MapElements';
-import { GameObjects, Scene } from 'phaser';
+import { MapVector, MapCell } from './Map/MapElements';
+import { Scene } from 'phaser';
 import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
-import { Map } from './Map';
+import { Map } from './Map/Map';
 
 export class MapController {
     private scene: Scene;
@@ -27,18 +27,22 @@ export class MapController {
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
-        this.map = new Map();
+        this.map = new Map('FirstFloor');
         this.snake = new Snake(15, 16, 3, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
 
-    public setup() {
+    public loadLevel() {
+        this.scene.load.json
+    }
+
+    public renderCurrentMap() {
         console.log("Controller setup");
         this.inputKeys = this.scene.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
 
         this.constructMap();
-        this.renderMap();
+        this.renderMapCells();
         this.renderSnake();
     }
 
@@ -78,7 +82,7 @@ export class MapController {
         this.map.flattenMap();
     }
 
-    private renderMap() {
+    private renderMapCells() {
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {

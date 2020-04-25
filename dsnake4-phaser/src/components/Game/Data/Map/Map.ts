@@ -1,17 +1,19 @@
-import { MapElement, MapCell, MapVector } from './MapElements';
-import { CELLS_Y, CELLS_X, MapCellType } from './Generics';
+import { MapElement, MapCell } from './MapElements';
+import { CELLS_Y, CELLS_X, MapCellType, MapLevel } from '../Generics';
 
 export class Map {
     /* 
     This class should calculate the map from all children elements.
     Do note that if children overlap, order of entry matters (we don't check overlap).
     
-    Also note that calculating the final map should be done once (or at least not a lot).
+    Also note that calculating the final map should be done once (or at least not a lot) with `flattenMap`.
     */
+    readonly mapLevel: MapLevel;
     private childElements: MapElement[];
     public Map2D!: MapCell[][];
 
-    constructor() {
+    constructor(mapLevel: MapLevel) {
+        this.mapLevel = mapLevel;
         this.childElements = [];
     }
 
@@ -63,7 +65,7 @@ export class Map {
 
     public appendElement(element: MapElement) {
         this.childElements.push(element);
-        
+
         // Make fluent
         return this;
     }

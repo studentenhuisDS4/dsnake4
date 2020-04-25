@@ -4,6 +4,7 @@ import random as r
 from Map_Objects import *
 from Snake import Snake
 from Food import Food
+from Shop import *
 
 
 class Game(object):
@@ -12,26 +13,19 @@ class Game(object):
     starting_position = []
     s = None
     current_floor = 0
-    number_of_floors = 4
+    number_of_floors = 5
 
     main_obj_total = 0
     main_obj = []
     main_obj_collected = 0
     main_obj_locations = []
 
-    krant_to_get = 0
+    max_lives = 3
+    lives_obtained = 0
+    lives_used = 0
 
-    beer_to_get = 10
-    beer_blocks_loss = 15
-
-    weed_to_get = 10
-    weed_time_effect = 105
-    weed_counter = 0
-
-    coffie_to_get = [10, 20, 30, 0]
-    coffie_total_lives = 3
-    coffie_lives_obtained = 0
-    coffie_lives_used = 0
+    shop = None
+    current_shop_items = []
 
     def __init__(self, s_x, s_y):
         self.current_floor = self.starting_floor
@@ -43,22 +37,74 @@ class Game(object):
         self.columns = 105
         self.rows = 60
 
-        self.number_of_keys = 5
-        self.keys_used = [0]*self.number_of_keys
-
         self.font = pygame.font.SysFont('Consolas', 20)
-        self.food_types = {"coffie": 0, "beer": 0,
-                           "weed": 0, "krant": 0, "main_obj": 0}
         self.food_colors = {"coffie": (154, 86, 27), "beer": (
             255, 255, 20), "weed": (70, 200, 0), "krant": (200, 200, 200), "main_obj": (255, 0, 0)}
+        self.init_main_obj()
 
         self.points = 0
-        self.init_main_obj()
+
         self.s = Snake(self)
+
         self.map = Map(self)
-        self.map.open_tropen
+        self.map.open_tropen()
+        self.map.open_first_stair()
+        self.map.open_schuur_stair()
+        self.map.open_second_stair()
+        self.map.open_third_stair()
+
+        self.init_shop()
+
+    def move_snake(self):
+        climbed = False
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                # TODO catch exeption if game already quit
+                pygame.quit()
+                exit()
+
+            keys = pygame.key.get_pressed()
+
+            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+                self.s.turn('LEFT')
+            elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
+                self.s.turn('RIGHT')
+            elif (keys[pygame.K_UP] or keys[pygame.K_w]):
+                self.s.turn('UP')
+            elif (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+                self.s.turn('DOWN')
+            elif keys[pygame.K_SPACE]:
+                return climbed, self.points, False, True
+            break
+
+        # check for stairs
+        climbed, game_ended = self.stair_climbing()
+
+        if self.current_floor == 4:
+            climbed = self.shop_buying()
+
+        self.s.move()
+
+        if game_ended:
+            return climbed, self.points, True, False
+
+        # check for self-collisions
+        if self.s.self_collision():
+            return climbed, self.points, self.fatal_collision(), False
+
+        # check for collisions with walls
+        if self.collision_with_walls():
+            return climbed, self.points, self.fatal_collision(), False
+
+        # check if the snake ate food
+        self.food_eating()
+
+        return climbed, self.points, False, False
 
     def init_main_obj(self):
+        self.main_obj = []
+        self.main_obj_locations = []
         self.main_obj.append(Food("main_obj", (35, 38, 0), self))
         self.main_obj_locations.append("Andrea's Room")
         self.main_obj.append(Food("main_obj", (78, 40, 1), self))
@@ -119,160 +165,138 @@ class Game(object):
         self.main_obj.append(Food("main_obj", (28, 26, 3), self))
         self.main_obj_locations.append("David's Room")
 
+        c = list(zip(self.main_obj, self.main_obj_locations))
+        r.shuffle(c)
+        self.main_obj, self.main_obj_locations = zip(*c)
+
         self.main_obj_total = len(self.main_obj)
 
-    def eating_food(self, f):
+    def init_shop(self):
+        items = []
 
-        if not self.map.under_effect_of_weed or f.food_type != "weed":
-            self.food_types[f.food_type] += 1
-            self.points += f.points
+        items.append(ShopItem(cost=100, name='Open Front Yard',
+                              description='', key='ofy', section=0, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Open Inside Stair',
+                              description='', key='ois', section=0, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
+                              key='cm1', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
+                              key='cm2', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Mail Box', description='New puzzles',
+                              key='0mb', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Abortion', description='Shortening potion',
+                              key='abo', section=2, repeatable=True, weight=1))
+        items.append(ShopItem(cost=100, name='Weed', description='Go through walls',
+                              key='wee', section=2, repeatable=True, weight=1))
+        items.append(ShopItem(cost=100, name='Life', description='Get an extra life',
+                              key='li1', section=2, repeatable=False, weight=1))
 
-        for i in range(min(f.block_parts, len(self.s.body))):
-            self.s.undigested_food.append(self.s.body[i])
+        self.shop = Shop(all_items=items, n_sections=3)
+        self.current_shop_items = [None]*3
+        self.enter_shop()
 
-        if f.food_type == "main_obj":
-            self.main_obj_collected += 1
-            if self.main_obj_collected != self.main_obj_total:
-                self.map.food.append(self.main_obj[self.main_obj_collected])
-        else:
-            self.map.add_random_food(self)
-
-        if self.keys_used[0] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 1:
-                self.food_types["krant"] = 0
-                self.keys_used[0] = 1
-                self.map.open_first_stair()
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.krant_to_get = 6
-        elif self.keys_used[1] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 4:
-                self.food_types["krant"] = 0
-                self.keys_used[1] = 1
-                self.map.open_schuur_stair()
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.krant_to_get = 8
-        elif self.keys_used[2] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 7:
-                self.food_types["krant"] = 0
-                self.keys_used[2] = 1
-                self.map.open_third_stair()
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 2, "l")
-                self.map.add_random_food(self, "krant", 2, "l")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.krant_to_get = 12
-        elif self.keys_used[3] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 11:
-                self.food_types["krant"] = 0
-                self.keys_used[3] = 1
-                self.map.open_second_stair()
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 0)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 1)
-                self.map.add_random_food(self, "krant", 2, "l")
-                self.map.add_random_food(self, "krant", 2, "l")
-                self.map.add_random_food(self, "krant", 2, "l")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.map.add_random_food(self, "krant", 2, "r")
-                self.krant_to_get = 16
-        elif self.keys_used[4] == 0:
-            if self.food_types["krant"] == self.krant_to_get and self.food_types["main_obj"] >= 21:
-                self.food_types["krant"] = 0
-                self.keys_used[4] = 1
-                self.map.open_tropen()
-
-        if self.food_types["beer"] == self.beer_to_get:
-            for i in range(self.beer_blocks_loss):
-                if len(self.s.body) > 3:
-                    self.s.body.pop()
-            self.food_types["beer"] = 0
-        if self.food_types["weed"] == self.weed_to_get and not self.map.under_effect_of_weed:
-            self.weed_counter = self.weed_time_effect
-            self.map.get_high()
-        if self.food_types["coffie"] == self.coffie_to_get[self.coffie_lives_obtained] and self.coffie_lives_obtained < 3:
-            self.food_types["coffie"] = 0
-            self.coffie_lives_obtained += 1
-
-        self.map.remove_food(self, f)
-
-    def climbing_stairs(self, stair_identifier):
-        stair_from = None
-        stair_to = None
-        next_floor = 0
-
-        stair_length = 0
-
-        for stair in self.map.get_stairs_at_floor(self.current_floor):
-            if stair.identifier == stair_identifier:
-                stair_from = stair
-        for i in range(self.number_of_floors):
-            if i != stair_from.floor:
-                for stair in self.map.get_stairs_at_floor(i):
-                    if stair.identifier == stair_identifier:
-                        stair_to = stair
-                        next_floor = i
-
-        stair_length = stair_to.bottom_right[abs(
-            stair_to.direction[1])] - stair_to.top_left[abs(stair_to.direction[1])]
-
-        for i in range(stair_length):
-            self.s.body.insert(0, (stair_to.climb_start[0] + i*stair_to.direction[0],
-                                   stair_to.climb_start[1] + i*stair_to.direction[1], next_floor))
-            if self.s.body[-1] in self.s.undigested_food:
-                self.s.complete_digestion(self.s.body[-1])
-                self.s.body[-1]
-            else:
-                self.s.body.pop()
-            if len(list(dict.fromkeys(self.s.body))) != len(self.s.body):
-                if self.use_life():
-                    pygame.time.delay(500)
-                    return False
-                else:
-                    pygame.time.delay(500)
+    def collision_with_walls(self):
+        for wall in self.map.get_walls_at_floor(self.current_floor):
+            direction = wall.direction
+            for block in range(wall.length):
+                i = wall.start[0] + (1 - direction)*block
+                j = wall.start[1] + direction*block
+                if self.s.body[0] == (i, j, self.current_floor):
                     return True
-            self.s.food_eating(self)
-        self.s.dirnx, self.s.dirny = (stair_to.direction)
-        self.current_floor = next_floor
-
         return False
 
-    def reduce_weed_counter(self):
-        self.weed_counter -= 1
-        if self.weed_counter == 0:
-            self.map.get_sober()
-            self.food_types["weed"] = 0
+    def food_eating(self):
+        for f in self.map.food:
+            if f.position == self.s.body[0]:
+                self.points += f.points
+                self.s.add_undigested_food(
+                    min(f.block_parts, len(self.s.body)))
+
+                if f.food_type == "main_obj":
+                    self.main_obj_collected += 1
+                    if self.main_obj_collected != self.main_obj_total:
+                        # Add Restarting
+                        self.map.food.append(
+                            self.main_obj[self.main_obj_collected])
+                else:
+                    self.map.add_random_food(self)
+
+                self.map.remove_food(self, f)
+
+    def stair_climbing(self):
+        for stair in self.map.get_stairs_at_floor(self.s.body[0][2]):
+            for i in range(stair.bottom_right[0] - stair.top_left[0]):
+                for j in range(stair.bottom_right[1] - stair.top_left[1]):
+                    if (stair.top_left[0] + i, stair.top_left[1] + j, self.current_floor) == self.s.body[0]:
+                        stair_identifier = stair.identifier
+                        stair_to = None
+                        next_floor = 0
+
+                        stair_length = 0
+
+                        for i in range(self.number_of_floors):
+                            if i != stair.floor:
+                                for st in self.map.get_stairs_at_floor(i):
+                                    if st.identifier == stair_identifier:
+                                        stair_to = st
+                                        next_floor = i
+
+                        stair_length = stair_to.bottom_right[abs(
+                            stair_to.direction[1])] - stair_to.top_left[abs(stair_to.direction[1])]
+
+                        self.s.move(
+                            move_to=(stair_to.climb_start[0], stair_to.climb_start[1], stair_to.floor))
+                        self.s.turn(stair_to.direction)
+
+                        if stair_to.floor == 4:
+                            self.enter_shop()
+
+                        for i in range(stair_length):
+                            self.s.move()
+
+                        # check for self-collisions
+                        if self.s.self_collision():
+                            return True, self.fatal_collision()
+
+                        # check if the snake ate food
+                        self.food_eating()
+
+                        self.s.dirnx, self.s.dirny = (stair_to.direction)
+                        self.current_floor = next_floor
+
+                        return True, False
+
+        return False, False
+
+    def shop_buying(self):
+        for se in self.map.shop_elements:
+            for i in range(se.bottom_right[0] - se.top_left[0]):
+                for j in range(se.bottom_right[1] - se.top_left[1]):
+                    if (se.top_left[0] + i, se.top_left[1] + j, self.current_floor) == self.s.body[0] and self.points >= se.item.cost:
+                        self.points -= se.item.cost
+
+                        if se.item.key == 'ofy':
+                            self.map.open_front_yard()
+                        elif se.item.key == 'ois':
+                            self.map.open_second_stair()
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        return True
+
 
     def use_life(self):
-        if self.coffie_lives_obtained - self.coffie_lives_used > 0:
-            self.coffie_lives_used += 1
+        if self.lives_obtained - self.lives_used > 0:
+            self.lives_used += 1
             snake_len = len(self.s.body)
             self.current_floor = 0
             self.s.reset(self)
@@ -284,17 +308,26 @@ class Game(object):
         else:
             return False
 
+    def enter_shop(self):
+        for s in range(self.shop.n_sections):
+            self.current_shop_items[s] = self.shop.select_random_item(
+                section=s)
+
+        self.map.update_shop(self)
+
+    def fatal_collision(self):
+        pygame.time.delay(500)
+        return not self.use_life()
+
     def reset(self, s_x, s_y):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
+        self.init_main_obj()
 
-        for i in list(self.food_types.keys()):
-            self.food_types[i] = 0
-
-        self.keys_used = [0]*len(self.keys_used)
         self.points = 0
-        self.weed_counter = 0
-        self.coffie_lives_obtained = 0
-        self.coffie_lives_used = 0
+        self.lives_obtained = 0
+        self.lives_used = 0
         self.s.reset(self)
         self.map.reset(self)
+
+        self.init_shop()

@@ -195,7 +195,7 @@ class Game(object):
     def collision_with_walls(self):
         for wall in self.map.get_walls_at_floor(self.current_floor):
             direction = wall.direction
-            for block in range(wall.finish[direction] - wall.start[direction]):
+            for block in range(wall.length):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
                 if self.s.body[0] == (i, j, self.current_floor):

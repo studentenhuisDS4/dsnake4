@@ -464,8 +464,12 @@ class Map(object):
     def open_first_stair(self):
         self.walls[self.bin_stair_wall].status = "invisible"
         self.walls[self.gr_stair_wall].status = "invisible"
-        self.walls[self.front_yard_wall].status = "invisible"
         print("Outside Stair OPENED!")
+
+    def open_front_yard(self):
+        self.walls[self.front_yard_wall].status = "invisible"
+        print("Front Yard OPENED!")
+        
 
     def open_second_stair(self):
         self.walls[self.grot1_stair_wall].status = "invisible"

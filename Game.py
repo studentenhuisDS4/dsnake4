@@ -81,6 +81,9 @@ class Game(object):
         # check for stairs
         climbed, game_ended = self.stair_climbing()
 
+        if self.current_floor == 4:
+            climbed = self.shop_buying()
+
         self.s.move()
 
         if game_ended:
@@ -251,16 +254,12 @@ class Game(object):
                         for i in range(stair_length):
                             self.s.move()
 
-                            # check for self-collisions
-                            if self.s.self_collision():
-                                return True, self.fatal_collision()
+                        # check for self-collisions
+                        if self.s.self_collision():
+                            return True, self.fatal_collision()
 
-                            # check for collisions with walls
-                            if self.collision_with_walls():
-                                return True, self.fatal_collision()
-
-                            # check if the snake ate food
-                            self.food_eating()
+                        # check if the snake ate food
+                        self.food_eating()
 
                         self.s.dirnx, self.s.dirny = (stair_to.direction)
                         self.current_floor = next_floor
@@ -268,6 +267,32 @@ class Game(object):
                         return True, False
 
         return False, False
+
+    def shop_buying(self):
+        for se in self.map.shop_elements:
+            for i in range(se.bottom_right[0] - se.top_left[0]):
+                for j in range(se.bottom_right[1] - se.top_left[1]):
+                    if (se.top_left[0] + i, se.top_left[1] + j, self.current_floor) == self.s.body[0] and self.points >= se.item.cost:
+                        self.points -= se.item.cost
+
+                        if se.item.key == 'ofy':
+                            self.map.open_front_yard()
+                        elif se.item.key == 'ois':
+                            self.map.open_second_stair()
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        elif se.item.key == '':
+                            break
+                        return True
+
 
     def use_life(self):
         if self.lives_obtained - self.lives_used > 0:

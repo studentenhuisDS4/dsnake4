@@ -6,7 +6,6 @@
 </template>
 
 <script lang="ts">
-
 import { Component, Prop, Vue } from "vue-property-decorator";
 import { launchGame } from "./GameConfig";
 
@@ -28,8 +27,6 @@ export default class Game extends Vue {
   mounted() {
     console.log("GAME - mounted");
     this.game = launchGame(this.canvasIdentifier);
-    
-    // this.game.scene..restart();
   }
 
   destroyed() {
@@ -41,6 +38,6 @@ export default class Game extends Vue {
 
 <style scoped>
 div {
-  font-family: 'Consolas';
+  font-family: "Consolas";
 }
 </style>

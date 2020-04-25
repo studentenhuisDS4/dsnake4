@@ -6,9 +6,12 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "npm run test:unit",
+    "test:unit": "jest"
   },
   "dependencies": {
+    "@types/jest": "^25.2.1",
+    "babel-core": "^7.0.0-bridge.0",
     "core-js": "^3.6.4",
     "phaser": "^3.22.0",
     "register-service-worker": "^1.7.1",
@@ -33,8 +36,10 @@
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "jest": "^25.4.0",
+    "jest-canvas-mock": "^2.2.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
+    "ts-jest": "^25.4.0",
     "typescript": "~3.8.3",
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.11"
@@ -42,11 +47,16 @@
   "jest": {
     "moduleFileExtensions": [
       "js",
+      "ts",
       "json",
       "vue"
     ],
     "transform": {
-      ".*\\.(vue)$": "vue-jest"
-    }
+      ".*\\.(vue)$": "vue-jest",
+      "^.+\\.tsx?$": "ts-jest"
+    },
+    "testURL": "http://localhost/",
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+    "setupFiles": ["jest-canvas-mock"]
   }
 }

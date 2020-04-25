@@ -4,6 +4,7 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
+import { defaultTextStyle } from './Generics';
 
 export class MapController {
     private scene: Scene;
@@ -13,14 +14,6 @@ export class MapController {
     cellHeight: number;
     cellWidth: number;
     inputKeys!: KeyBindings;
-
-    private defaultTextStyle = {
-        fontSize: this.cellHeight?.toString(),
-        fontStyle: 'normal',
-        fontFamily: 'Consolas',
-        color: "#42b983",
-        backgroundColor: 'rgba(0,0,0,0)'
-    };
 
     constructor(scene: Scene, cellWidth: number, cellHeight: number) {
         this.scene = scene;
@@ -106,7 +99,7 @@ export class MapController {
         const pixelX = (part.x - 1) * this.cellWidth + 1;
         const pixelY = (part.y - 1) * this.cellHeight - 2;
         if (part.gameObject == null) {
-            part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), this.defaultTextStyle);
+            part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }
         else {
             part.gameObject.setPosition(pixelX, pixelY);

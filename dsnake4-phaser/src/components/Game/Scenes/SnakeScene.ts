@@ -17,14 +17,6 @@ export class SnakeScene extends Phaser.Scene {
     private cellWidth!: number;
     private cellHeight!: number;
 
-    private defaultTextStyle = {
-        fontSize: this.cellHeight?.toString(),
-        fontStyle: 'normal',
-        fontFamily: 'Consolas',
-        color: "#42b983",
-        backgroundColor: 'rgba(0,0,0,0)'
-    };
-
     // Snake game loop
     private mapController!: MapController;
     inputKeys!: KeyBindings;

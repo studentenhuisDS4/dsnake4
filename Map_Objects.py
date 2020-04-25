@@ -2,6 +2,7 @@ import pygame as pygame
 import random as r
 
 from Food import Food
+from Shop import *
 
 
 class Wall(object):
@@ -38,9 +39,19 @@ class Stair(object):
         self.climb_start = climb_start
 
 
+class ShopElement(Stair):
+    color = (0, 0, 0)
+    text_color = (0, 0, 0)
+    item = None
+
+    def __init__(self, floor, top_left, bottom_right, identifier):
+        super().__init__(floor, top_left, bottom_right, identifier, (0, 0), (0, 0))
+
+
 class Map(object):
     walls = []
     stairs = []
+    shop_elements = []
     food = []
 
     bin_stair_wall = 0
@@ -54,6 +65,10 @@ class Map(object):
     floor2_stair_wall = 0
     tropen_wall = 0
 
+    GREEN = pygame.Color('green1')
+    RED = pygame.Color('tomato')
+    BLACK = pygame.Color('black')
+
     under_effect_of_weed = False
 
     def __init__(self, g):
@@ -61,6 +76,7 @@ class Map(object):
         self.init_second_floor()
         self.init_third_floor()
         self.init_tropen()
+        self.init_shop()
         self.init_stairs()
         self.init_food(g)
 
@@ -260,6 +276,18 @@ class Map(object):
         self.walls.append(Wall(3, (65, 35), (65, 44), 1))
         self.walls.append(Wall(3, (65, 48), (65, 59), 1))
 
+    def init_shop(self):
+        # contour walls
+        self.walls.append(Wall(4, (0, 0), (104, 0), 0, breakable=False))
+        self.walls.append(Wall(4, (104, 0), (104, 20), 1, breakable=False))
+        self.walls.append(Wall(4, (0, 0), (0, 20), 1, breakable=False))
+        
+        self.shop_elements = []
+        
+        self.shop_elements.append(ShopElement(4, (1, 1), (35, 20), 6))
+        self.shop_elements.append(ShopElement(4, (36, 1), (69, 20), 6))
+        self.shop_elements.append(ShopElement(4, (70, 1), (104, 20), 6))
+
     def init_stairs(self):
         self.stairs = []
 
@@ -281,6 +309,12 @@ class Map(object):
 
         self.stairs.append(Stair(0, (13, 0), (18, 1), 5, (0, 1), (15, 1)))
         self.stairs.append(Stair(3, (41, 58), (65, 59), 5, (0, -1), (53, 58)))
+
+        self.stairs.append(Stair(0, (75, 1), (104, 5), 6, (0, 1), (90, 1)))
+        self.stairs.append(Stair(4, (0, 59), (105, 60), 6, (0, -1), (53, 58)))
+        self.stairs.append(Stair(4, (0, 20), (1, 59), 6, (0, -1), (53, 97)))
+        self.stairs.append(
+            Stair(4, (104, 20), (105, 59), 6, (0, -1), (53, 97)))
 
     def init_food(self, g):
         self.food = []
@@ -418,6 +452,15 @@ class Map(object):
 
         return
 
+    def update_shop(self, g=None):
+        for i in range(len(self.shop_elements)):
+            self.shop_elements[i].item = g.current_shop_items[i]
+            if g.points >= self.shop_elements[i].item.cost:
+                self.shop_elements[i].color = self.GREEN
+            else:
+                self.shop_elements[i].color = self.RED
+            self.shop_elements[i].text_color = self.BLACK
+
     def open_first_stair(self):
         self.walls[self.bin_stair_wall].status = "invisible"
         self.walls[self.gr_stair_wall].status = "invisible"
@@ -449,6 +492,7 @@ class Map(object):
         self.init_second_floor()
         self.init_third_floor()
         self.init_tropen()
+        self.init_shop()
         self.init_stairs()
         self.init_food(g)
         self.open_tropen()
@@ -487,4 +531,23 @@ class Map(object):
                 pygame.draw.rect(surface, f.color,
                                  (i*dis+1, j*dis+1, dis-1, dis-1))
 
+        if g.current_floor == 4:
+            self.draw_shop(surface=surface, g=g)
+
         g.s.draw(surface, g)
+
+    def draw_shop(self, surface=None, g=None):
+        dis = g.width/g.columns
+
+        for s in self.shop_elements:
+            for i in range(s.bottom_right[0] - s.top_left[0]):
+                for j in range(s.bottom_right[1] - s.top_left[1]):
+                    pygame.draw.rect(surface, s.color, ((
+                        i+s.top_left[0])*dis+1, (j+s.top_left[1])*dis+1, dis-1, dis-1))
+            name = g.font.render(s.item.name, False, s.text_color)
+            surface.blit(name, (s.top_left[0]*dis + 30, 40))
+            description = g.font.render(
+                s.item.description, False, s.text_color)
+            surface.blit(description, (s.top_left[0]*dis + 30, 70))
+            cost = g.font.render(str(s.item.cost), False, s.text_color)
+            surface.blit(cost, (s.top_left[0]*dis + 30, 100))

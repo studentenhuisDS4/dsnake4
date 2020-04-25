@@ -722,6 +722,8 @@ def connect_server(client, *argv):
 
 
 pygame.init()
+pygame.display.set_caption('DSnake4')
+
 pygame.font.init()
 
 g = Game(100, 20)

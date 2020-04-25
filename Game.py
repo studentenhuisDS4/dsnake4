@@ -4,6 +4,7 @@ import random as r
 from Map_Objects import *
 from Snake import Snake
 from Food import Food
+from Shop import *
 
 
 class Game(object):
@@ -12,7 +13,7 @@ class Game(object):
     starting_position = []
     s = None
     current_floor = 0
-    number_of_floors = 4
+    number_of_floors = 5
 
     main_obj_total = 0
     main_obj = []
@@ -22,6 +23,9 @@ class Game(object):
     max_lives = 3
     lives_obtained = 0
     lives_used = 0
+
+    shop = None
+    current_shop_items = []
 
     def __init__(self, s_x, s_y):
         self.current_floor = self.starting_floor
@@ -36,16 +40,20 @@ class Game(object):
         self.font = pygame.font.SysFont('Consolas', 20)
         self.food_colors = {"coffie": (154, 86, 27), "beer": (
             255, 255, 20), "weed": (70, 200, 0), "krant": (200, 200, 200), "main_obj": (255, 0, 0)}
+        self.init_main_obj()
 
         self.points = 0
-        self.init_main_obj()
+
         self.s = Snake(self)
+
         self.map = Map(self)
         self.map.open_tropen()
         self.map.open_first_stair()
         self.map.open_schuur_stair()
         self.map.open_second_stair()
         self.map.open_third_stair()
+
+        self.init_shop()
 
     def move_snake(self):
         climbed = False
@@ -160,6 +168,30 @@ class Game(object):
 
         self.main_obj_total = len(self.main_obj)
 
+    def init_shop(self):
+        items = []
+
+        items.append(ShopItem(cost=100, name='Open Front Yard',
+                              description='', key='ofy', section=0, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Open Inside Stair',
+                              description='', key='ois', section=0, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
+                              key='cm1', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
+                              key='cm2', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Mail Box', description='New puzzles',
+                              key='0mb', section=1, repeatable=False, weight=1))
+        items.append(ShopItem(cost=100, name='Abortion', description='Shortening potion',
+                              key='abo', section=2, repeatable=True, weight=1))
+        items.append(ShopItem(cost=100, name='Weed', description='Go through walls',
+                              key='wee', section=2, repeatable=True, weight=1))
+        items.append(ShopItem(cost=100, name='Life', description='Get an extra life',
+                              key='li1', section=2, repeatable=False, weight=1))
+
+        self.shop = Shop(all_items=items, n_sections=3)
+        self.current_shop_items = [None]*3
+        self.enter_shop()
+
     def collision_with_walls(self):
         for wall in self.map.get_walls_at_floor(self.current_floor):
             direction = wall.direction
@@ -209,9 +241,13 @@ class Game(object):
                         stair_length = stair_to.bottom_right[abs(
                             stair_to.direction[1])] - stair_to.top_left[abs(stair_to.direction[1])]
 
-                        self.s.body.insert(0, (stair_to.climb_start[0], stair_to.climb_start[1], stair_to.floor))
-                        (self.s.dirnx, self.s.dirny) = stair_to.direction
-                        
+                        self.s.move(
+                            move_to=(stair_to.climb_start[0], stair_to.climb_start[1], stair_to.floor))
+                        self.s.turn(stair_to.direction)
+
+                        if stair_to.floor == 4:
+                            self.enter_shop()
+
                         for i in range(stair_length):
                             self.s.move()
 
@@ -247,6 +283,13 @@ class Game(object):
         else:
             return False
 
+    def enter_shop(self):
+        for s in range(self.shop.n_sections):
+            self.current_shop_items[s] = self.shop.select_random_item(
+                section=s)
+
+        self.map.update_shop(self)
+
     def fatal_collision(self):
         pygame.time.delay(500)
         return not self.use_life()
@@ -255,10 +298,11 @@ class Game(object):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
         self.init_main_obj()
-        
+
         self.points = 0
         self.lives_obtained = 0
         self.lives_used = 0
         self.s.reset(self)
         self.map.reset(self)
 
+        self.init_shop()

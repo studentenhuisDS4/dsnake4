@@ -15,9 +15,12 @@ class Snake(object):
         self.dirny = 0
         self.font = pygame.font.SysFont('Consolas', 13)
 
-    def move(self):
-        self.body.insert(
-            0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
+    def move(self, move_to=None):
+        if move_to == None:
+            self.body.insert(
+                0, (self.body[0][0] + self.dirnx, self.body[0][1] + self.dirny, self.body[0][2]))
+        else:
+            self.body.insert(0, move_to)
 
         if self.body[-1] in self.undigested_food:
             self.complete_digestion(self.body[-1])
@@ -25,27 +28,28 @@ class Snake(object):
         else:
             self.body.pop()
 
-    def turn(self, direction=''):
-
-        if direction == 'LEFT' and self.dirny != 0:
-            self.dirnx = -1
-            self.dirny = 0
-        elif direction == 'RIGHT' and self.dirny != 0:
-            self.dirnx = 1
-            self.dirny = 0
-        elif direction == 'UP' and self.dirnx != 0:
-            self.dirnx = 0
-            self.dirny = -1
-        elif direction == 'DOWN' and self.dirnx != 0:
-            self.dirnx = 0
-            self.dirny = 1
-
+    def turn(self, direction=None):
+        if type(direction) == type(''):
+            if direction == 'LEFT' and self.dirny != 0:
+                self.dirnx = -1
+                self.dirny = 0
+            elif direction == 'RIGHT' and self.dirny != 0:
+                self.dirnx = 1
+                self.dirny = 0
+            elif direction == 'UP' and self.dirnx != 0:
+                self.dirnx = 0
+                self.dirny = -1
+            elif direction == 'DOWN' and self.dirnx != 0:
+                self.dirnx = 0
+                self.dirny = 1
+        else:
+            self.dirnx, self.dirny = direction
         return
 
     def add_undigested_food(self, n_of_blocks=1):
         for i in range(n_of_blocks):
             self.undigested_food.append(self.body[i])
-    
+
     def self_collision(self):
         if len(list(dict.fromkeys(self.body))) != len(self.body):
             return True
@@ -82,5 +86,5 @@ class Snake(object):
             if self.body[part][2] == g.current_floor:
                 textsurface = self.font.render(letter, False, (0, 255, 0))
                 pygame.draw.rect(surface, (0, 0, 0),
-                                (i*dis+1, j*dis+1, dis-1, dis-1))
+                                 (i*dis+1, j*dis+1, dis-1, dis-1))
                 surface.blit(textsurface, (i*dis+2, j*dis-1))

@@ -7,7 +7,6 @@ from Map_Objects import *
 from Snake import Snake
 from Food import Food
 from Sprites import Spritesheet
-from png_rendering import png_rendering
 from utils.server_client import ServerClient
 
 
@@ -44,10 +43,10 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
         surface.blit(next_object, (g.width + 20, 90 + counter))
         counter += 120
 
-    # if g.map.under_effect_of_weed:
-    #     for i in range(g.weed_counter):
-    #         pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_time_effect), 255*min(1, 2*g.weed_counter/g.weed_time_effect), 0),
-    #                          (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
+    if g.map.under_effect_of_weed:
+        for i in range(g.weed_counter):
+            pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_effect_length), 255*min(1, 2*g.weed_counter/g.weed_effect_length), 0),
+                             (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
     for i in range(g.main_obj_collected):
         surface.blit(

@@ -8,28 +8,23 @@ class ShopItem(object):
     description = ''
     key = ''
     section = 0
-    repeatable = False
     weight = 1
 
-    def __init__(self, cost=0, name='', description='', key='000', section=0, repeatable=False, weight=1):
+    def __init__(self, cost=0, name='', description='', key='000', section=0, weight=1):
         self.cost = cost
         self.name = name
         self.description = description
         self.key = key
         self.section = section
-        self.repeatable = repeatable
         self.weight = weight
 
 
 class Shop(object):
     items = []
-    bought_items = {}
     n_sections = 0
 
     def __init__(self, all_items=[], n_sections=1):
         self.items = deepcopy(all_items)
-        for i in self.items:
-            self.bought_items[i.key] = 0
         self.n_sections = n_sections
         self.check_empty_section()
 
@@ -56,17 +51,15 @@ class Shop(object):
             for it in self.get_items_at_section(s):
                 w.append(it.weight)
             if sum(w) == 0:
-                empty_item = ShopItem(0, name='Empty', description='You boght all the items in this section',
-                                      key='404', section=s, repeatable=True, weight=1)
+                empty_item = ShopItem(0, name='Empty', description='All items bought',
+                                      key='404', section=s, weight=1)
                 self.items.append(empty_item)
 
 
     def buy_object(self, key=''):
         for i in self.items:
             if i.key == key:
-                self.bought_items[key] += 1
-                if not i.repeatable:
-                    i.weight = 0
+                i.weight = 0
                 self.check_empty_section()
     
     def weighted_choice(self, weights=[]):
@@ -77,4 +70,13 @@ class Shop(object):
             if upto + weights[i] >= r:
                 return i
             upto += weights[i]
+    
+    def delete_item(self, key='000'):
+        for i in range(len(self.items)):
+            if self.items[i].key == key:
+                self.items.pop(i)
+                return
+
+    def add_item(self, item=None):
+        self.items.append(item)
 

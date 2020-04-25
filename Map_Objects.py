@@ -117,7 +117,7 @@ class Map(object):
         # protecting stairs
         self.walls.append(Wall(0, (56, 27), 3, 0, breakable=False))
         self.walls.append(Wall(0, (59, 27), 3, 1, breakable=False))
-        self.walls.append(Wall(0, (55, 30), 5, 0, breakable=False))
+        self.walls.append(Wall(0, (56, 30), 4, 0, breakable=False))
         # Binnenplaats stair wall
         self.walls.append(Wall(0, (55, 27), 3, 1, breakable=False))
         self.bin_stair_wall = len(self.walls) - 1
@@ -269,7 +269,7 @@ class Map(object):
         self.walls.append(Wall(3, (75, 15), 15, 0))
         self.walls.append(Wall(3, (40, 15), 5, 1))
         self.walls.append(Wall(3, (40, 24), 18, 1))
-        self.walls.append(Wall(3, (40, 46), 7, 1))
+        self.walls.append(Wall(3, (40, 46), 13, 1))
         self.walls.append(Wall(3, (17, 37), 23, 0))
         self.walls.append(Wall(3, (53, 3), 12, 1))
         self.walls.append(Wall(3, (65, 35), 24, 0))
@@ -281,9 +281,11 @@ class Map(object):
         self.walls.append(Wall(4, (0, 0), 104, 0, breakable=False))
         self.walls.append(Wall(4, (104, 0), 20, 1, breakable=False))
         self.walls.append(Wall(4, (0, 0), 20, 1, breakable=False))
-        
+        self.walls.append(Wall(4, (35, 0), 20, 1, breakable=False))
+        self.walls.append(Wall(4, (69, 0), 20, 1, breakable=False))
+
         self.shop_elements = []
-        
+
         self.shop_elements.append(ShopElement(4, (1, 1), (35, 20), 6))
         self.shop_elements.append(ShopElement(4, (36, 1), (69, 20), 6))
         self.shop_elements.append(ShopElement(4, (70, 1), (104, 20), 6))
@@ -455,7 +457,11 @@ class Map(object):
     def update_shop(self, g=None):
         for i in range(len(self.shop_elements)):
             self.shop_elements[i].item = g.current_shop_items[i]
-            if g.points >= self.shop_elements[i].item.cost:
+        self.update_shop_color(g)
+
+    def update_shop_color(self, g=None):
+        for i in range(len(self.shop_elements)):
+            if g.points >= self.shop_elements[i].item.cost and self.shop_elements[i].item.weight > 0 and self.shop_elements[i].item.key != '404':
                 self.shop_elements[i].color = self.GREEN
             else:
                 self.shop_elements[i].color = self.RED
@@ -469,7 +475,6 @@ class Map(object):
     def open_front_yard(self):
         self.walls[self.front_yard_wall].status = "invisible"
         print("Front Yard OPENED!")
-        
 
     def open_second_stair(self):
         self.walls[self.grot1_stair_wall].status = "invisible"
@@ -502,8 +507,9 @@ class Map(object):
         self.open_tropen()
         self.open_first_stair()
         self.open_schuur_stair()
-        self.open_second_stair()
         self.open_third_stair()
+
+        self.get_sober()
         self.under_effect_of_weed = False
 
     def draw(self, surface, g):
@@ -537,7 +543,7 @@ class Map(object):
 
         if g.current_floor == 4:
             self.draw_shop(surface=surface, g=g)
-
+            
         g.s.draw(surface, g)
 
     def draw_shop(self, surface=None, g=None):

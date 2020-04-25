@@ -6,6 +6,8 @@ import { SH, SW } from '../GameConfig';
 import { Button } from '@/components/GameObjects/Button';
 import { GameObjects } from 'phaser';
 import { MenuItem } from '@/components/GameObjects/MenuDefinition';
+import { defaultTextStyle } from '../Data/Generics';
+import { UnitTestScene } from './TestScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -14,14 +16,6 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export class MenuScene extends Phaser.Scene {
-    private defaultTextStyle = {
-        fontSize: 20,
-        fontStyle: 'normal',
-        // fontFamily: 'Consolas',
-        color: "#42b983",
-        backgroundColor: 'rgba(0,0,0,0)'
-    };
-
     width: number;
     height: number;
 
@@ -61,11 +55,17 @@ export class MenuScene extends Phaser.Scene {
                         target: "Game",
                         duration: 500,
                         allowInput: false,
-                    })
+                    });
                 }
             },
             {
                 text: "HIGHSCORES",
+            },
+            {
+                text: "DEBUG // TEST",
+                onClick: () => {
+                    this.game.scene.start(UnitTestScene);
+                }
             },
             {
                 text: "HELP",
@@ -96,7 +96,7 @@ export class MenuScene extends Phaser.Scene {
         this.add.circle(x, y, 30, 0x999999, 1);
         const light: GameObjects.Light = this.lights.addLight(x, y, 100, 0x42b983, 1);
 
-        this.input.on('pointermove', function (event: any) {
+        this.input.on('pointermove', function (event: MouseEvent) {
             light.x = event.x;
             light.y = event.y;
         });
@@ -109,7 +109,7 @@ export class MenuScene extends Phaser.Scene {
 
     createTitle(x: number, y: number, text: string) {
         this.add
-            .text(x, y, text, this.defaultTextStyle)
+            .text(x, y, text, defaultTextStyle)
             .setOrigin(0.5);
     }
 
@@ -118,7 +118,7 @@ export class MenuScene extends Phaser.Scene {
             let spacing = 0;
             let objects: GameObjects.GameObject[] = [];
             items.forEach(item => {
-                const button = Button.create(this, x, y + spacing, item.text, this.defaultTextStyle);
+                const button = Button.create(this, x, y + spacing, item.text, defaultTextStyle);
                 objects.push(this.add.existing(button));
                 button.on('pointerup', () => {
                     if (item.onClick != null) {
@@ -126,7 +126,7 @@ export class MenuScene extends Phaser.Scene {
                     } else {
                         console.log("Warning: button has no callback");
                     }
-                })
+                });
                 spacing += verticalSpace;
             });
             return objects;
@@ -189,14 +189,14 @@ export class MenuScene extends Phaser.Scene {
                     this.renderSnakePart(part);
                 });
             }
-        })
+        });
     }
 
     private renderSnakePart(part: BodyPart) {
         const pixelX = (part.x - 1) * this.cellWidth + 1;
         const pixelY = (part.y - 1) * this.cellHeight - 2;
         if (part.gameObject == null) {
-            part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), this.defaultTextStyle);
+            part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }
         else {
             part.gameObject.setPosition(pixelX, pixelY);

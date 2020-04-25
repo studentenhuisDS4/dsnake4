@@ -1,12 +1,15 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-			{
-				"label": "npmServe",
-				"type": "shell",
-				"command": "npm",
-				"args": ["run", "serve"],
-				"options": {
+		{
+			"label": "npmServe",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"serve"
+			],
+			"options": {
 				"cwd": "${workspaceFolder}/dsnake4-phaser/"
 			}
 		}

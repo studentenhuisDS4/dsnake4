@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y } from '../Data/Generics';
+import { CELLS_X, CELLS_Y, LEVELDATA } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 
@@ -39,10 +39,12 @@ export class SnakeScene extends Phaser.Scene {
     public preload() {
         this.load.setPath('img/assets/');
         this.load.image('logo', 'logo.png');
+        this.load.json("Level1", LEVELDATA.Level1);
     }
 
     public create() {
         console.log("SNAKE SCENE - created");
+        console.log("Level1 data:", this.cache.json.get("Level1"));
         this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight);
 
         // Priority : layering

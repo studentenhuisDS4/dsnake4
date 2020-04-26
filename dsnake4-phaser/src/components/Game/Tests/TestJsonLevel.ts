@@ -1,6 +1,7 @@
 import { TestBase } from './TestBase';
 import { Scene, Loader } from 'phaser';
 import { LEVELDATA } from '../Data/Generics';
+import * as data from '@/assets/levels/Level2.json';
 
 export class TestJsonLevel extends TestBase {
     name: string = "Test: .json levels";

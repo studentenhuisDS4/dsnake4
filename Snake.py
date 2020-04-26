@@ -45,6 +45,16 @@ class Snake(object):
         else:
             self.dirnx, self.dirny = direction
         return
+    
+    def reduce(self, l=1):
+        blocks_removed = 0
+        for i in range(min(len(self.undigested_food), l)):
+            self.undigested_food.pop(0)
+            blocks_removed += 1
+        
+        for i in range(min(len(self.body) - 3, l - blocks_removed)):
+            self.body.pop()
+        return
 
     def add_undigested_food(self, n_of_blocks=1):
         for i in range(n_of_blocks):

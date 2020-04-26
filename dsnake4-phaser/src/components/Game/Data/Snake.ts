@@ -1,4 +1,5 @@
 import { Direction, CELLS_Y, CELLS_X } from './Generics';
+import { XY } from './Map/MapElements';
 type BodyPartType = 'Head' | 'Body' | 'Tail';
 
 export class BodyPart {
@@ -156,5 +157,38 @@ export class Snake {
             newY = currY;
         });
 
+        if (this.selfCollision()) {
+            console.log('Collided');
+        }
+
+    }
+
+    public getHeadPosition(): XY | null {
+        let part = this.bodyParts.find(part => {
+            if (part.type == 'Head') {
+                return part;
+            }
+        });
+
+        if (part != null) {
+            return new XY(part.x, part.y);
+        } else {
+            console.warn("GetHeadPosition function: Snake head not found.");
+            return null;
+        }
+    }
+
+    public selfCollision() {
+        let headXY = this.getHeadPosition();
+
+        return this.bodyParts.find(part => {
+            if (headXY != null) {
+                if (part.type != 'Head' && part.x == headXY.x && part.y == headXY.y) {
+                    return true;
+                }
+            }
+        }) != null;
+
+        // return collision;
     }
 }

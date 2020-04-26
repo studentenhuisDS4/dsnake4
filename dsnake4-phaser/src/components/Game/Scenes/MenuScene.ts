@@ -79,7 +79,7 @@ export class MenuScene extends Phaser.Scene {
         this.time.addEvent({
             delay: 50, callback: () => {
                 this.snakes.forEach(snake => {
-                    snake.moveSnake();
+                    snake?.moveSnake();
                     this.limitSnake(snake);
                 });
                 this.renderSnakes();

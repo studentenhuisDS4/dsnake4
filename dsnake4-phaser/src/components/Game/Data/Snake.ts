@@ -7,6 +7,7 @@ export class BodyPart {
     public y: number;
     public type: BodyPartType;
     public gameObject!: Phaser.GameObjects.Text;
+    public foodStored: boolean;
 
     public floor!: number;
 
@@ -14,14 +15,15 @@ export class BodyPart {
         this.x = x;
         this.y = y;
         this.type = type;
+        this.foodStored = false;
     }
 
     public toCharacter() {
         switch (this.type) {
-            case 'Body':
-                return 'S';
             case 'Head':
                 return 'D';
+            case 'Body':
+                return 'S';
             case 'Tail':
                 return '4';
             default:
@@ -133,37 +135,71 @@ export class Snake {
     public moveSnake() {
         switch (this.direction) {
             case 'Up':
-                this.y < CELLS_Y ? this.y-- : null;
+                this.y--;
                 break;
             case 'Down':
-                this.y > 0 ? this.y++ : null;
+                this.y++;
                 break;
             case 'Right':
-                this.x < CELLS_X ? this.x++ : null;
+                this.x++;
                 break;
             case 'Left':
-                this.x < CELLS_X ? this.x-- : null;
+                this.x--;
                 break;
         }
+
         let newX = this.x;
         let newY = this.y;
+        let newFoodStored = false;
+
+        let increaseLength: boolean = this.completeDigestion();
+
         this.bodyParts.forEach(part => {
             const currX = part.x;
             const currY = part.y;
+            const currF = part.foodStored;
+
             part.x = newX;
             part.y = newY;
+            part.foodStored = newFoodStored;
 
             newX = currX;
             newY = currY;
+            newFoodStored = currF;
+
+            if (increaseLength && part.type == 'Tail') {
+                part.type = 'Body';
+            }
         });
 
-        if (this.selfCollision()) {
-            console.log('Collided');
+        if (increaseLength) {
+            this.bodyParts.push(new BodyPart(newX, newY, 'Tail'));
         }
-
     }
 
-    public getHeadPosition(): XY | null {
+    public addUndigestedFood(nBlocks: number) {
+        let count: number = 0;
+        for (let i = 0; i < this.bodyParts.length; i++) {
+            if (!this.bodyParts[i].foodStored) {
+                this.bodyParts[i].foodStored = true;
+                count++;
+            }
+            if (count == nBlocks) {
+                return;
+            }
+        }
+    }
+
+    public completeDigestion(): boolean {
+        return this.bodyParts.find(part => {
+            if (part.type == 'Tail' && part.foodStored) {
+                part.foodStored = false;
+                return true;
+            }
+        }) != null;
+    }
+
+    public getHeadFoodStatus(): boolean {
         let part = this.bodyParts.find(part => {
             if (part.type == 'Head') {
                 return part;
@@ -171,24 +207,18 @@ export class Snake {
         });
 
         if (part != null) {
-            return new XY(part.x, part.y);
+            return part.foodStored;
         } else {
             console.warn("GetHeadPosition function: Snake head not found.");
-            return null;
+            return false;
         }
     }
 
     public selfCollision() {
-        let headXY = this.getHeadPosition();
-
         return this.bodyParts.find(part => {
-            if (headXY != null) {
-                if (part.type != 'Head' && part.x == headXY.x && part.y == headXY.y) {
-                    return true;
-                }
+            if (part.type != 'Head' && part.x == this.x && part.y == this.y) {
+                return true;
             }
         }) != null;
-
-        // return collision;
     }
 }

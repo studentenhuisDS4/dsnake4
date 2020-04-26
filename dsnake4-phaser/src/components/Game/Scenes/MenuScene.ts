@@ -136,7 +136,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     createSnakes() {
-        const x = 35;
+        const x = 10;
         this.snakes.push(new Snake(x, 16, 3, 'Right'));
         this.snakes.push(new Snake(x, 36, 3, 'Down'));
         this.snakes.push(new Snake(x, 36, 3, 'Down'));
@@ -199,6 +199,7 @@ export class MenuScene extends Phaser.Scene {
             part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }
         else {
+            part.gameObject.text = part.toCharacter();
             part.gameObject.setPosition(pixelX, pixelY);
         }
     }

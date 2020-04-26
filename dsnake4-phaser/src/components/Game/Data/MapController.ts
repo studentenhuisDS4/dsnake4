@@ -27,7 +27,7 @@ export class MapController {
     }
 
     public loadLevel() {
-        this.scene.load.json
+        this.scene.load.json;
     }
 
     public renderCurrentMap() {
@@ -102,6 +102,7 @@ export class MapController {
             part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }
         else {
+            part.gameObject.text = part.toCharacter();
             part.gameObject.setPosition(pixelX, pixelY);
         }
     }

@@ -1,5 +1,15 @@
 import { Direction, CELLS_X, CELLS_Y, MapCellType, MapLevel } from '../Generics';
 
+export class XY {
+    x: number;
+    y: number;
+
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
+    }
+}
+
 export class MapCell {
     /* 
     This class represents a single cell on the grid with a certain type.
@@ -10,7 +20,7 @@ export class MapCell {
 
     constructor(x: number, y: number, type: MapCellType) {
         if (type == null) {
-            throw new Error("The MapCell type should be type 'Void', but not null | undefined.")
+            throw new Error("The MapCell type should be type 'Void', but not null | undefined.");
         } else {
             this.x = x;
             this.y = y;

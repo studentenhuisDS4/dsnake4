@@ -193,7 +193,7 @@ class Game(object):
         items.append(ShopItem(cost=10, name='Mail Box', description='New puzzles',
                               key='0mb', section=1, weight=1))
         items.append(ShopItem(cost=10, name='Cassette Player', description='New Music Friday',
-                              key='0mb', section=1, weight=1))
+                              key='0cp', section=1, weight=1))
         items.append(ShopItem(cost=10, name='Reduce by 20', description='Shortening potion',
                               key='r20', section=2, weight=1))
         items.append(ShopItem(cost=10, name='Weed', description='Go through walls',
@@ -312,6 +312,9 @@ class Game(object):
                             self.weed = True
                             self.shop.add_item(ShopItem(
                                 cost=200, name='Weed', description='Go through walls', key='wee', section=2, weight=1))
+                        elif key == 'cm1':
+                            break
+
 
                         self.map.update_shop_color(g=self)
 

@@ -53,6 +53,7 @@ class Map(object):
     stairs = []
     shop_elements = []
     food = []
+    furniture = []
 
     bin_stair_wall = 0
     gr_stair_wall = 0

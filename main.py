@@ -52,6 +52,10 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
         surface.blit(
             mo_images[i], (g.width + 10 + (i % 5)*35, int(i/5)*35 + counter))
 
+    if g.current_floor == 1:
+        surface.blit(images[9], (621, 570))
+
+
     pygame.display.update()
 
 
@@ -779,8 +783,9 @@ objects_images.append(pygame.transform.scale(objects_images[3], (int(
     objects_images[3].get_rect().size[0]*1.5), int(objects_images[3].get_rect().size[1]*1.5))))
 objects_images.append(pygame.transform.scale(objects_images[4], (int(
     objects_images[4].get_rect().size[0]*1.5), int(objects_images[4].get_rect().size[1]*1.5))))
-objects_images.append(pygame.transform.scale(pygame.image.load(
-    "images/Marcus_Painting.jpeg"), (179, 159)))
+objects_images.append(pygame.image.load("images/Cassette_Machine.png"))
+objects_images.append(pygame.image.load("images/Cassette.png"))
+objects_images.append(pygame.image.load("images/Mail_Box.png"))
 objects_images.append(pygame.transform.scale(
     pygame.image.load("images/weed.png"), (16, 32)))
 
@@ -792,14 +797,6 @@ for i in range(main_objects_sheet.total_objects):
     (w, h) = main_objects_sheet.object_size
     main_objects_images.append(main_objects_sheet.image_at((x, y, w, h)))
 
-
-# images.append(pygame.image.load("images/Andrea_Chess_knight.png"))
-# images.append(pygame.transform.scale(
-#     pygame.image.load("images/GR_gustav.png"), (30, 30)))
-# images.append(pygame.transform.scale(
-#     pygame.image.load("images/friespixelart.png"), (23, 30)))
-# images.append(pygame.transform.scale(
-#     pygame.image.load("images/JarnoTrekker2.png"), (30, 30)))
 
 connected = False
 

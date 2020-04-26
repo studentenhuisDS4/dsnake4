@@ -95,6 +95,13 @@ export class MenuScene extends Phaser.Scene {
         this.lights.setAmbientColor(0x313339);
         this.add.circle(x, y, 30, 0x999999, 1);
         const light: GameObjects.Light = this.lights.addLight(x, y, 100, 0x42b983, 1);
+        const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+
+        this.events.on('snakeMovement', function (event: number[]) {
+            snakeLight.x = event[0] * 10;
+            snakeLight.y = event[1] * 10;
+            console.log('light change', event);
+        });
 
         this.input.on('pointermove', function (event: MouseEvent) {
             light.x = event.x;
@@ -183,6 +190,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private renderSnakes() {
+        this.events.emit('snakeMovement', [this.snakes[0].x, this.snakes[0].y]);
         this.snakes.forEach(snake => {
             if (snake?.bodyParts != null) {
                 snake.bodyParts.forEach(part => {

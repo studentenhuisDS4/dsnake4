@@ -20,7 +20,7 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-var': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     // note you must disable the base rule as it can report incorrect errors
-    "semi": "off",
-    "@typescript-eslint/semi": ["error"]
+    // "semi": "off",
+    // "@typescript-eslint/semi": ["warm"]
   }
 }

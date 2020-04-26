@@ -79,7 +79,7 @@ export class MenuScene extends Phaser.Scene {
         this.time.addEvent({
             delay: 50, callback: () => {
                 this.snakes.forEach(snake => {
-                    snake.moveSnake();
+                    snake?.moveSnake();
                     this.limitSnake(snake);
                 });
                 this.renderSnakes();
@@ -182,15 +182,15 @@ export class MenuScene extends Phaser.Scene {
         }
     }
 
-    private renderSnakes() {
-        this.snakes.forEach(snake => {
-            if (snake?.bodyParts != null) {
-                snake.bodyParts.forEach(part => {
-                    this.renderSnakePart(part);
-                });
-            }
-        });
-    }
+private renderSnakes() {
+    this.snakes.forEach(snake => {
+        if (snake.bodyParts != null) {
+            snake.bodyParts.forEach(part => {
+                this.renderSnakePart(part);
+            });
+        }
+    });
+}
 
     private renderSnakePart(part: BodyPart) {
         const pixelX = (part.x - 1) * this.cellWidth + 1;

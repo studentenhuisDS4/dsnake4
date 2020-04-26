@@ -22,30 +22,49 @@ class Wall(object):
         self.breakable = breakable
 
 
-class Stair(object):
+class Block(object):
     floor = 0
     top_left = (0, 0)
     bottom_right = (0, 0)
+
+    def __init__(self, floor, top_left, bottom_right):
+        self.floor = floor
+        self.top_left = top_left
+        self.bottom_right = bottom_right
+
+
+class Stair(Block):
     identifier = 0
     direction = (0, 0)
     climb_start = (0, 0)
 
     def __init__(self, floor, top_left, bottom_right, identifier, direction, climb_start):
-        self.floor = floor
-        self.top_left = top_left
-        self.bottom_right = bottom_right
+        super().__init__(floor, top_left, bottom_right)
         self.identifier = identifier
         self.direction = direction
         self.climb_start = climb_start
 
 
-class ShopElement(Stair):
+class ShopElement(Block):
     color = (0, 0, 0)
     text_color = (0, 0, 0)
     item = None
 
-    def __init__(self, floor, top_left, bottom_right, identifier):
-        super().__init__(floor, top_left, bottom_right, identifier, (0, 0), (0, 0))
+    def __init__(self, floor, top_left, bottom_right):
+        super().__init__(floor, top_left, bottom_right)
+
+
+class Furniture(Block):
+    image_index = 0
+    active = False
+    counter = 0
+
+    def __init__(self, floor, top_left, bottom_right, image_index):
+        super().__init__(floor, top_left, bottom_right)
+        self.image_index = image_index
+
+    def activate(self):
+        self.active = True
 
 
 class Map(object):
@@ -79,6 +98,7 @@ class Map(object):
         self.init_tropen()
         self.init_shop()
         self.init_stairs()
+        self.init_furniture()
         self.init_food(g)
 
     def init_first_floor(self):
@@ -287,9 +307,9 @@ class Map(object):
 
         self.shop_elements = []
 
-        self.shop_elements.append(ShopElement(4, (1, 1), (35, 20), 6))
-        self.shop_elements.append(ShopElement(4, (36, 1), (69, 20), 6))
-        self.shop_elements.append(ShopElement(4, (70, 1), (104, 20), 6))
+        self.shop_elements.append(ShopElement(4, (1, 1), (35, 20)))
+        self.shop_elements.append(ShopElement(4, (36, 1), (69, 20)))
+        self.shop_elements.append(ShopElement(4, (70, 1), (104, 20)))
 
     def init_stairs(self):
         self.stairs = []
@@ -318,6 +338,13 @@ class Map(object):
         self.stairs.append(Stair(4, (0, 20), (1, 59), 6, (0, -1), (53, 97)))
         self.stairs.append(
             Stair(4, (104, 20), (105, 59), 6, (0, -1), (53, 97)))
+
+    def init_furniture(self):
+        self.furniture = []
+
+        self.furniture.append(Furniture(1, (45, 56), (48, 59), 0))
+        self.furniture.append(Furniture(1, (61, 1), (64, 5), 1))
+
 
     def init_food(self, g):
         self.food = []
@@ -383,7 +410,6 @@ class Map(object):
         self.add_food(Food(f_type, (col, row, floor), g))
 
     def is_food_not_legal(self, g, pos):
-
         for wall in self.get_walls_at_floor(pos[2], draw=True):
             direction = wall.direction
             for block in range(wall.length):
@@ -453,8 +479,6 @@ class Map(object):
             if w.status == "see_through":
                 w.status = "visible"
 
-        return
-
     def update_shop(self, g=None):
         for i in range(len(self.shop_elements)):
             self.shop_elements[i].item = g.current_shop_items[i]
@@ -505,6 +529,7 @@ class Map(object):
         self.init_shop()
         self.init_stairs()
         self.init_food(g)
+        self.init_furniture()
         self.open_tropen()
         self.open_first_stair()
         self.open_schuur_stair()
@@ -513,7 +538,7 @@ class Map(object):
         self.get_sober()
         self.under_effect_of_weed = False
 
-    def draw(self, surface, g):
+    def draw(self, surface, g, fu_images=[]):
         dis = g.width/g.columns
 
         for wall in self.get_walls_at_floor(g.current_floor, draw=True):
@@ -535,6 +560,11 @@ class Map(object):
                     pygame.draw.rect(surface, (14, 37, 255), ((
                         i+stair.top_left[0])*dis+1, (j+stair.top_left[1])*dis+1, dis-1, dis-1))
 
+        for fur in self.furniture:
+            if fur.active and fur.floor == g.current_floor:
+                surface.blit(fu_images[fur.image_index], (fur.top_left[0]*dis + 1, fur.top_left[1]*dis + 1))
+
+
         for f in self.food:
             i = f.position[0]
             j = f.position[1]
@@ -544,7 +574,7 @@ class Map(object):
 
         if g.current_floor == 4:
             self.draw_shop(surface=surface, g=g)
-            
+
         g.s.draw(surface, g)
 
     def draw_shop(self, surface=None, g=None):
@@ -554,7 +584,7 @@ class Map(object):
             for i in range(s.bottom_right[0] - s.top_left[0]):
                 for j in range(s.bottom_right[1] - s.top_left[1]):
                     pygame.draw.rect(surface, s.color, ((
-                        i+s.top_left[0])*dis+1, (j+s.top_left[1])*dis+1, dis-1, dis-1))
+                        i+s.top_left[0])*dis+1, (j+s.top_left[1])*dis+1, dis, dis))
             name = g.font.render(s.item.name, False, s.text_color)
             surface.blit(name, (s.top_left[0]*dis + 30, 40))
             description = g.font.render(

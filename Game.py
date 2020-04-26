@@ -28,6 +28,8 @@ class Game(object):
     weed = False
     weed_effect_length = 105
 
+    double_speed = False
+
     shop = None
     current_shop_items = []
 
@@ -60,6 +62,7 @@ class Game(object):
 
     def move_snake(self):
         climbed = False
+        moved = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -69,43 +72,59 @@ class Game(object):
 
             keys = pygame.key.get_pressed()
 
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                self.s.turn('LEFT')
-            elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
-                self.s.turn('RIGHT')
-            elif (keys[pygame.K_UP] or keys[pygame.K_w]):
-                self.s.turn('UP')
-            elif (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-                self.s.turn('DOWN')
-            elif keys[pygame.K_SPACE]:
-                return climbed, self.points, False, True
-            elif keys[pygame.K_h] and self.weed:
+            if keys[pygame.K_SPACE]:
+                self.double_speed = True
+
+            if not moved:
+                if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+                    self.s.turn('LEFT')
+                    moved = True
+                elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
+                    self.s.turn('RIGHT')
+                    moved = True
+                elif (keys[pygame.K_UP] or keys[pygame.K_w]):
+                    self.s.turn('UP')
+                    moved = True
+                elif (keys[pygame.K_DOWN] or keys[pygame.K_s]):
+                    self.s.turn('DOWN')
+                    moved = True
+                elif keys[pygame.K_p]:
+                    return climbed, self.points, False, True
+
+            if keys[pygame.K_h] and self.weed:
                 self.map.get_high()
                 self.weed_counter = self.weed_effect_length
                 self.weed = False
-            break
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.double_speed = False
 
-        # check for stairs
-        climbed, game_ended = self.stair_climbing()
+        n_moves = 2 if self.double_speed else 1
 
-        if self.current_floor == 4:
-            self.shop_buying()
+        for i in range(n_moves):
+            self.s.move()
 
-        self.s.move()
+            if self.current_floor == 4:
+                self.shop_buying()
 
-        if game_ended:
-            return climbed, self.points, True, False
+            # check for stairs
+            climbed, game_ended = self.stair_climbing()
 
-        # check for self-collisions
-        if self.s.self_collision():
-            return climbed, self.points, self.fatal_collision(), False
 
-        # check for collisions with walls
-        if self.collision_with_walls():
-            return climbed, self.points, self.fatal_collision(), False
+            if game_ended:
+                return climbed, self.points, True, False
 
-        # check if the snake ate food
-        self.food_eating()
+            # check for self-collisions
+            if self.s.self_collision():
+                return climbed, self.points, self.fatal_collision(), False
+
+            # check for collisions with walls
+            if self.collision_with_walls():
+                return climbed, self.points, self.fatal_collision(), False
+
+            # check if the snake ate food
+            self.food_eating()
+        
         self.reduce_weed_counter()
 
         return climbed, self.points, False, False
@@ -213,6 +232,12 @@ class Game(object):
                 j = wall.start[1] + direction*block
                 if self.s.body[0] == (i, j, self.current_floor):
                     return True
+
+        for fur in self.map.furniture:
+            for i in range(fur.bottom_right[0] - fur.top_left[0]):
+                for j in range(fur.bottom_right[1] - fur.top_left[1]):
+                    if (fur.top_left[0] + i, fur.top_left[1] + j, self.current_floor) == self.s.body[0] and fur.active:
+                        return True
         return False
 
     def food_eating(self):
@@ -312,9 +337,10 @@ class Game(object):
                             self.weed = True
                             self.shop.add_item(ShopItem(
                                 cost=200, name='Weed', description='Go through walls', key='wee', section=2, weight=1))
-                        elif key == 'cm1':
-                            break
-
+                        elif key == '0mb':
+                            self.map.furniture[0].activate()
+                        elif key == '0cp':
+                            self.map.furniture[1].activate()
 
                         self.map.update_shop_color(g=self)
 
@@ -358,6 +384,7 @@ class Game(object):
     def reset(self, s_x, s_y):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
+        self.double_speed = False
         self.init_main_obj()
 
         self.points = 0

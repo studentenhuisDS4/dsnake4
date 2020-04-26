@@ -1,6 +1,4 @@
-import { Direction, CELLS_X, CELLS_Y } from './Generics';
-
-export type MapCellType = 'Wall' | 'Pickup' | 'Stairs' | 'Void';
+import { Direction, CELLS_X, CELLS_Y, MapCellType, MapLevel } from '../Generics';
 
 export class MapCell {
     /* 
@@ -109,67 +107,5 @@ export class MapVector extends MapElement {
 
     public resetCells(): void {
         this.cells = [];
-    }
-}
-
-
-export class Map {
-    /* 
-    This class should calculate the map from all children elements.
-    Do note that if children overlap, order of entry matters (we don't check overlap).
-    
-    Also note that calculating the final map should be done once (or at least not a lot).
-    */
-    private childElements: MapElement[];
-    public Map2D!: MapCell[][];
-
-    constructor() {
-        this.childElements = [];
-        this.constructMap();
-    }
-
-    public constructMap() {
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Up'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Down'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 3, 'Left'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(10, 1, 'Wall'), 30, 'Right'));
-        this.appendElement(new MapVector(new MapCell(1, 30, 'Wall'), 30, 'Right'));
-
-        // TODO add easy way to define rooms, f.e. MapRectangle or MapStairs:
-        // this.appendElement(new MapRectangle(x1, y1, 3, 'Up'));
-        // this.loadMapFromImage(imageMap);
-    }
-
-    // This function performs the pre-processing to get an 2D-Array of cells in `this.Map2D`
-    public flattenMap() {
-        this.Map2D = [];
-        if (this.childElements != null) {
-            this.childElements.forEach(elem => {
-                elem.cells.forEach(elemCell => {
-                    if (this.Map2D[elemCell.x] == null) {
-                        this.Map2D[elemCell.x] = [];
-                    }
-                    this.Map2D[elemCell.x][elemCell.y] = elemCell.clone();
-                })
-            });
-        }
-    }
-
-    // public loadMapFromImage(imageMap: any) {
-    //     throw new Error("The loadMapFromImage function has not been implemented yet.");
-    // }
-
-    public clearChildren() {
-        this.childElements = [];
-    }
-
-    public clear2DMap() {
-        this.Map2D = [];
-    }
-
-    public appendElement(element: MapElement) {
-        this.childElements.push(element);
     }
 }

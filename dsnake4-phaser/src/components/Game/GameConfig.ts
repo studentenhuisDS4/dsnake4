@@ -1,28 +1,23 @@
 import * as Phaser from 'phaser';
 import { SnakeScene } from './Scenes/SnakeScene';
 import { MenuScene } from './Scenes/MenuScene';
+import { TestRunnerScene } from './Scenes/TestScene';
 
-export const ZOOM = 1;
-export const SW = 1050 / ZOOM;
-export const SH = 600 / ZOOM;
+export const SW = 1050;
+export const SH = 600;
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: 'DSnake4',
     type: Phaser.AUTO,
-    scene: [MenuScene, SnakeScene],
+    scene: [MenuScene, SnakeScene, TestRunnerScene],
     width: SW,
     height: SH,
     fps: {
         target: 25,
         forceSetTimeOut: true
     },
-    // scale: {
-    //     zoom: ZOOM
-    // },
-    // resolution: window.devicePixelRatio,
     render: {
         antialiasGL: true,
-        antialias: true,
-        //     roundPixels: false,
+        antialias: false,
     },
     physics: {
         default: 'arcade',

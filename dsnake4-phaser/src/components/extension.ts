@@ -28,3 +28,21 @@ export function getPixelsData(textureManager: Phaser.Textures.TextureManager, ke
 
     return null;
 }
+
+// let image = getPixelsData(this.textures, "logo");
+        // console.log("image", image);
+        // if (image != null) {
+        //     // console.log("image data: ", image.);
+        //     // console.log(getPixelColorAt(image, 10, 10));
+        //     for (let i = 0; i < Math.min(image.width,CELLS_X); i++) {
+        //         for (let j = 0; j < Math.min(image.height,CELLS_Y); j++) {
+        //             // This is f'in heavy and inefficient to calculate
+        //             const pixelColor = getPixelColorAt(image, i, j);
+        //             this.add.rectangle(
+        //                 i * this.cellWidth - this.cellWidth / 2,
+        //                 j * this.cellHeight - this.cellHeight / 2,
+        //                 this.cellWidth - 2, this.cellHeight - 2,
+        //                 pixelColor.color32, 0.6);
+        //         }
+        //     }
+        // }

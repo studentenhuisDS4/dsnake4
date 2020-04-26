@@ -8,7 +8,7 @@
             "sourceMaps": true,
             "url": "http://localhost:8080",
             "webRoot": "${workspaceRoot}",
-            "preLaunchTask": "npmServe"
+            "preLaunchTask": "npmServe",
         },
         {
             "name":"Python: Module",

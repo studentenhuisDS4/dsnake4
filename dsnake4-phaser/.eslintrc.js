@@ -14,7 +14,13 @@ module.exports = {
   rules: {
     'prefer-const': 'off',
     '@typescript-eslint/no-inferrable-types': 'off',
+    '@typescript-eslint/type-annotation-spacing': 'off',
+    '@typescript-eslint/no-empty-function': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off'
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-var': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    // note you must disable the base rule as it can report incorrect errors
+    // "semi": "off",
+    // "@typescript-eslint/semi": ["warm"]
   }
 }

@@ -49,10 +49,18 @@ export class MapController {
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
         }
+        this.checkSnakeEating()
     }
 
     public checkSnakeCollision() {
         return this.map.checkCollision(this.snake.x, this.snake.y) == 'Wall';
+    }
+
+    private checkSnakeEating() {
+        if (this.map.checkCollision(this.snake.x, this.snake.y) == 'Pickup') {
+            let vars: number[] | undefined = this.map.getEatenFoodProperties(this.snake.x, this.snake.y);
+            if (vars != undefined) { vars[0] += 0; }
+        }
     }
 
     public timedUpdate() {
@@ -75,11 +83,6 @@ export class MapController {
         this.map.flattenMap();
     }
 
-    private checkSnakeEating() {
-        if (this.map.checkCollision(this.snake.x, this.snake.y) == 'Pickup') {
-            return;
-        }
-    }
 
     private renderMapCells() {
         this.map.Map2D

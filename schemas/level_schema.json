@@ -52,7 +52,30 @@
         },
         "IWall": {
             "additionalProperties": false,
+            "description": "Interface `IWall` defines",
             "properties": {
+                "anchor": {
+                    "additionalItems": {
+                        "anyOf": [
+                            {
+                                "type": "number"
+                            },
+                            {
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    "items": [
+                        {
+                            "type": "number"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "minItems": 2,
+                    "type": "array"
+                },
                 "direction": {
                     "$ref": "#/definitions/Direction"
                 },
@@ -64,12 +87,6 @@
                 },
                 "visible": {
                     "type": "boolean"
-                },
-                "x": {
-                    "type": "number"
-                },
-                "y": {
-                    "type": "number"
                 }
             },
             "type": "object"

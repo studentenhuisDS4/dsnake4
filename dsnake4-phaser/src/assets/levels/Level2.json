@@ -1,6 +1,12 @@
 {
+    "name": "Second floor",
+    "level": "SecondFloor",
     "walls": [
-        {}
+        {
+            "anchor": [1,2],
+            "direction": "Down",
+            "length": 3 
+        }
     ],
     "stairs": [
         {}

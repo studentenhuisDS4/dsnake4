@@ -1,24 +1,14 @@
-import { Direction, CELLS_X, CELLS_Y, MapCellType, MapLevel } from '../Generics';
+import { Direction, CELLS_X, CELLS_Y, CellType } from '../Generics';
 
-export class XY {
-    x: number;
-    y: number;
-
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
+/**
+ * Class `MapCell` represents a single cell on the grid with a certain type.
+ */
 export class MapCell {
-    /* 
-    This class represents a single cell on the grid with a certain type.
-    */
     x: number; // 0-oriented (until CELLS_X -1)
     y: number; // 0-oriented (until CELLS_Y -1)
-    type: MapCellType;
+    type: CellType;
 
-    constructor(x: number, y: number, type: MapCellType) {
+    constructor(x: number, y: number, type: CellType) {
         if (type == null) {
             throw new Error("The MapCell type should be type 'Void', but not null | undefined.");
         } else {
@@ -48,21 +38,21 @@ export class MapCell {
     }
 }
 
+/**
+ * The `MapElement` class allows flattening any defined map object to an array of MapCells, which can be rendered.
+ */
 export abstract class MapElement {
-    /* 
-    This class allows flattening any defined map object to an array of MapCells, which can be rendered.
-    */
     cells!: MapCell[];
 
     public abstract generateCells(): void;
     public abstract resetCells(): void;
 }
 
-export class MapVector extends MapElement {
-    /*
-    This class allows adding hor/vert vectors and rendering them to a MapElement.
+/**
+ * `MapVector`allows defining hor/vert vectors and rendering them to a MapElement.
     Rendered elements end up in the cells property of MapElement.
-     */
+ */
+export class MapVector extends MapElement {
     readonly startCell: MapCell;
     readonly length: number = 0;
     readonly direction: Direction;
@@ -85,7 +75,10 @@ export class MapVector extends MapElement {
         }
     }
 
-    // Convert vector to array of 'MapCell's
+    /**
+     * Convert vector to array of 'MapCell's
+     * @returns  
+     */
     public generateCells() {
         this.resetCells();
         for (let i = 0; i < this.length; i++) {

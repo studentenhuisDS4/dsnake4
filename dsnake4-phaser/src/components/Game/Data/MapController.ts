@@ -4,7 +4,7 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { defaultTextStyle } from './Generics';
+import { defaultTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
 
 export class MapController {
     private scene: Scene;
@@ -20,8 +20,8 @@ export class MapController {
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
-        this.map = new Map('FirstFloor');
-        this.snake = new Snake(15, 16, 3, 'Right');
+        this.map = new Map(Level.FirstFloor);
+        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
@@ -52,7 +52,7 @@ export class MapController {
     }
 
     public checkSnakeCollision() {
-        return this.map.checkCollision(this.snake.x, this.snake.y) == 'Wall';
+        return this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Wall;
     }
 
     public timedUpdate() {
@@ -66,10 +66,10 @@ export class MapController {
 
         // Load elements into the map
         this.map
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Up'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Down'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Left'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Right'));
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Down'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Left'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Right'));
 
         // Perform processing to 2D-array
         this.map.flattenMap();

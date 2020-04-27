@@ -6,7 +6,7 @@ import { SH, SW } from '../GameConfig';
 import { Button } from '@/components/GameObjects/Button';
 import { GameObjects } from 'phaser';
 import { MenuItem } from '@/components/GameObjects/MenuDefinition';
-import { defaultTextStyle } from '../Data/Generics';
+import { defaultTextStyle, Vector2 } from '../Data/Generics';
 import { UnitTestScene } from './TestScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -100,7 +100,6 @@ export class MenuScene extends Phaser.Scene {
         this.events.on('snakeMovement', function (event: number[]) {
             snakeLight.x = event[0] * 10;
             snakeLight.y = event[1] * 10;
-            console.log('light change', event);
         });
 
         this.input.on('pointermove', function (event: MouseEvent) {
@@ -144,12 +143,12 @@ export class MenuScene extends Phaser.Scene {
 
     createSnakes() {
         const x = 10;
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
     }
 
     private limitSnake(snake: Snake) {

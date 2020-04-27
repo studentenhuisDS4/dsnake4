@@ -1,19 +1,30 @@
-import { Direction, CELLS_Y, CELLS_X } from './Generics';
-import { XY } from './Map/MapElements';
+import { Direction, CELLS_Y, CELLS_X, Vector2 } from './Generics';
 type BodyPartType = 'Head' | 'Body' | 'Tail';
 
 export class BodyPart {
-    public x: number;
-    public y: number;
+    public position: Vector2;
     public type: BodyPartType;
     public gameObject!: Phaser.GameObjects.Text;
     public foodStored: boolean;
 
     public floor!: number;
 
-    constructor(x: number, y: number, type: BodyPartType) {
-        this.x = x;
-        this.y = y;
+    /**
+     * Gets x-position of body part (readonly)
+     */
+    get x(): number {
+        return this.position.x;
+    }
+
+    /**
+     * Gets y-position of body part (readonly)
+     */
+    get y(): number {
+        return this.position.y;
+    }
+
+    constructor(position: Vector2, type: BodyPartType) {
+        this.position = position;
         this.type = type;
         this.foodStored = false;
     }
@@ -33,15 +44,20 @@ export class BodyPart {
 }
 
 export class Snake {
-    x: number;
-    y: number;
+    position: Vector2;
     direction: Direction;
     bodyParts!: BodyPart[];
 
-    constructor(initialLength: number, x: number, y: number, initialDirection: Direction = 'Up') {
+    get x(): number {
+        return this.position.x;
+    }
+    get y(): number {
+        return this.position.y;
+    }
+
+    constructor(position: Vector2, initialLength: number, initialDirection: Direction = 'Up') {
+        this.position = position;
         this.direction = initialDirection;
-        this.x = x;
-        this.y = y;
 
         this.emptySnake();
         this.generateSnake(initialLength);
@@ -52,10 +68,11 @@ export class Snake {
     }
 
     public generateSnake(length: number) {
-        let xPart = this.x;
-        let yPart = this.y;
+        let xPart = this.position.x;
+        let yPart = this.position.y;
+        const pos = this.position.clone();
 
-        this.bodyParts.push(new BodyPart(xPart, yPart, 'Head'));
+        this.bodyParts.push(new BodyPart(pos, 'Head'));
         for (let i = 0; i < length - 1; i++) {
             let resultX;
             let resultY;
@@ -77,9 +94,9 @@ export class Snake {
             // Dont allow overflow of body part
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
-                    this.bodyParts.push(new BodyPart(xPart, yPart, 'Tail'));
+                    this.bodyParts.push(new BodyPart(pos, 'Tail'));
                 } else {
-                    this.bodyParts.push(new BodyPart(xPart, yPart, 'Body'));
+                    this.bodyParts.push(new BodyPart(pos, 'Body'));
                 }
             }
             else {
@@ -135,36 +152,33 @@ export class Snake {
     public moveSnake() {
         switch (this.direction) {
             case 'Up':
-                this.y--;
+                this.position.y--;
                 break;
             case 'Down':
-                this.y++;
+                this.position.y++;
                 break;
             case 'Right':
-                this.x++;
+                this.position.x++;
                 break;
             case 'Left':
-                this.x--;
+                this.position.x--;
                 break;
         }
 
-        let newX = this.x;
-        let newY = this.y;
+        let newPos = this.position.clone();
         let newFoodStored = false;
 
         let increaseLength: boolean = this.completeDigestion();
 
         this.bodyParts.forEach(part => {
-            const currX = part.x;
-            const currY = part.y;
+            const currPos = part.position.clone();
             const currF = part.foodStored;
 
-            part.x = newX;
-            part.y = newY;
+            part.position.x = newPos.x;
+            part.position.y = newPos.y;
             part.foodStored = newFoodStored;
 
-            newX = currX;
-            newY = currY;
+            newPos = currPos;
             newFoodStored = currF;
 
             if (increaseLength && part.type == 'Tail') {
@@ -173,7 +187,7 @@ export class Snake {
         });
 
         if (increaseLength) {
-            this.bodyParts.push(new BodyPart(newX, newY, 'Tail'));
+            this.bodyParts.push(new BodyPart(newPos, 'Tail'));
         }
     }
 
@@ -216,7 +230,7 @@ export class Snake {
 
     public selfCollision() {
         return this.bodyParts.find(part => {
-            if (part.type != 'Head' && part.x == this.x && part.y == this.y) {
+            if (part.type != 'Head' && part.position.x == this.position.x && part.position.y == this.position.y) {
                 return true;
             }
         }) != null;

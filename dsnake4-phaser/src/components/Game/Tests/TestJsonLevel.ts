@@ -1,12 +1,13 @@
 import { TestBase } from './TestBase';
 import { Scene, Loader } from 'phaser';
-import { LEVELDATA } from '../Data/Generics';
-import * as data from '@/assets/levels/Level2.json';
+import * as level2Data from '@/assets/levels/Level2.json';
+import { assert } from './Assertions';
+import { ILevel } from '../Data/Map/JsonInterfaces';
 
 export class TestJsonLevel extends TestBase {
-    name: string = "Test: .json levels";
+    name: string = "Test - serve static .json data";
 
-    lvl1 = "Level1";
+    lvl1 = "test_data";
     constructor(scene: Scene) {
         super(scene);
 
@@ -18,12 +19,7 @@ export class TestJsonLevel extends TestBase {
     }
 
     preload(loader: Loader.LoaderPlugin) {
-        try {
-            loader.json(this.lvl1, LEVELDATA.Level1);
-        } catch (e) {
-            console.warn("Preloading test-suite TestJsonLevel failed: ", e);
-            return e;
-        }
+        loader.json(this.lvl1, "/test.json");
     }
 
     breakDown(): void {
@@ -31,12 +27,21 @@ export class TestJsonLevel extends TestBase {
     }
 
     runTests(): void {
-
+        this.checkDynamicAsset();
+        this.checkStaticAsset();
     }
 
-    private checkAssets() {
-        let data = this.scene.cache.json.get(this.lvl1);
-        // expect(data != null;
+    /**
+     * Test: checks dynamically pre-loaded level in cache.
+     */
+    private checkDynamicAsset() {
+        this.scene.cache.json.get(this.lvl1);
+    }
+
+    private checkStaticAsset() {
+        // const level: ILevel = level2Data;
+        // console.log(level);
+        // assert(level);
     }
 
 }

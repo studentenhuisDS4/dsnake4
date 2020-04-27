@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
     preload() {
         this.load.setPath('img/assets/');
         // this.load.image('logo', 'logo.png');
-        this.load.image('logo', ['menu.png', 'menu-normal.png']);
+        this.load.image('logo', ['menu2.png', 'menu2-normal.png']);
     }
 
     public create() {
@@ -91,26 +91,26 @@ export class MenuScene extends Phaser.Scene {
     createLogo(imageName: string) {
         const x = this.width / 2;
         const y = this.height / 4;
+
+        this.add.circle(x, y, 20, 0x999999, 1);
+        this.add
+            .image(x, y, imageName)
+            .setOrigin(0.5, 0.5)
+            // .setScale(0.4, 0.4)
+            .setPipeline('Light2D');
+
         this.lights.enable();
-        this.lights.setAmbientColor(0x313339);
-        this.add.circle(x, y, 30, 0x999999, 1);
-        const light: GameObjects.Light = this.lights.addLight(x, y, 100, 0x42b983, 1);
         const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
-
-        this.events.on('snakeMovement', function (event: number[]) {
-            snakeLight.x = event[0] * 10;
-            snakeLight.y = event[1] * 10;
-        });
-
+        this.lights.setAmbientColor(0x313339);
+        const light: GameObjects.Light = this.lights.addLight(x, y, 130, 0x42b983, 1);
         this.input.on('pointermove', function (event: MouseEvent) {
             light.x = event.x;
             light.y = event.y;
         });
-        this.add
-            .image(x, y, imageName)
-            .setOrigin(0.5, 0.5)
-            .setScale(0.4, 0.4)
-            .setPipeline('Light2D');
+        this.events.on('snakeMovement', function (event: number[]) {
+            snakeLight.x = event[0] * 10;
+            snakeLight.y = event[1] * 10;
+        });
     }
 
     createTitle(x: number, y: number, text: string) {
@@ -143,12 +143,12 @@ export class MenuScene extends Phaser.Scene {
 
     createSnakes() {
         const x = 10;
-        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
-        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
-        this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 16), 6, 'Right'));
+        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
+        // this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
+        // this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
     }
 
     private limitSnake(snake: Snake) {

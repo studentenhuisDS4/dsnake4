@@ -21,7 +21,7 @@ export class MapController {
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
         this.map = new Map(Level.FirstFloor);
-        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
+        this.snake = new Snake(new Vector2(15, 16), 15, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }

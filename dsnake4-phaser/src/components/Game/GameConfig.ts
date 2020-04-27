@@ -7,7 +7,7 @@ export const SW = 1050;
 export const SH = 600;
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: 'DSnake4',
-    type: Phaser.AUTO,
+    type: Phaser.WEBGL,
     scene: [MenuScene, SnakeScene, TestRunnerScene],
     width: SW,
     height: SH,

@@ -70,9 +70,8 @@ export class Snake {
     public generateSnake(length: number) {
         let xPart = this.position.x;
         let yPart = this.position.y;
-        const pos = this.position.clone();
 
-        this.bodyParts.push(new BodyPart(pos, 'Head'));
+        this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Head'));
         for (let i = 0; i < length - 1; i++) {
             let resultX;
             let resultY;
@@ -94,9 +93,9 @@ export class Snake {
             // Dont allow overflow of body part
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
-                    this.bodyParts.push(new BodyPart(pos, 'Tail'));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Tail'));
                 } else {
-                    this.bodyParts.push(new BodyPart(pos, 'Body'));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Body'));
                 }
             }
             else {
@@ -165,20 +164,22 @@ export class Snake {
                 break;
         }
 
-        let newPos = this.position.clone();
+        let newX = this.position.x;
+        let newY = this.position.y;
         let newFoodStored = false;
-
         let increaseLength: boolean = this.completeDigestion();
 
         this.bodyParts.forEach(part => {
-            const currPos = part.position.clone();
+            const currX = part.position.x;
+            const currY = part.position.y;
             const currF = part.foodStored;
 
-            part.position.x = newPos.x;
-            part.position.y = newPos.y;
+            part.position.x = newX;
+            part.position.y = newY;
             part.foodStored = newFoodStored;
 
-            newPos = currPos;
+            newX = currX;
+            newY = currY;
             newFoodStored = currF;
 
             if (increaseLength && part.type == 'Tail') {
@@ -187,7 +188,7 @@ export class Snake {
         });
 
         if (increaseLength) {
-            this.bodyParts.push(new BodyPart(newPos, 'Tail'));
+            this.bodyParts.push(new BodyPart(new Vector2(newX,newY), 'Tail'));
         }
     }
 

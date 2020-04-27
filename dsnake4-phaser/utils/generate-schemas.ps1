@@ -10,6 +10,5 @@ If (!(test-path $path))
 }
 
 # Install package globally with `npm i -g typescript-json-schema`
-typescript-json-schema ".\src\components\Game\Data\Map\LevelData.ts" ILevel -o "..\schemas\level_schema.json" --noExtraProps
-
+npx typescript-json-schema ".\src\components\Game\Data\Map\LevelData.ts" ILevel -o "..\schemas\level_schema.json" --noExtraProps
 Write-Output "Generated 1 .json schema (.\schemas\level_schema.json) from class ILevel (.\src\components\Game\Data\Map\LevelData.ts)."

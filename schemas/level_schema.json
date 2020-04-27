@@ -26,10 +26,7 @@
                 "height": {
                     "type": "number"
                 },
-                "key": {
-                    "type": "string"
-                },
-                "mirrorKey": {
+                "identifier": {
                     "type": "string"
                 },
                 "opened": {
@@ -38,13 +35,10 @@
                 "opens": {
                     "$ref": "#/definitions/MapLevel"
                 },
+                "position": {
+                    "$ref": "#/definitions/Vector2"
+                },
                 "width": {
-                    "type": "number"
-                },
-                "x": {
-                    "type": "number"
-                },
-                "y": {
                     "type": "number"
                 }
             },
@@ -54,33 +48,14 @@
             "additionalProperties": false,
             "description": "Interface `IWall` defines",
             "properties": {
-                "anchor": {
-                    "additionalItems": {
-                        "anyOf": [
-                            {
-                                "type": "number"
-                            },
-                            {
-                                "type": "number"
-                            }
-                        ]
-                    },
-                    "items": [
-                        {
-                            "type": "number"
-                        },
-                        {
-                            "type": "number"
-                        }
-                    ],
-                    "minItems": 2,
-                    "type": "array"
-                },
                 "direction": {
                     "$ref": "#/definitions/Direction"
                 },
                 "length": {
                     "type": "number"
+                },
+                "position": {
+                    "$ref": "#/definitions/Vector2"
                 },
                 "removable": {
                     "type": "boolean"
@@ -93,13 +68,25 @@
         },
         "MapLevel": {
             "enum": [
-                "FirstFloor",
-                "SecondFloor",
-                "Shop",
-                "ThirdFloor",
-                "Tropen"
+                0,
+                1,
+                2,
+                3,
+                4
             ],
-            "type": "string"
+            "type": "number"
+        },
+        "Vector2": {
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
         }
     },
     "properties": {

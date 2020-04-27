@@ -345,7 +345,6 @@ class Map(object):
         self.furniture.append(Furniture(1, (45, 56), (48, 59), 0))
         self.furniture.append(Furniture(1, (61, 1), (64, 5), 1))
 
-
     def init_food(self, g):
         self.food = []
 
@@ -389,7 +388,7 @@ class Map(object):
         third_floor = ""
         if len(argv) == 0:
             f_type = list(g.food_colors.keys())[r.randint(0, 3)]
-            floor = r.randint(0, g.number_of_floors-1)
+            floor = r.randint(0, g.number_of_floors - 2)
         elif len(argv) == 1 and type(argv) == type(""):
             f_type = argv
         elif len(argv) == 1 and type(argv) == type(1):
@@ -495,7 +494,7 @@ class Map(object):
     def open_first_stair(self):
         self.walls[self.bin_stair_wall].status = "invisible"
         self.walls[self.gr_stair_wall].status = "invisible"
-        print("Outside Stair OPENED!")
+        # print("Outside Stair OPENED!")
 
     def open_front_yard(self):
         self.walls[self.front_yard_wall].status = "invisible"
@@ -509,16 +508,16 @@ class Map(object):
     def open_third_stair(self):
         self.walls[self.floor1_stair_wall].status = "invisible"
         self.walls[self.floor2_stair_wall].status = "invisible"
-        print("Upstairs OPENED!")
+        # print("Upstairs OPENED!")
 
     def open_schuur_stair(self):
         self.walls[self.schuur1_stair_wall].status = "invisible"
         self.walls[self.schuur2_stair_wall].status = "invisible"
-        print("Schuur Stair OPENED!")
+        # print("Schuur Stair OPENED!")
 
     def open_tropen(self):
         self.walls[self.tropen_wall].status = "invisible"
-        print("Tropen OPENED!")
+        # print("Tropen OPENED!")
 
     def reset(self, g):
         self.walls = []
@@ -562,8 +561,8 @@ class Map(object):
 
         for fur in self.furniture:
             if fur.active and fur.floor == g.current_floor:
-                surface.blit(fu_images[fur.image_index], (fur.top_left[0]*dis + 1, fur.top_left[1]*dis + 1))
-
+                surface.blit(
+                    fu_images[fur.image_index], (fur.top_left[0]*dis + 1, fur.top_left[1]*dis + 1))
 
         for f in self.food:
             i = f.position[0]

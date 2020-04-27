@@ -48,6 +48,13 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[], fu_images=
             pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_effect_length), 255*min(1, 2*g.weed_counter/g.weed_effect_length), 0),
                              (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
+    for i in range(g.boost_max):
+        pygame.draw.rect(surface, (100, 100, 100),
+                         (g.width + int(i*2.5), g.height - 25, 2, 25))
+    for i in range(g.boost_counter):
+        pygame.draw.rect(surface, (255*min(1, 2 - 2*g.boost_counter/g.boost_max), 255*min(1, 2*g.boost_counter/g.boost_max), 0),
+                         (g.width + int(i*2.5), g.height - 25, 2, 25))
+
     for i in range(g.main_obj_collected):
         surface.blit(
             mo_images[i], (g.width + 10 + (i % 5)*35, int(i/5)*35 + counter))
@@ -811,8 +818,7 @@ while True:
         exit()
     elif status == "play":
         while True:
-            pygame.time.delay(50)
-            clock.tick(15)
+            clock.tick(g.speed)
             climbed, score, game_ended, paused = g.move_snake()
             if game_ended:
                 g.reset(100, 20)

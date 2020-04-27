@@ -28,7 +28,12 @@ class Game(object):
     weed = False
     weed_effect_length = 105
 
+    speed = 15
     double_speed = False
+    half_speed = False
+
+    boost_counter = 0
+    boost_max = 100
 
     shop = None
     current_shop_items = []
@@ -69,64 +74,72 @@ class Game(object):
                 # TODO catch exeption if game already quit
                 pygame.quit()
                 exit()
-
-            keys = pygame.key.get_pressed()
-
-            if keys[pygame.K_SPACE]:
-                self.double_speed = True
-
-            if not moved:
-                if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                    self.s.turn('LEFT')
-                    moved = True
-                elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
-                    self.s.turn('RIGHT')
-                    moved = True
-                elif (keys[pygame.K_UP] or keys[pygame.K_w]):
-                    self.s.turn('UP')
-                    moved = True
-                elif (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-                    self.s.turn('DOWN')
-                    moved = True
-                elif keys[pygame.K_p]:
-                    return climbed, self.points, False, True
-
-            if keys[pygame.K_h] and self.weed:
-                self.map.get_high()
-                self.weed_counter = self.weed_effect_length
-                self.weed = False
             elif event.type == pygame.KEYUP:
                 if event.key == pygame.K_SPACE:
                     self.double_speed = False
+                elif event.key == pygame.K_v:
+                    self.half_speed = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.double_speed = True
+                elif event.key == pygame.K_v:
+                    self.half_speed = True
+                elif event.key == pygame.K_h and self.weed:
+                    self.map.get_high()
+                    self.weed_counter = self.weed_effect_length
+                    self.weed = False
+                elif event.key == pygame.K_p:
+                    self.half_speed = False
+                    self.double_speed = False
+                    return climbed, self.points, False, True
+                elif not moved:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        self.s.turn('LEFT')
+                        moved = True
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        self.s.turn('RIGHT')
+                        moved = True
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        self.s.turn('UP')
+                        moved = True
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        self.s.turn('DOWN')
+                        moved = True
 
-        n_moves = 2 if self.double_speed else 1
-
-        for i in range(n_moves):
-            self.s.move()
-
-            if self.current_floor == 4:
-                self.shop_buying()
-
-            # check for stairs
-            climbed, game_ended = self.stair_climbing()
-
-
-            if game_ended:
-                return climbed, self.points, True, False
-
-            # check for self-collisions
-            if self.s.self_collision():
-                return climbed, self.points, self.fatal_collision(), False
-
-            # check for collisions with walls
-            if self.collision_with_walls():
-                return climbed, self.points, self.fatal_collision(), False
-
-            # check if the snake ate food
-            self.food_eating()
         
-        self.reduce_weed_counter()
+        self.speed = 15
+        if self.double_speed and self.boost_counter > 0:
+            self.speed = 30
+        elif self.half_speed and self.boost_counter > 0:
+            self.speed = 10
 
+        if self.speed != 15:
+            self.boost_counter -= 1
+
+        self.s.move()
+
+        if self.current_floor == 4:
+            self.shop_buying()
+
+        # check for stairs
+        climbed, game_ended = self.stair_climbing()
+
+        if game_ended:
+            return climbed, self.points, True, False
+
+        # check for self-collisions
+        if self.s.self_collision():
+            return climbed, self.points, self.fatal_collision(), False
+
+        # check for collisions with walls
+        if self.collision_with_walls():
+            return climbed, self.points, self.fatal_collision(), False
+
+        # check if the snake ate food
+        self.food_eating()
+
+        self.reduce_weed_counter()
+        
         return climbed, self.points, False, False
 
     def init_main_obj(self):
@@ -231,12 +244,14 @@ class Game(object):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
                 if self.s.body[0] == (i, j, self.current_floor):
+                    print('Collided with a wall')
                     return True
 
         for fur in self.map.furniture:
             for i in range(fur.bottom_right[0] - fur.top_left[0]):
                 for j in range(fur.bottom_right[1] - fur.top_left[1]):
                     if (fur.top_left[0] + i, fur.top_left[1] + j, self.current_floor) == self.s.body[0] and fur.active:
+                        print('Collided with furniture')
                         return True
         return False
 
@@ -255,6 +270,8 @@ class Game(object):
                             self.main_obj[self.main_obj_collected])
                 else:
                     self.map.add_random_food(self)
+                    self.boost_counter = min(
+                        self.boost_max, self.boost_counter + 20)
 
                 self.map.remove_food(self, f)
 
@@ -385,6 +402,9 @@ class Game(object):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
         self.double_speed = False
+        self.half_speed = False
+        self.speed = 15
+        self.boost_counter = 0
         self.init_main_obj()
 
         self.points = 0

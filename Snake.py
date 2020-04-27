@@ -62,6 +62,7 @@ class Snake(object):
 
     def self_collision(self):
         if len(list(dict.fromkeys(self.body))) != len(self.body):
+            print('Collided with yourself')
             return True
         else:
             return False

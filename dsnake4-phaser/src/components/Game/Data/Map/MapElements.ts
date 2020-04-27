@@ -119,7 +119,7 @@ export class Food extends MapElement {
     public points!: number;
     public blocksAdded!: number;
     public boostCharge!: number;
-    public color!: number[];
+    public color!: number;
 
 
     constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number) {
@@ -135,22 +135,27 @@ export class Food extends MapElement {
             case 'Coffie':
                 this.points = 20;
                 this.blocksAdded = 1;
+                this.color = 0xEEEE08;
                 break;
             case 'Beer':
                 this.points = 20;
                 this.blocksAdded = 1;
+                this.color = 0xEEEE08;
                 break;
             case 'Weed':
                 this.points = 20;
                 this.blocksAdded = 1;
+                this.color = 0xEEEE08;
                 break;
             case 'Krant':
                 this.points = 20;
                 this.blocksAdded = 1;
+                this.color = 0xEEEE08;
                 break;
             case 'MainObject':
                 this.points = 100;
                 this.blocksAdded = 5;
+                this.color = 0xEE0000;
                 break;
 
         }

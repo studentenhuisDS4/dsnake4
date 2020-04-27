@@ -75,6 +75,12 @@ export class MapController {
         this.map.flattenMap();
     }
 
+    private checkSnakeEating() {
+        if (this.map.checkCollision(this.snake.x, this.snake.y) == 'Pickup') {
+            return;
+        }
+    }
+
     private renderMapCells() {
         this.map.Map2D
             .forEach(row => row

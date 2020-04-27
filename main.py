@@ -10,10 +10,10 @@ from Sprites import Spritesheet
 from utils.server_client import ServerClient
 
 
-def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
+def redraw_game_window(surface, g, nickname, images=[], mo_images=[], fu_images=[]):
     surface.fill((0, 0, 0))
-    g.map.draw(surface, g)
     drawGrid(g.width, g.columns, g.rows, surface)
+    g.map.draw(surface, g, fu_images)
 
     text_color = pygame.Color('green1')
 
@@ -48,13 +48,16 @@ def redraw_game_window(surface, g, nickname, images=[], mo_images=[]):
             pygame.draw.rect(surface, (255*min(1, 2 - 2*g.weed_counter/g.weed_effect_length), 255*min(1, 2*g.weed_counter/g.weed_effect_length), 0),
                              (i*dis+1, (g.rows - 1)*dis+1, dis-1, dis-1))
 
+    for i in range(g.boost_max):
+        pygame.draw.rect(surface, (100, 100, 100),
+                         (g.width + int(i*2.5), g.height - 25, 2, 25))
+    for i in range(g.boost_counter):
+        pygame.draw.rect(surface, (255*min(1, 2 - 2*g.boost_counter/g.boost_max), 255*min(1, 2*g.boost_counter/g.boost_max), 0),
+                         (g.width + int(i*2.5), g.height - 25, 2, 25))
+
     for i in range(g.main_obj_collected):
         surface.blit(
             mo_images[i], (g.width + 10 + (i % 5)*35, int(i/5)*35 + counter))
-
-    if g.current_floor == 1:
-        surface.blit(images[9], (621, 570))
-
 
     pygame.display.update()
 
@@ -758,6 +761,7 @@ local_scores_file = open("Local_scores.txt", "a")
 
 objects_images = []
 main_objects_images = []
+furniture_images = []
 
 game_objects_rect = {"colored_beer": (0, 0, 11, 45),
                      "gray_beer": (18, 0, 11, 45),
@@ -783,9 +787,9 @@ objects_images.append(pygame.transform.scale(objects_images[3], (int(
     objects_images[3].get_rect().size[0]*1.5), int(objects_images[3].get_rect().size[1]*1.5))))
 objects_images.append(pygame.transform.scale(objects_images[4], (int(
     objects_images[4].get_rect().size[0]*1.5), int(objects_images[4].get_rect().size[1]*1.5))))
-objects_images.append(pygame.image.load("images/Cassette_Machine.png"))
+furniture_images.append(pygame.image.load("images/Mail_Box.png"))
+furniture_images.append(pygame.image.load("images/Cassette_Machine.png"))
 objects_images.append(pygame.image.load("images/Cassette.png"))
-objects_images.append(pygame.image.load("images/Mail_Box.png"))
 objects_images.append(pygame.transform.scale(
     pygame.image.load("images/weed.png"), (16, 32)))
 
@@ -814,8 +818,7 @@ while True:
         exit()
     elif status == "play":
         while True:
-            pygame.time.delay(50)
-            clock.tick(15)
+            clock.tick(g.speed)
             climbed, score, game_ended, paused = g.move_snake()
             if game_ended:
                 g.reset(100, 20)
@@ -832,8 +835,8 @@ while True:
                     exit()
                 score = 0
                 game_ended = False
-            redraw_game_window(window, g, nickname,
-                               objects_images, main_objects_images)
+            redraw_game_window(window, g, nickname, objects_images,
+                               main_objects_images, furniture_images)
             if paused:
                 choice = pause_menu(window=window, g=g)
                 if choice == "resume":

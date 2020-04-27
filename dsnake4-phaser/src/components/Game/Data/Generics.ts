@@ -16,6 +16,7 @@ export enum MapLevel {
     'Tropen',
     'Shop'
 }
+export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject';
 
 export const CELLS_X: number = 105;
 export const CELLS_Y: number = 60;

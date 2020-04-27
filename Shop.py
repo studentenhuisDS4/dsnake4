@@ -8,6 +8,7 @@ class ShopItem(object):
     description = ''
     key = ''
     section = 0
+    bought = False
     weight = 1
 
     def __init__(self, cost=0, name='', description='', key='000', section=0, weight=1):
@@ -61,6 +62,7 @@ class Shop(object):
             if i.key == key:
                 i.weight = 0
                 self.check_empty_section()
+                i.bought = True
     
     def weighted_choice(self, weights=[]):
         total = sum(w for w in weights)

@@ -87,6 +87,7 @@ class Map(object):
 
     GREEN = pygame.Color('green1')
     RED = pygame.Color('tomato')
+    GREY = pygame.Color('grey55')
     BLACK = pygame.Color('black')
 
     under_effect_of_weed = False
@@ -487,6 +488,8 @@ class Map(object):
         for i in range(len(self.shop_elements)):
             if g.points >= self.shop_elements[i].item.cost and self.shop_elements[i].item.weight > 0 and self.shop_elements[i].item.key != '404':
                 self.shop_elements[i].color = self.GREEN
+            elif self.shop_elements[i].item.bought:
+                self.shop_elements[i].color = self.GREY
             else:
                 self.shop_elements[i].color = self.RED
             self.shop_elements[i].text_color = self.BLACK

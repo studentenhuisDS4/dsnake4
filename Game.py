@@ -311,6 +311,9 @@ class Game(object):
                         # check if the snake ate food
                         self.food_eating()
 
+                        if stair_to.floor == 4:
+                            self.map.update_shop_color(self)
+
                         self.s.dirnx, self.s.dirny = (stair_to.direction)
                         self.current_floor = next_floor
 

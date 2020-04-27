@@ -1,4 +1,4 @@
-import { MapVector, MapCell } from './Map/MapElements';
+import { MapVector, MapCell, Food } from './Map/MapElements';
 import { Scene } from 'phaser';
 import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
@@ -21,7 +21,7 @@ export class MapController {
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
         this.map = new Map('FirstFloor');
-        this.snake = new Snake(15, 16, 3, 'Right');
+        this.snake = new Snake(3, 16, 15, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
@@ -61,15 +61,15 @@ export class MapController {
     }
 
     private constructMap() {
-        const offsetX = 30;
-        const offsetY = 30;
-
         // Load elements into the map
         this.map
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Up'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Down'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Left'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, 'Wall'), 3, 'Right'));
+            .appendElement(new Food(new MapCell(2, 2, 'Pickup'), 'Beer', 2, 2))
+            .appendElement(new Food(new MapCell(11, 11, 'Pickup'), 'Weed', 1, 1))
+            .appendElement(new Food(new MapCell(41, 41, 'Pickup'), 'Krant', 1, 1))
+            .appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 105, 'Right'))
+            .appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 60, 'Down'))
+            .appendElement(new MapVector(new MapCell(1, 60, 'Wall'), 105, 'Right'))
+            .appendElement(new MapVector(new MapCell(105, 1, 'Wall'), 60, 'Down'));
 
         // Perform processing to 2D-array
         this.map.flattenMap();
@@ -79,11 +79,21 @@ export class MapController {
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {
-                    this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2,
-                        cell.y * this.cellHeight - this.cellHeight / 2,
-                        this.cellWidth - 2, this.cellHeight - 2,
-                        0xEEEEEE);
+                    switch (cell.type) {
+                        case 'Wall':
+                            this.scene.add.rectangle(
+                                cell.x * this.cellWidth - this.cellWidth / 2,
+                                cell.y * this.cellHeight - this.cellHeight / 2,
+                                this.cellWidth - 2, this.cellHeight - 2,
+                                0xEEEEEE);
+                            break;
+                        case 'Pickup':
+                            this.scene.add.rectangle(
+                                cell.x * this.cellWidth - this.cellWidth / 2,
+                                cell.y * this.cellHeight - this.cellHeight / 2,
+                                this.cellWidth - 2, this.cellHeight - 2,
+                                0xEE0000);
+                    }
                 }));
     }
 

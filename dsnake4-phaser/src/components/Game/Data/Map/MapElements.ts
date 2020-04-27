@@ -1,4 +1,5 @@
-import { Direction, CELLS_X, CELLS_Y, MapCellType, MapLevel } from '../Generics';
+import { Direction, CELLS_X, CELLS_Y, MapCellType, FoodType, MapLevel } from '../Generics';
+import { Map } from './Map';
 
 export class MapCell {
     /* 
@@ -28,8 +29,8 @@ export class MapCell {
     }
 
     public validateCoordinates() {
-        if (this.x >= 0 && this.y >= 0 &&
-            this.x < CELLS_X && this.y < CELLS_Y) {
+        if (this.x > 0 && this.y > 0 &&
+            this.x <= CELLS_X && this.y <= CELLS_Y) {
             return true;
         }
         else {
@@ -108,4 +109,71 @@ export class MapVector extends MapElement {
     public resetCells(): void {
         this.cells = [];
     }
+}
+
+export class Food extends MapElement {
+    public TopLeftCell: MapCell;
+    public height: number;
+    public width: number;
+    public type: FoodType;
+    public points!: number;
+    public blocksAdded!: number;
+    public boostCharge!: number;
+    public color!: number[];
+
+
+    constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number) {
+        super();
+        this.TopLeftCell = TopLeftCell;
+        this.type = type;
+        this.height = height;
+        this.width = width;
+
+        this.generateCells();
+
+        switch (this.type) {
+            case 'Coffie':
+                this.points = 20;
+                this.blocksAdded = 1;
+                break;
+            case 'Beer':
+                this.points = 20;
+                this.blocksAdded = 1;
+                break;
+            case 'Weed':
+                this.points = 20;
+                this.blocksAdded = 1;
+                break;
+            case 'Krant':
+                this.points = 20;
+                this.blocksAdded = 1;
+                break;
+            case 'MainObject':
+                this.points = 100;
+                this.blocksAdded = 5;
+                break;
+
+        }
+    }
+
+    public generateCells(): void {
+        this.resetCells();
+        for (let i = 0; i < this.height; i++) {
+            for (let j = 0; j < this.width; j++) {
+                const newCell = this.TopLeftCell.clone();
+                newCell.x += i;
+                newCell.y += j;
+                if (newCell.validateCoordinates()) {
+                    this.cells.push(newCell);
+                } else {
+                    // Skip throwing error, but a DEBUG warning might be nice.
+                    // console.log("The cell was setup outside the map and cant be rendered. Skipped cell.")
+                }
+            }
+        }
+    }
+    public resetCells(): void {
+        this.cells = [];
+    }
+
 }

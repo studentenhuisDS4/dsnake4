@@ -95,6 +95,13 @@ export class MenuScene extends Phaser.Scene {
         this.lights.setAmbientColor(0x313339);
         this.add.circle(x, y, 30, 0x999999, 1);
         const light: GameObjects.Light = this.lights.addLight(x, y, 100, 0x42b983, 1);
+        const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+
+        this.events.on('snakeMovement', function (event: number[]) {
+            snakeLight.x = event[0] * 10;
+            snakeLight.y = event[1] * 10;
+            console.log('light change', event);
+        });
 
         this.input.on('pointermove', function (event: MouseEvent) {
             light.x = event.x;
@@ -136,7 +143,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     createSnakes() {
-        const x = 35;
+        const x = 10;
         this.snakes.push(new Snake(x, 16, 3, 'Right'));
         this.snakes.push(new Snake(x, 36, 3, 'Down'));
         this.snakes.push(new Snake(x, 36, 3, 'Down'));
@@ -182,15 +189,16 @@ export class MenuScene extends Phaser.Scene {
         }
     }
 
-private renderSnakes() {
-    this.snakes.forEach(snake => {
-        if (snake.bodyParts != null) {
-            snake.bodyParts.forEach(part => {
-                this.renderSnakePart(part);
-            });
-        }
-    });
-}
+    private renderSnakes() {
+        this.events.emit('snakeMovement', [this.snakes[0].x, this.snakes[0].y]);
+        this.snakes.forEach(snake => {
+            if (snake?.bodyParts != null) {
+                snake.bodyParts.forEach(part => {
+                    this.renderSnakePart(part);
+                });
+            }
+        });
+    }
 
     private renderSnakePart(part: BodyPart) {
         const pixelX = (part.x - 1) * this.cellWidth + 1;
@@ -199,6 +207,7 @@ private renderSnakes() {
             part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }
         else {
+            part.gameObject.text = part.toCharacter();
             part.gameObject.setPosition(pixelX, pixelY);
         }
     }

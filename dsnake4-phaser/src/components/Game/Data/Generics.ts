@@ -14,7 +14,7 @@ export class LEVELDATA {
 }
 
 export const defaultTextStyle = {
-    fontSize: 20,
+    fontSize: 18,
     fontStyle: 'normal',
     // fontFamily: 'Consolas',
     color: "#42b983",

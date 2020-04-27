@@ -24,6 +24,10 @@ class Game(object):
     lives_obtained = 0
     lives_used = 0
 
+    weed_counter = 0
+    weed = False
+    weed_effect_length = 105
+
     shop = None
     current_shop_items = []
 
@@ -50,7 +54,6 @@ class Game(object):
         self.map.open_tropen()
         self.map.open_first_stair()
         self.map.open_schuur_stair()
-        self.map.open_second_stair()
         self.map.open_third_stair()
 
         self.init_shop()
@@ -76,13 +79,17 @@ class Game(object):
                 self.s.turn('DOWN')
             elif keys[pygame.K_SPACE]:
                 return climbed, self.points, False, True
+            elif keys[pygame.K_h] and self.weed:
+                self.map.get_high()
+                self.weed_counter = self.weed_effect_length
+                self.weed = False
             break
 
         # check for stairs
         climbed, game_ended = self.stair_climbing()
 
         if self.current_floor == 4:
-            climbed = self.shop_buying()
+            self.shop_buying()
 
         self.s.move()
 
@@ -99,6 +106,7 @@ class Game(object):
 
         # check if the snake ate food
         self.food_eating()
+        self.reduce_weed_counter()
 
         return climbed, self.points, False, False
 
@@ -174,22 +182,24 @@ class Game(object):
     def init_shop(self):
         items = []
 
-        items.append(ShopItem(cost=100, name='Open Front Yard',
-                              description='', key='ofy', section=0, repeatable=False, weight=1))
-        items.append(ShopItem(cost=100, name='Open Inside Stair',
-                              description='', key='ois', section=0, repeatable=False, weight=1))
-        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
-                              key='cm1', section=1, repeatable=False, weight=1))
-        items.append(ShopItem(cost=100, name='Coffie Machine', description='Koffie',
-                              key='cm2', section=1, repeatable=False, weight=1))
-        items.append(ShopItem(cost=100, name='Mail Box', description='New puzzles',
-                              key='0mb', section=1, repeatable=False, weight=1))
-        items.append(ShopItem(cost=100, name='Abortion', description='Shortening potion',
-                              key='abo', section=2, repeatable=True, weight=1))
-        items.append(ShopItem(cost=100, name='Weed', description='Go through walls',
-                              key='wee', section=2, repeatable=True, weight=1))
-        items.append(ShopItem(cost=100, name='Life', description='Get an extra life',
-                              key='li1', section=2, repeatable=False, weight=1))
+        items.append(ShopItem(cost=10, name='Open Front Yard',
+                              description='', key='ofy', section=0, weight=1))
+        items.append(ShopItem(cost=10, name='Open Inside Stair',
+                              description='', key='ois', section=0, weight=1))
+        items.append(ShopItem(cost=10, name='Coffie Machine', description='Koffie',
+                              key='cm1', section=1, weight=1))
+        items.append(ShopItem(cost=10, name='Coffie Machine', description='Koffie',
+                              key='cm2', section=1, weight=1))
+        items.append(ShopItem(cost=10, name='Mail Box', description='New puzzles',
+                              key='0mb', section=1, weight=1))
+        items.append(ShopItem(cost=10, name='Cassette Player', description='New Music Friday',
+                              key='0cp', section=1, weight=1))
+        items.append(ShopItem(cost=10, name='Reduce by 20', description='Shortening potion',
+                              key='r20', section=2, weight=1))
+        items.append(ShopItem(cost=10, name='Weed', description='Go through walls',
+                              key='wee', section=2, weight=1))
+        items.append(ShopItem(cost=10, name='1 UP', description='Get an extra life (max 3)',
+                              key='li1', section=2, weight=1))
 
         self.shop = Shop(all_items=items, n_sections=3)
         self.current_shop_items = [None]*3
@@ -272,27 +282,41 @@ class Game(object):
         for se in self.map.shop_elements:
             for i in range(se.bottom_right[0] - se.top_left[0]):
                 for j in range(se.bottom_right[1] - se.top_left[1]):
-                    if (se.top_left[0] + i, se.top_left[1] + j, self.current_floor) == self.s.body[0] and self.points >= se.item.cost:
+                    if se.item.key != '404' and (se.top_left[0] + i, se.top_left[1] + j, self.current_floor) == self.s.body[0] and self.points >= se.item.cost and se.item.weight > 0:
                         self.points -= se.item.cost
 
-                        if se.item.key == 'ofy':
-                            self.map.open_front_yard()
-                        elif se.item.key == 'ois':
-                            self.map.open_second_stair()
-                        elif se.item.key == '':
-                            break
-                        elif se.item.key == '':
-                            break
-                        elif se.item.key == '':
-                            break
-                        elif se.item.key == '':
-                            break
-                        elif se.item.key == '':
-                            break
-                        elif se.item.key == '':
-                            break
-                        return True
+                        key = se.item.key
 
+                        self.shop.buy_object(key)
+                        self.shop.delete_item(key)
+
+                        if key == 'ofy':
+                            self.map.open_front_yard()
+                        elif key == 'ois':
+                            self.map.open_second_stair()
+                        elif key == 'li1':
+                            self.lives_obtained += 1
+                            self.shop.add_item(ShopItem(cost=200, name='1 UP', description='Get an extra life (max 3)',
+                                                        key='li2', section=2, weight=1))
+                        elif key == 'li2':
+                            self.lives_obtained += 1
+                            self.shop.add_item(ShopItem(cost=200, name='1 UP', description='Get an extra life (max 3)',
+                                                        key='li3', section=2, weight=1))
+                        elif key == 'li3':
+                            self.lives_obtained += 1
+                        elif key == 'r20':
+                            self.s.reduce(20)
+                            self.shop.add_item(ShopItem(
+                                cost=200, name='Reduce by 20', description='Shortening potion', key='r20', section=2, weight=1))
+                        elif key == 'wee':
+                            self.weed = True
+                            self.shop.add_item(ShopItem(
+                                cost=200, name='Weed', description='Go through walls', key='wee', section=2, weight=1))
+                        elif key == 'cm1':
+                            break
+
+
+                        self.map.update_shop_color(g=self)
 
     def use_life(self):
         if self.lives_obtained - self.lives_used > 0:
@@ -314,6 +338,18 @@ class Game(object):
                 section=s)
 
         self.map.update_shop(self)
+
+    def reduce_weed_counter(self):
+        if self.weed_counter == 0:
+            return
+        elif self.weed_counter == 1:
+            self.weed_counter = 0
+            self.map.get_sober()
+            self.shop.add_item(ShopItem(cost=100, name='Weed', description='Go through walls',
+                                        key='wee', section=2, weight=1))
+
+        else:
+            self.weed_counter -= 1
 
     def fatal_collision(self):
         pygame.time.delay(500)

@@ -1,5 +1,5 @@
-import { Direction, MapLevel } from '../../Generics';
-import { Map } from '../Map';
+import { Direction, MapLevel } from '../Generics';
+import { Map } from './Map';
 
 export interface IWall {
     x: number;

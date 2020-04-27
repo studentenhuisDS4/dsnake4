@@ -57,7 +57,7 @@ export class MapController {
     }
 
     private checkSnakeEating() {
-        if (this.map.checkCollision(this.snake.x, this.snake.y) == 'Pickup') {
+        if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
             let vars: number[] | undefined = this.map.getEatenFoodProperties(this.snake.x, this.snake.y);
             if (vars != undefined) { vars[0] += 0; }
         }
@@ -96,14 +96,14 @@ export class MapController {
             .forEach(row => row
                 .forEach(cell => {
                     switch (cell.type) {
-                        case 'Wall':
+                        case CellType.Wall:
                             this.scene.add.rectangle(
                                 cell.x * this.cellWidth - this.cellWidth / 2,
                                 cell.y * this.cellHeight - this.cellHeight / 2,
                                 this.cellWidth - 2, this.cellHeight - 2,
                                 0xEEEEEE);
                             break;
-                        case 'Pickup':
+                        case CellType.Pickup:
                             this.scene.add.rectangle(
                                 cell.x * this.cellWidth - this.cellWidth / 2,
                                 cell.y * this.cellHeight - this.cellHeight / 2,

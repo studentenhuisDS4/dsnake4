@@ -1,4 +1,4 @@
-import { MapElement, MapCell } from './MapElements';
+import { MapElement, MapCell, Food } from './MapElements';
 import { CELLS_Y, CELLS_X, CellType, MapLevel } from '../Generics';
 
 export class Map {
@@ -30,6 +30,18 @@ export class Map {
             return CellType.Void;
         }
         return this.Map2D[x][y].type;
+    }
+
+    public getEatenFoodProperties(x: number, y: number) {
+        for (let el of this.childElements) {
+            for (let cell of el.cells) {
+                if (cell.x == x && cell.y == y) {
+                    if (el instanceof Food) {
+                        return [el.points, el.blocksAdded, el.boostCharge]
+                    }
+                }
+            }
+        }
     }
 
     public getMapCell(x: number, y: number) {

@@ -28,6 +28,13 @@ class Game(object):
     weed = False
     weed_effect_length = 105
 
+    speed = 15
+    double_speed = False
+    half_speed = False
+
+    boost_counter = 0
+    boost_max = 100
+
     shop = None
     current_shop_items = []
 
@@ -60,38 +67,62 @@ class Game(object):
 
     def move_snake(self):
         climbed = False
+        moved = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 # TODO catch exeption if game already quit
                 pygame.quit()
                 exit()
+            elif event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    self.double_speed = False
+                elif event.key == pygame.K_v:
+                    self.half_speed = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.double_speed = True
+                elif event.key == pygame.K_v:
+                    self.half_speed = True
+                elif event.key == pygame.K_h and self.weed:
+                    self.map.get_high()
+                    self.weed_counter = self.weed_effect_length
+                    self.weed = False
+                elif event.key == pygame.K_p:
+                    self.half_speed = False
+                    self.double_speed = False
+                    return climbed, self.points, False, True
+                elif not moved:
+                    if event.key == pygame.K_LEFT or event.key == pygame.K_a:
+                        self.s.turn('LEFT')
+                        moved = True
+                    elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
+                        self.s.turn('RIGHT')
+                        moved = True
+                    elif event.key == pygame.K_UP or event.key == pygame.K_w:
+                        self.s.turn('UP')
+                        moved = True
+                    elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
+                        self.s.turn('DOWN')
+                        moved = True
 
-            keys = pygame.key.get_pressed()
+        
+        self.speed = 15
+        if self.double_speed and self.boost_counter > 0:
+            self.speed = 30
+        elif self.half_speed and self.boost_counter > 0:
+            self.speed = 10
 
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                self.s.turn('LEFT')
-            elif (keys[pygame.K_RIGHT] or keys[pygame.K_d]):
-                self.s.turn('RIGHT')
-            elif (keys[pygame.K_UP] or keys[pygame.K_w]):
-                self.s.turn('UP')
-            elif (keys[pygame.K_DOWN] or keys[pygame.K_s]):
-                self.s.turn('DOWN')
-            elif keys[pygame.K_SPACE]:
-                return climbed, self.points, False, True
-            elif keys[pygame.K_h] and self.weed:
-                self.map.get_high()
-                self.weed_counter = self.weed_effect_length
-                self.weed = False
-            break
+        if self.speed != 15:
+            self.boost_counter -= 1
 
-        # check for stairs
-        climbed, game_ended = self.stair_climbing()
+        self.s.move()
 
         if self.current_floor == 4:
             self.shop_buying()
 
-        self.s.move()
+        # check for stairs
+        climbed, game_ended = self.stair_climbing()
 
         if game_ended:
             return climbed, self.points, True, False
@@ -106,8 +137,9 @@ class Game(object):
 
         # check if the snake ate food
         self.food_eating()
-        self.reduce_weed_counter()
 
+        self.reduce_weed_counter()
+        
         return climbed, self.points, False, False
 
     def init_main_obj(self):
@@ -182,28 +214,28 @@ class Game(object):
     def init_shop(self):
         items = []
 
-        items.append(ShopItem(cost=10, name='Open Front Yard',
+        items.append(ShopItem(cost=100, name='Open Front Yard',
                               description='', key='ofy', section=0, weight=1))
-        items.append(ShopItem(cost=10, name='Open Inside Stair',
+        items.append(ShopItem(cost=100, name='Open Inside Stair',
                               description='', key='ois', section=0, weight=1))
-        items.append(ShopItem(cost=10, name='Coffie Machine', description='Koffie',
+        items.append(ShopItem(cost=200, name='Coffie Machine', description='Koffie',
                               key='cm1', section=1, weight=1))
-        items.append(ShopItem(cost=10, name='Coffie Machine', description='Koffie',
+        items.append(ShopItem(cost=200, name='Coffie Machine', description='Koffie',
                               key='cm2', section=1, weight=1))
-        items.append(ShopItem(cost=10, name='Mail Box', description='New puzzles',
+        items.append(ShopItem(cost=200, name='Mail Box', description='New puzzles',
                               key='0mb', section=1, weight=1))
-        items.append(ShopItem(cost=10, name='Cassette Player', description='New Music Friday',
-                              key='0cp', section=1, weight=1))
-        items.append(ShopItem(cost=10, name='Reduce by 20', description='Shortening potion',
+        items.append(ShopItem(cost=1000, name='Cassette Player', description='New Music Friday',
+                              key='0cp', section=1, weight=0.5))
+        items.append(ShopItem(cost=150, name='Reduce by 20', description='Shortening potion',
                               key='r20', section=2, weight=1))
-        items.append(ShopItem(cost=10, name='Weed', description='Go through walls',
+        items.append(ShopItem(cost=100, name='Weed', description='Go through walls',
                               key='wee', section=2, weight=1))
-        items.append(ShopItem(cost=10, name='1 UP', description='Get an extra life (max 3)',
+        items.append(ShopItem(cost=200, name='1 UP', description='Get an extra life (max 3)',
                               key='li1', section=2, weight=1))
 
         self.shop = Shop(all_items=items, n_sections=3)
         self.current_shop_items = [None]*3
-        self.enter_shop()
+        self.refresh_shop()
 
     def collision_with_walls(self):
         for wall in self.map.get_walls_at_floor(self.current_floor):
@@ -212,7 +244,15 @@ class Game(object):
                 i = wall.start[0] + (1 - direction)*block
                 j = wall.start[1] + direction*block
                 if self.s.body[0] == (i, j, self.current_floor):
+                    print('Collided with a wall')
                     return True
+
+        for fur in self.map.furniture:
+            for i in range(fur.bottom_right[0] - fur.top_left[0]):
+                for j in range(fur.bottom_right[1] - fur.top_left[1]):
+                    if (fur.top_left[0] + i, fur.top_left[1] + j, self.current_floor) == self.s.body[0] and fur.active:
+                        print('Collided with furniture')
+                        return True
         return False
 
     def food_eating(self):
@@ -223,6 +263,7 @@ class Game(object):
                     min(f.block_parts, len(self.s.body)))
 
                 if f.food_type == "main_obj":
+                    self.refresh_shop()
                     self.main_obj_collected += 1
                     if self.main_obj_collected != self.main_obj_total:
                         # Add Restarting
@@ -230,6 +271,8 @@ class Game(object):
                             self.main_obj[self.main_obj_collected])
                 else:
                     self.map.add_random_food(self)
+                    self.boost_counter = min(
+                        self.boost_max, self.boost_counter + f.boost)
 
                 self.map.remove_food(self, f)
 
@@ -258,9 +301,6 @@ class Game(object):
                             move_to=(stair_to.climb_start[0], stair_to.climb_start[1], stair_to.floor))
                         self.s.turn(stair_to.direction)
 
-                        if stair_to.floor == 4:
-                            self.enter_shop()
-
                         for i in range(stair_length):
                             self.s.move()
 
@@ -270,6 +310,9 @@ class Game(object):
 
                         # check if the snake ate food
                         self.food_eating()
+
+                        if stair_to.floor == 4:
+                            self.map.update_shop_color(self)
 
                         self.s.dirnx, self.s.dirny = (stair_to.direction)
                         self.current_floor = next_floor
@@ -296,25 +339,26 @@ class Game(object):
                             self.map.open_second_stair()
                         elif key == 'li1':
                             self.lives_obtained += 1
-                            self.shop.add_item(ShopItem(cost=200, name='1 UP', description='Get an extra life (max 3)',
+                            self.shop.add_item(ShopItem(cost=400, name='1 UP', description='Get an extra life (max 3)',
                                                         key='li2', section=2, weight=1))
                         elif key == 'li2':
                             self.lives_obtained += 1
-                            self.shop.add_item(ShopItem(cost=200, name='1 UP', description='Get an extra life (max 3)',
+                            self.shop.add_item(ShopItem(cost=800, name='1 UP', description='Get an extra life (max 3)',
                                                         key='li3', section=2, weight=1))
                         elif key == 'li3':
                             self.lives_obtained += 1
                         elif key == 'r20':
                             self.s.reduce(20)
                             self.shop.add_item(ShopItem(
-                                cost=200, name='Reduce by 20', description='Shortening potion', key='r20', section=2, weight=1))
+                                cost=150, name='Reduce by 20', description='Shortening potion', key='r20', section=2, weight=1))
                         elif key == 'wee':
                             self.weed = True
                             self.shop.add_item(ShopItem(
-                                cost=200, name='Weed', description='Go through walls', key='wee', section=2, weight=1))
-                        elif key == 'cm1':
-                            break
-
+                                cost=100, name='Weed', description='Go through walls', key='wee', section=2, weight=1))
+                        elif key == '0mb':
+                            self.map.furniture[0].activate()
+                        elif key == '0cp':
+                            self.map.furniture[1].activate()
 
                         self.map.update_shop_color(g=self)
 
@@ -332,7 +376,7 @@ class Game(object):
         else:
             return False
 
-    def enter_shop(self):
+    def refresh_shop(self):
         for s in range(self.shop.n_sections):
             self.current_shop_items[s] = self.shop.select_random_item(
                 section=s)
@@ -358,6 +402,10 @@ class Game(object):
     def reset(self, s_x, s_y):
         self.current_floor = self.starting_floor
         self.main_obj_collected = 0
+        self.double_speed = False
+        self.half_speed = False
+        self.speed = 15
+        self.boost_counter = 0
         self.init_main_obj()
 
         self.points = 0
@@ -367,3 +415,4 @@ class Game(object):
         self.map.reset(self)
 
         self.init_shop()
+        self.refresh_shop()

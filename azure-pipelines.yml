@@ -31,7 +31,12 @@ jobs:
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
         ArtifactName: 'snake-app' # output artifact named snake-app
-
+    - task: DownloadBuildArtifacts@0
+      inputs:
+        buildType: 'current'
+        downloadType: 'single'
+        artifactName: 'dsnake4-phaser'
+        downloadPath: '$(System.ArtifactsDirectory)'
 # - job: python-snake
 #   pool:
 #     vmImage: 'ubuntu-latest'

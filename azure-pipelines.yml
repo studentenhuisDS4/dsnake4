@@ -22,14 +22,15 @@ jobs:
         npm install
         npm run build
       displayName: 'npm install and build'
+      workingDirectory: dsnake4-phaser
     - task: CopyFiles@2
       inputs:
-        Contents: 'build/**' # Pull the build directory (React)
+        Contents: 'dsnake4-phaser/build/**' # Pull the build directory (React)
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
-        ArtifactName: 'www' # output artifact named www
+        ArtifactName: 'snake-app' # output artifact named snake-app
 
 # - job: python-snake
 #   pool:

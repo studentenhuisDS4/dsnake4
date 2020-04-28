@@ -70,7 +70,7 @@ export class Map {
         for (let x = 1; x <= CELLS_X; x++) {
             for (let y = 1; y <= CELLS_Y; y++) {
                 if (this.Map2D[x][y] == null) {
-                    this.Map2D[x][y] = new MapCell(x, y, CellType.Void);
+                    this.Map2D[x][y] = new MapCell(x, y, CellType.Void, 0x000000);
                 }
             }
         }

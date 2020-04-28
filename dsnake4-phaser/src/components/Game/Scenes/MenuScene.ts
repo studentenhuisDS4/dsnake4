@@ -105,7 +105,7 @@ export class MenuScene extends Phaser.Scene {
         this.lights.setAmbientColor(0x313339);
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 125, 0xffffff, 1);
 
-        // The mouse is fun, but the moon is calling us more.
+        // The mouse is fun, but the moon is calling us more. Agreed -Andrea
         // this.input.on('pointermove', function (event: MouseEvent) {
         //     light.x = event.x;
         //     light.y = event.y;
@@ -147,12 +147,13 @@ export class MenuScene extends Phaser.Scene {
 
     createSnakes() {
         const x = 10;
-        this.snakes.push(new Snake(new Vector2(x, 16), 6, 'Right'));
-        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        // this.snakes.push(new Snake(new Vector2(x, 36), 3, 'Down'));
-        // this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
-        // this.snakes.push(new Snake(new Vector2(x, 16), 3, 'Right'));
+        const len = 20
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
     }
 
     private limitSnake(snake: Snake) {

@@ -7,8 +7,9 @@ export class MapCell {
     x: number; // 0-oriented (until CELLS_X -1)
     y: number; // 0-oriented (until CELLS_Y -1)
     type: CellType;
+    color: number;
 
-    constructor(x: number, y: number, type: CellType) {
+    constructor(x: number, y: number, type: CellType, color?: number) {
         if (type == null) {
             throw new Error("The MapCell type should be type 'Void', but not null | undefined.");
         } else {
@@ -16,6 +17,7 @@ export class MapCell {
             this.y = y;
             if (this.validateCoordinates()) {
                 this.type = type;
+                this.color = (color == undefined) ? 0xEEEEEE : color;
             } else {
                 throw new Error("The given coordinates do not fit the map.");
             }
@@ -121,8 +123,6 @@ export class Food extends MapElement {
     public points!: number;
     public blocksAdded!: number;
     public boostCharge!: number;
-    public color!: number;
-
 
     constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number) {
         super();
@@ -137,27 +137,22 @@ export class Food extends MapElement {
             case 'Coffie':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Beer':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Weed':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Krant':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'MainObject':
                 this.points = 100;
                 this.blocksAdded = 5;
-                this.color = 0xEE0000;
                 break;
 
         }

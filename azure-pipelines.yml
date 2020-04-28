@@ -31,12 +31,15 @@ jobs:
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
         ArtifactName: 'dsnake4-phaser' # output artifact named snake-app
-    - task: DownloadBuildArtifacts@0
+    - task: UniversalPackages@0
       inputs:
-        buildType: 'current'
-        downloadType: 'single'
-        artifactName: 'dsnake4-phaser'
-        downloadPath: '$(System.ArtifactsDirectory)'
+        command: 'publish'
+        publishDirectory: '$(Build.ArtifactStagingDirectory)'
+        feedsToUsePublish: 'internal'
+        vstsFeedPublish: '1ec9d425-a99e-48b2-983f-b31bc9281b63/1a0470b0-ee13-4441-b6a5-42df5b2d73e7'
+        vstsFeedPackagePublish: 'dsnake4-phaser'
+        versionOption: 'minor'
+        verbosity: 'Warning'
 # - job: python-snake
 #   pool:
 #     vmImage: 'ubuntu-latest'

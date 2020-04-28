@@ -28,7 +28,7 @@ export class TestRunnerScene extends Phaser.Scene {
         console.warn("Ran: " + this.testSuites.length + " testSuites.");
         this.testSuites.forEach(suite => {
             console.log(suite.name);
-            console.log('%c Oh my heavens! ', 'color: darkgray');
+            console.log('%c > Completed a test suite! ', 'color: lime');
         });
         this.scene.stop();
     }

@@ -1,25 +1,15 @@
-import { Direction, CELLS_X, CELLS_Y, MapCellType, FoodType, MapLevel } from '../Generics';
-import { Map } from './Map';
+import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel } from '../Generics';
 
-export class XY {
-    x: number;
-    y: number;
-
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
+/**
+ * Class `MapCell` represents a single cell on the grid with a certain type.
+ */
 export class MapCell {
-    /* 
-    This class represents a single cell on the grid with a certain type.
-    */
     x: number; // 0-oriented (until CELLS_X -1)
     y: number; // 0-oriented (until CELLS_Y -1)
-    type: MapCellType;
+    type: CellType;
+    color: number;
 
-    constructor(x: number, y: number, type: MapCellType) {
+    constructor(x: number, y: number, type: CellType, color?: number) {
         if (type == null) {
             throw new Error("The MapCell type should be type 'Void', but not null | undefined.");
         } else {
@@ -27,6 +17,7 @@ export class MapCell {
             this.y = y;
             if (this.validateCoordinates()) {
                 this.type = type;
+                this.color = (color == undefined) ? 0xEEEEEE : color;
             } else {
                 throw new Error("The given coordinates do not fit the map.");
             }
@@ -49,21 +40,21 @@ export class MapCell {
     }
 }
 
+/**
+ * The `MapElement` class allows flattening any defined map object to an array of MapCells, which can be rendered.
+ */
 export abstract class MapElement {
-    /* 
-    This class allows flattening any defined map object to an array of MapCells, which can be rendered.
-    */
     cells!: MapCell[];
 
     public abstract generateCells(): void;
     public abstract resetCells(): void;
 }
 
-export class MapVector extends MapElement {
-    /*
-    This class allows adding hor/vert vectors and rendering them to a MapElement.
+/**
+ * `MapVector`allows defining hor/vert vectors and rendering them to a MapElement.
     Rendered elements end up in the cells property of MapElement.
-     */
+ */
+export class MapVector extends MapElement {
     readonly startCell: MapCell;
     readonly length: number = 0;
     readonly direction: Direction;
@@ -86,7 +77,10 @@ export class MapVector extends MapElement {
         }
     }
 
-    // Convert vector to array of 'MapCell's
+    /**
+     * Convert vector to array of 'MapCell's
+     * @returns  
+     */
     public generateCells() {
         this.resetCells();
         for (let i = 0; i < this.length; i++) {
@@ -129,8 +123,6 @@ export class Food extends MapElement {
     public points!: number;
     public blocksAdded!: number;
     public boostCharge!: number;
-    public color!: number;
-
 
     constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number) {
         super();
@@ -145,27 +137,22 @@ export class Food extends MapElement {
             case 'Coffie':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Beer':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Weed':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'Krant':
                 this.points = 20;
                 this.blocksAdded = 1;
-                this.color = 0xEEEE08;
                 break;
             case 'MainObject':
                 this.points = 100;
                 this.blocksAdded = 5;
-                this.color = 0xEE0000;
                 break;
 
         }

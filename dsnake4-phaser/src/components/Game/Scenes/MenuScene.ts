@@ -6,7 +6,7 @@ import { SH, SW } from '../GameConfig';
 import { Button } from '@/components/GameObjects/Button';
 import { GameObjects } from 'phaser';
 import { MenuItem } from '@/components/GameObjects/MenuDefinition';
-import { defaultTextStyle } from '../Data/Generics';
+import { defaultTextStyle, Vector2 } from '../Data/Generics';
 import { UnitTestScene } from './TestScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
     preload() {
         this.load.setPath('img/assets/');
         // this.load.image('logo', 'logo.png');
-        this.load.image('logo', ['menu.png', 'menu-normal.png']);
+        this.load.image('logo', ['menu.png', 'menu_n.png']);
     }
 
     public create() {
@@ -91,27 +91,30 @@ export class MenuScene extends Phaser.Scene {
     createLogo(imageName: string) {
         const x = this.width / 2;
         const y = this.height / 4;
+
+        this.add.circle(x, y, 20, 0x999999, 1);
+        this.add
+            .image(x, y, imageName)
+            .setOrigin(0.5, 0.5)
+            .setAlpha(0.7)
+            .setScale(0.4, 0.4)
+            .setPipeline('Light2D');
+
         this.lights.enable();
-        this.lights.setAmbientColor(0x313339);
-        this.add.circle(x, y, 30, 0x999999, 1);
-        const light: GameObjects.Light = this.lights.addLight(x, y, 100, 0x42b983, 1);
         const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        this.lights.setAmbientColor(0x313339);
+        const moonLight: GameObjects.Light = this.lights.addLight(x, y, 125, 0xffffff, 1);
+
+        // The mouse is fun, but the moon is calling us more. Agreed -Andrea
+        // this.input.on('pointermove', function (event: MouseEvent) {
+        //     light.x = event.x;
+        //     light.y = event.y;
+        // });
 
         this.events.on('snakeMovement', function (event: number[]) {
             snakeLight.x = event[0] * 10;
             snakeLight.y = event[1] * 10;
-            console.log('light change', event);
         });
-
-        this.input.on('pointermove', function (event: MouseEvent) {
-            light.x = event.x;
-            light.y = event.y;
-        });
-        this.add
-            .image(x, y, imageName)
-            .setOrigin(0.5, 0.5)
-            .setScale(0.4, 0.4)
-            .setPipeline('Light2D');
     }
 
     createTitle(x: number, y: number, text: string) {
@@ -144,12 +147,13 @@ export class MenuScene extends Phaser.Scene {
 
     createSnakes() {
         const x = 10;
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 36, 3, 'Down'));
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
-        this.snakes.push(new Snake(x, 16, 3, 'Right'));
+        const len = 20
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
     }
 
     private limitSnake(snake: Snake) {

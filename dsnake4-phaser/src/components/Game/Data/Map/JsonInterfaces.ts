@@ -1,25 +1,22 @@
-import { Direction, MapLevel } from '../../Generics';
-import { Map } from '../Map';
+import { Direction, MapLevel, Vector2 } from '../Generics';
 
+/**
+ * Interface `IWall` defines 
+ */
 export interface IWall {
-    x: number;
-    y: number;
-    length: number;
+    position: Vector2;
     direction: Direction;
+    length: number;
     removable?: boolean; // Has default
     visible?: boolean; // Has default
 }
 
 export interface IStairs {
-    // Unique key and key of other level
-    key: string;
-    mirrorKey: string;
-
-    x: number;
-    y: number;
+    identifier: string;     // Linked stair
+    
+    position: Vector2;
     width: number;
     height: number;
-
     opened: boolean;
     opens: MapLevel;
 
@@ -34,11 +31,4 @@ export interface ILevel {
     level: MapLevel;
     walls: IWall[];
     stairs: IStairs[];
-}
-
-export class LevelHelper {
-
-    public static parseJsonLevel(levelData: JSON): Map | null {
-        return null;
-    };
 }

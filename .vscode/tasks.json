@@ -12,6 +12,18 @@
 			"options": {
 				"cwd": "${workspaceFolder}/dsnake4-phaser/"
 			}
+		},
+		{
+			"label": "npm Json Schemas",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"run",
+				"schemas"
+			],
+			"options": {
+				"cwd": "${workspaceFolder}/dsnake4-phaser/"
+			}
 		}
 	]
 }

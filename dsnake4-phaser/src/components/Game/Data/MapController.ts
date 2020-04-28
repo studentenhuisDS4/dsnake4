@@ -4,7 +4,7 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { defaultTextStyle } from './Generics';
+import { defaultTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
 
 export class MapController {
     private scene: Scene;
@@ -15,13 +15,15 @@ export class MapController {
     cellWidth: number;
     inputKeys!: KeyBindings;
 
+    renderedCells!: Phaser.GameObjects.Rectangle[][];
+
     constructor(scene: Scene, cellWidth: number, cellHeight: number) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
-        this.map = new Map('FirstFloor');
-        this.snake = new Snake(3, 16, 15, 'Right');
+        this.map = new Map(Level.FirstFloor);
+        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
@@ -49,18 +51,25 @@ export class MapController {
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
         }
-        this.checkSnakeEating()
+        if (this.checkSnakeEating()) {
+            this.updateRenderedMap();
+        }
+
     }
 
     public checkSnakeCollision() {
-        return this.map.checkCollision(this.snake.x, this.snake.y) == 'Wall';
+        return this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Wall;
     }
 
-    private checkSnakeEating() {
-        if (this.map.checkCollision(this.snake.x, this.snake.y) == 'Pickup') {
-            let vars: number[] | undefined = this.map.getEatenFoodProperties(this.snake.x, this.snake.y);
-            if (vars != undefined) { vars[0] += 0; }
+    private checkSnakeEating(): boolean {
+        if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
+            let vars: number[] | undefined = this.map.EatFood(this.snake.x, this.snake.y);
+            if (vars != undefined) {
+                // Will perform actions based on the food eaten
+                return true;
+            }
         }
+        return false;
     }
 
     public timedUpdate() {
@@ -69,15 +78,22 @@ export class MapController {
     }
 
     private constructMap() {
+        const offsetX = 30;
+        const offsetY = 30;
+
         // Load elements into the map
         this.map
-            .appendElement(new Food(new MapCell(2, 2, 'Pickup'), 'Beer', 2, 2))
-            .appendElement(new Food(new MapCell(11, 11, 'Pickup'), 'Weed', 1, 1))
-            .appendElement(new Food(new MapCell(41, 41, 'Pickup'), 'Krant', 1, 1))
-            .appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 105, 'Right'))
-            .appendElement(new MapVector(new MapCell(1, 1, 'Wall'), 60, 'Down'))
-            .appendElement(new MapVector(new MapCell(1, 60, 'Wall'), 105, 'Right'))
-            .appendElement(new MapVector(new MapCell(105, 1, 'Wall'), 60, 'Down'));
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Down'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Left'))
+            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Right'))
+            .appendElement(new Food(new MapCell(2, 2, CellType.Pickup, 0xFFFF00), 'Beer', 2, 2))
+            .appendElement(new Food(new MapCell(11, 11, CellType.Pickup, 0x00EE00), 'Weed', 1, 1))
+            .appendElement(new Food(new MapCell(41, 41, CellType.Pickup, 0x8D9293), 'Krant', 1, 1))
+            .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 105, 'Right'))
+            .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 60, 'Down'))
+            .appendElement(new MapVector(new MapCell(1, 60, CellType.Wall), 105, 'Right'))
+            .appendElement(new MapVector(new MapCell(105, 1, CellType.Wall), 60, 'Down'));
 
         // Perform processing to 2D-array
         this.map.flattenMap();
@@ -85,24 +101,29 @@ export class MapController {
 
 
     private renderMapCells() {
+        this.renderedCells = [];
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {
-                    switch (cell.type) {
-                        case 'Wall':
-                            this.scene.add.rectangle(
-                                cell.x * this.cellWidth - this.cellWidth / 2,
-                                cell.y * this.cellHeight - this.cellHeight / 2,
-                                this.cellWidth - 2, this.cellHeight - 2,
-                                0xEEEEEE);
-                            break;
-                        case 'Pickup':
-                            this.scene.add.rectangle(
-                                cell.x * this.cellWidth - this.cellWidth / 2,
-                                cell.y * this.cellHeight - this.cellHeight / 2,
-                                this.cellWidth - 2, this.cellHeight - 2,
-                                0xEE0000);
+                    if (this.renderedCells[cell.x] == null) {
+                        this.renderedCells[cell.x] = [];
                     }
+                    this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
+                        cell.x * this.cellWidth - this.cellWidth / 2,
+                        cell.y * this.cellHeight - this.cellHeight / 2,
+                        this.cellWidth - 2, this.cellHeight - 2,
+                        cell.color);
+                }));
+    }
+
+    private updateRenderedMap() {
+        this.map.Map2D
+            .forEach(row => row
+                .forEach(cell => {
+                    if (this.renderedCells[cell.x] == null) {
+                        this.renderedCells[cell.x] = [];
+                    }
+                    this.renderedCells[cell.x][cell.y].setFillStyle(cell.color);
                 }));
     }
 

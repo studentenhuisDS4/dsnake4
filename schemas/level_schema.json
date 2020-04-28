@@ -1,0 +1,114 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "additionalProperties": false,
+    "definitions": {
+        "Direction": {
+            "enum": [
+                "Down",
+                "Left",
+                "Right",
+                "Up"
+            ],
+            "type": "string"
+        },
+        "IStairs": {
+            "additionalProperties": false,
+            "properties": {
+                "enterOffsetX": {
+                    "type": "number"
+                },
+                "enterOffsetY": {
+                    "type": "number"
+                },
+                "entryDirection": {
+                    "$ref": "#/definitions/Direction"
+                },
+                "height": {
+                    "type": "number"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "opened": {
+                    "type": "boolean"
+                },
+                "opens": {
+                    "$ref": "#/definitions/MapLevel"
+                },
+                "position": {
+                    "$ref": "#/definitions/Vector2"
+                },
+                "width": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        },
+        "IWall": {
+            "additionalProperties": false,
+            "description": "Interface `IWall` defines",
+            "properties": {
+                "direction": {
+                    "$ref": "#/definitions/Direction"
+                },
+                "length": {
+                    "type": "number"
+                },
+                "position": {
+                    "$ref": "#/definitions/Vector2"
+                },
+                "removable": {
+                    "type": "boolean"
+                },
+                "visible": {
+                    "type": "boolean"
+                }
+            },
+            "type": "object"
+        },
+        "MapLevel": {
+            "enum": [
+                0,
+                1,
+                2,
+                3,
+                4
+            ],
+            "type": "number"
+        },
+        "Vector2": {
+            "additionalProperties": false,
+            "properties": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                }
+            },
+            "type": "object"
+        }
+    },
+    "properties": {
+        "level": {
+            "$ref": "#/definitions/MapLevel"
+        },
+        "name": {
+            "type": "string"
+        },
+        "stairs": {
+            "items": {
+                "$ref": "#/definitions/IStairs"
+            },
+            "type": "array"
+        },
+        "walls": {
+            "items": {
+                "$ref": "#/definitions/IWall"
+            },
+            "type": "array"
+        }
+    },
+    "type": "object"
+}
+

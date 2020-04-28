@@ -3,5 +3,13 @@
     "git.ignoreLimitWarning": true,
     "files.exclude": {
         "**/node_modules": true
-    }
+    },
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "**/Level*"
+            ],
+            "url": "./schemas/level_schema.json"
+        }
+    ]
 }

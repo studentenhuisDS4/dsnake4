@@ -1,5 +1,5 @@
 import { MapElement, MapCell, Food } from './MapElements';
-import { CELLS_Y, CELLS_X, MapCellType, MapLevel } from '../Generics';
+import { CELLS_Y, CELLS_X, CellType, MapLevel } from '../Generics';
 
 export class Map {
     /* 
@@ -17,29 +17,33 @@ export class Map {
         this.childElements = [];
     }
 
-    public checkCollision(x: number, y: number): MapCellType {
+    public checkCollision(x: number, y: number): CellType {
         if (x <= 0 || x >= CELLS_X) {
             console.log('hit x wall', x);
-            return 'Wall';
+            return CellType.Wall;
         }
         if (y <= 0 || y >= CELLS_Y) {
             console.log('hit y wall', x);
-            return 'Wall';
+            return CellType.Wall;
         }
         if (this.Map2D[x] == null || this.Map2D[x][y] == null) {
-            return 'Void';
+            return CellType.Void;
         }
         return this.Map2D[x][y].type;
     }
 
-    public getEatenFoodProperties(x: number, y: number) {
-        for (let el of this.childElements) {
-            for (let cell of el.cells) {
-                if (cell.x == x && cell.y == y) {
-                    if (el instanceof Food) {
-                        return [el.points, el.blocksAdded, el.boostCharge]
-                    }
+    public EatFood(x: number, y: number) {
+        for (let i = 0; i < this.childElements.length; i++) {
+            let el = this.childElements[i];
+            if (el instanceof Food) {
+                if (el.TopLeftCell.x <= x && el.TopLeftCell.x + el.width >= x && el.TopLeftCell.y <= y && el.TopLeftCell.y + el.height >= y) {
+                    let properties: number[] = [el.points, el.blocksAdded, el.boostCharge];
+                    this.childElements.splice(i, 1)
+                    this.flattenMap();
+
+                    return properties;
                 }
+
             }
         }
     }
@@ -48,9 +52,11 @@ export class Map {
         return this.Map2D[x][y];
     }
 
-    // This function performs the pre-processing to get an 2D-Array of cells in `this.Map2D`
+    /**
+     * Flattens map, which is the pre-processing to get an 2D-Array of cells in `this.Map2D`
+     */
     public flattenMap() {
-        this.Map2D = [];
+        this.clear2DMap();
         if (this.childElements != null) {
             this.childElements.forEach(elem => {
                 elem.cells.forEach(elemCell => {
@@ -61,11 +67,14 @@ export class Map {
                 })
             });
         }
+        for (let x = 1; x <= CELLS_X; x++) {
+            for (let y = 1; y <= CELLS_Y; y++) {
+                if (this.Map2D[x][y] == null) {
+                    this.Map2D[x][y] = new MapCell(x, y, CellType.Void, 0x000000);
+                }
+            }
+        }
     }
-
-    // public loadMapFromImage(imageMap: any) {
-    //     throw new Error("The loadMapFromImage function has not been implemented yet.");
-    // }
 
     public clearChildren() {
         this.childElements = [];

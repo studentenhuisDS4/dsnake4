@@ -224,7 +224,7 @@ export class Snake {
         if (part != null) {
             return part.foodStored;
         } else {
-            console.warn("GetHeadPosition function: Snake head not found.");
+            console.warn("GetHeadFoodStatus function: Snake head not found.");
             return false;
         }
     }

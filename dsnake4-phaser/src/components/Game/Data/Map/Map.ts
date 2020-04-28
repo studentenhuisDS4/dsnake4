@@ -32,14 +32,18 @@ export class Map {
         return this.Map2D[x][y].type;
     }
 
-    public getEatenFoodProperties(x: number, y: number) {
-        for (let el of this.childElements) {
-            for (let cell of el.cells) {
-                if (cell.x == x && cell.y == y) {
-                    if (el instanceof Food) {
-                        return [el.points, el.blocksAdded, el.boostCharge]
-                    }
+    public EatFood(x: number, y: number) {
+        for (let i = 0; i < this.childElements.length; i++) {
+            let el = this.childElements[i];
+            if (el instanceof Food) {
+                if (el.TopLeftCell.x <= x && el.TopLeftCell.x + el.width >= x && el.TopLeftCell.y <= y && el.TopLeftCell.y + el.height >= y) {
+                    let properties: number[] = [el.points, el.blocksAdded, el.boostCharge];
+                    this.childElements.splice(i, 1)
+                    this.flattenMap();
+
+                    return properties;
                 }
+
             }
         }
     }
@@ -52,7 +56,7 @@ export class Map {
      * Flattens map, which is the pre-processing to get an 2D-Array of cells in `this.Map2D`
      */
     public flattenMap() {
-        this.Map2D = [];
+        this.clear2DMap();
         if (this.childElements != null) {
             this.childElements.forEach(elem => {
                 elem.cells.forEach(elemCell => {
@@ -62,6 +66,13 @@ export class Map {
                     this.Map2D[elemCell.x][elemCell.y] = elemCell.clone();
                 })
             });
+        }
+        for (let x = 1; x <= CELLS_X; x++) {
+            for (let y = 1; y <= CELLS_Y; y++) {
+                if (this.Map2D[x][y] == null) {
+                    this.Map2D[x][y] = new MapCell(x, y, CellType.Void);
+                }
+            }
         }
     }
 

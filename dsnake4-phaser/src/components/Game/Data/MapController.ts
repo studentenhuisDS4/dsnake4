@@ -15,6 +15,8 @@ export class MapController {
     cellWidth: number;
     inputKeys!: KeyBindings;
 
+    renderedCells!: Phaser.GameObjects.Rectangle[][];
+
     constructor(scene: Scene, cellWidth: number, cellHeight: number) {
         this.scene = scene;
 
@@ -49,18 +51,25 @@ export class MapController {
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
         }
-        this.checkSnakeEating()
+        if (this.checkSnakeEating()) {
+            this.updateRenderedMap();
+        }
+
     }
 
     public checkSnakeCollision() {
         return this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Wall;
     }
 
-    private checkSnakeEating() {
+    private checkSnakeEating(): boolean {
         if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
-            let vars: number[] | undefined = this.map.getEatenFoodProperties(this.snake.x, this.snake.y);
-            if (vars != undefined) { vars[0] += 0; }
+            let vars: number[] | undefined = this.map.EatFood(this.snake.x, this.snake.y);
+            if (vars != undefined) {
+                vars[0] += 0;
+                return true;
+            }
         }
+        return false;
     }
 
     public timedUpdate() {
@@ -71,7 +80,7 @@ export class MapController {
     private constructMap() {
         const offsetX = 30;
         const offsetY = 30;
-      
+
         // Load elements into the map
         this.map
             .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
@@ -92,25 +101,58 @@ export class MapController {
 
 
     private renderMapCells() {
+        this.renderedCells = [];
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {
+                    if (this.renderedCells[cell.x] == null) {
+                        this.renderedCells[cell.x] = [];
+                    }
                     switch (cell.type) {
                         case CellType.Wall:
-                            this.scene.add.rectangle(
+                            this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
                                 cell.x * this.cellWidth - this.cellWidth / 2,
                                 cell.y * this.cellHeight - this.cellHeight / 2,
                                 this.cellWidth - 2, this.cellHeight - 2,
                                 0xEEEEEE);
                             break;
                         case CellType.Pickup:
-                            this.scene.add.rectangle(
+                            this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
                                 cell.x * this.cellWidth - this.cellWidth / 2,
                                 cell.y * this.cellHeight - this.cellHeight / 2,
                                 this.cellWidth - 2, this.cellHeight - 2,
                                 0xEE0000);
+                            break;
+                        case CellType.Void:
+                            this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
+                                cell.x * this.cellWidth - this.cellWidth / 2,
+                                cell.y * this.cellHeight - this.cellHeight / 2,
+                                this.cellWidth - 2, this.cellHeight - 2,
+                                0x000000);
+                            break;
                     }
                 }));
+    }
+
+    private updateRenderedMap() {
+        this.map.Map2D
+        .forEach(row => row
+            .forEach(cell => {
+                if (this.renderedCells[cell.x] == null) {
+                    this.renderedCells[cell.x] = [];
+                }
+                switch (cell.type) {
+                    case CellType.Wall:
+                        this.renderedCells[cell.x][cell.y].setFillStyle(0xEEEEEE);
+                        break;
+                    case CellType.Pickup:
+                        this.renderedCells[cell.x][cell.y].setFillStyle(0xEE0000);
+                        break;
+                    case CellType.Void:
+                        this.renderedCells[cell.x][cell.y].setFillStyle(0x000000);
+                        break;
+                }
+            }));
     }
 
     private renderSnake() {

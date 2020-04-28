@@ -101,8 +101,9 @@ export class MenuScene extends Phaser.Scene {
             .setPipeline('Light2D');
 
         this.lights.enable();
-        const snakeLight1: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
-        const snakeLight2: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        // 0x42b983 color of the light before
+        const snakeLight1: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
+        const snakeLight2: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
         this.lights.setAmbientColor(0x313339);
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 

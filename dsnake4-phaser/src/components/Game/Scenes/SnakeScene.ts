@@ -17,6 +17,9 @@ export class SnakeScene extends Phaser.Scene {
     private cellWidth!: number;
     private cellHeight!: number;
 
+    shiftX!: number;
+    shiftY!: number;
+
     // Snake game loop
     private mapController!: MapController;
     inputKeys!: KeyBindings;
@@ -33,10 +36,12 @@ export class SnakeScene extends Phaser.Scene {
         this.load.image('logo', 'logo.png');
     }
 
-    public create() {
+    public create(data: number[]) {
         console.log("SNAKE SCENE - created");
         console.log("Level1 data:", this.cache.json.get("Level1"));
-        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight);
+        this.shiftX = data[0];
+        this.shiftY = data[1];
+        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight, this.shiftX, this.shiftY);
 
         // Priority : layering
         this.renderGrid();
@@ -66,11 +71,13 @@ export class SnakeScene extends Phaser.Scene {
 
     private renderGrid() {
         this.add.grid(
-            SW / 2, SH / 2,
+            SW / 2 + this.shiftX, SH / 2 + this.shiftY,
             SW + 1, SH + 1,
             this.cellWidth, this.cellHeight,
             0x000000, 0, 0x222222, 0.9);
     }
 
-
+    public getScore(){
+        return this.mapController.points;
+    }
 }

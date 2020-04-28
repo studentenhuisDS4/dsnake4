@@ -13,19 +13,28 @@ export class MapController {
 
     cellHeight: number;
     cellWidth: number;
+    shiftX: number;
+    shiftY: number;
     inputKeys!: KeyBindings;
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
 
-    constructor(scene: Scene, cellWidth: number, cellHeight: number) {
+    points: number;
+
+    constructor(scene: Scene, cellWidth: number, cellHeight: number, shiftX: number, shiftY: number) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
+        this.shiftX = shiftX;
+        this.shiftY = shiftY;
         this.map = new Map(Level.FirstFloor);
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
+        console.log("Shifted by: ", this.shiftX, this.shiftY);
+
+        this.points = 0;
     }
 
     public loadLevel() {
@@ -66,6 +75,7 @@ export class MapController {
             let vars: number[] | undefined = this.map.EatFood(this.snake.x, this.snake.y);
             if (vars != undefined) {
                 this.snake.addUndigestedFood(vars[1]);
+                this.points += vars[0];
                 // Will perform actions based on the food eaten
                 return true;
             }
@@ -110,8 +120,8 @@ export class MapController {
                         this.renderedCells[cell.x] = [];
                     }
                     this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2,
-                        cell.y * this.cellHeight - this.cellHeight / 2,
+                        cell.x * this.cellWidth - this.cellWidth / 2 + this.shiftX,
+                        cell.y * this.cellHeight - this.cellHeight / 2 + this.shiftY,
                         this.cellWidth - 2, this.cellHeight - 2,
                         cell.color);
                 }));
@@ -137,8 +147,8 @@ export class MapController {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + 1;
-        const pixelY = (part.y - 1) * this.cellHeight - 2;
+        const pixelX = (part.x - 1) * this.cellWidth + 1 + this.shiftX;
+        const pixelY = (part.y - 1) * this.cellHeight - 2 + this.shiftY;
         if (part.gameObject == null) {
             part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
         }

@@ -30,7 +30,7 @@ jobs:
     - task: PublishBuildArtifacts@1
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
-        ArtifactName: 'snake-app' # output artifact named snake-app
+        ArtifactName: 'dsnake4-phaser' # output artifact named snake-app
     - task: DownloadBuildArtifacts@0
       inputs:
         buildType: 'current'

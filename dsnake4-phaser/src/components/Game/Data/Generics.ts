@@ -42,3 +42,10 @@ export class Vector2 {
         return new Vector2(this.x, this.y);
     }
 }
+export const foodColors = {
+    'Coffie': 0x6f4e37,
+    'Beer': 0xCDAA37,
+    'Weed': 0x00FF00,
+    'Krant': 0x999999,
+    'MainObject': 0xFF0000
+};

@@ -1,10 +1,10 @@
-import { MapVector, MapCell, Food } from './Map/MapElements';
+import { MapVector, MapCell, Food, Stair } from './Map/MapElements';
 import { Scene } from 'phaser';
 import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { defaultTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
+import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
 
 export class MapController {
     private scene: Scene;
@@ -77,6 +77,8 @@ export class MapController {
                 this.snake.addUndigestedFood(vars[1]);
                 this.points += vars[0];
                 // Will perform actions based on the food eaten
+                this.map.addRandomFood();
+                this.map.flattenMap();
                 return true;
             }
         }
@@ -94,19 +96,24 @@ export class MapController {
 
         // Load elements into the map
         this.map
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Down'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Left'))
-            .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Right'))
-            .appendElement(new Food(new MapCell(2, 2, CellType.Pickup, 0xFFFF00), 'Beer', 2, 2))
-            .appendElement(new Food(new MapCell(11, 11, CellType.Pickup, 0x00EE00), 'Weed', 1, 1))
-            .appendElement(new Food(new MapCell(41, 41, CellType.Pickup, 0x8D9293), 'Krant', 1, 1))
+            .appendElement(new Stair(new MapCell(60, 20, CellType.Stairs, 0x634100), 3, 3, '000'))
+            // .appendElement(new Stair(new MapCell(100, 40, CellType.Stairs, 0x634100), 2, 2, '001'))
+            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
+            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Down'))
+            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Left'))
+            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Right'))
             .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 105, 'Right'))
             .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 60, 'Down'))
             .appendElement(new MapVector(new MapCell(1, 60, CellType.Wall), 105, 'Right'))
             .appendElement(new MapVector(new MapCell(105, 1, CellType.Wall), 60, 'Down'));
 
         // Perform processing to 2D-array
+        this.map.flattenMap();
+        this.map.addRandomFood();
+        this.map.flattenMap();
+        this.map.addRandomFood();
+        this.map.flattenMap();
+        this.map.addRandomFood();
         this.map.flattenMap();
     }
 
@@ -150,7 +157,7 @@ export class MapController {
         const pixelX = (part.x - 1) * this.cellWidth + 1 + this.shiftX;
         const pixelY = (part.y - 1) * this.cellHeight - 2 + this.shiftY;
         if (part.gameObject == null) {
-            part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
+            part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), snakeTextStyle);
         }
         else {
             part.gameObject.text = part.toCharacter();

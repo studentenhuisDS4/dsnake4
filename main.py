@@ -429,7 +429,7 @@ def pause_menu(window=None, g=None):
     quit_box = pygame.Rect(rect_x, 310, 156, 32)
     quit_color = color_inactive
     quit_surface = font.render("QUIT", True, quit_color)
-    background_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+    background_surface = pygame.Surface((g.width, g.height), pygame.SRCALPHA)
     pygame.draw.rect(background_surface, (0, 0, 0, transparency),
                      background_surface.get_rect())
     window.blit(background_surface, (0, 0))

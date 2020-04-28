@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
     preload() {
         this.load.setPath('img/assets/');
         // this.load.image('logo', 'logo.png');
-        this.load.image('logo', ['01.png', '01_n.png']);
+        this.load.image('logo', ['menu.png', 'menu_n.png']);
     }
 
     public create() {
@@ -96,17 +96,21 @@ export class MenuScene extends Phaser.Scene {
         this.add
             .image(x, y, imageName)
             .setOrigin(0.5, 0.5)
-            // .setScale(0.4, 0.4)
+            .setAlpha(0.7)
+            .setScale(0.4, 0.4)
             .setPipeline('Light2D');
 
         this.lights.enable();
         const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
         this.lights.setAmbientColor(0x313339);
-        const light: GameObjects.Light = this.lights.addLight(x, y, 130, 0x42b983, 1);
-        this.input.on('pointermove', function (event: MouseEvent) {
-            light.x = event.x;
-            light.y = event.y;
-        });
+        const moonLight: GameObjects.Light = this.lights.addLight(x, y, 125, 0xffffff, 1);
+
+        // The mouse is fun, but the moon is calling us more.
+        // this.input.on('pointermove', function (event: MouseEvent) {
+        //     light.x = event.x;
+        //     light.y = event.y;
+        // });
+
         this.events.on('snakeMovement', function (event: number[]) {
             snakeLight.x = event[0] * 10;
             snakeLight.y = event[1] * 10;

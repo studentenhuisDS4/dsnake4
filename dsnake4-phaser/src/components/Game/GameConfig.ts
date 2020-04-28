@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { SnakeScene } from './Scenes/SnakeScene';
 import { MenuScene } from './Scenes/MenuScene';
+import { HubScene } from './Scenes/HubScene';
 import { TestRunnerScene } from './Scenes/TestScene';
 
 export const SW = 1050;
@@ -8,9 +9,9 @@ export const SH = 600;
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: 'DSnake4',
     type: Phaser.WEBGL,
-    scene: [MenuScene, SnakeScene, TestRunnerScene],
+    scene: [MenuScene, HubScene, TestRunnerScene],
     width: SW,
-    height: SH,
+    height: SH + 50,
     fps: {
         target: 25,
         forceSetTimeOut: true

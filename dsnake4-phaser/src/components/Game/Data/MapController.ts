@@ -65,6 +65,7 @@ export class MapController {
         if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
             let vars: number[] | undefined = this.map.EatFood(this.snake.x, this.snake.y);
             if (vars != undefined) {
+                this.snake.addUndigestedFood(vars[1]);
                 // Will perform actions based on the food eaten
                 return true;
             }

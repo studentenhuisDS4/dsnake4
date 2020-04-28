@@ -136,19 +136,19 @@ export class Food extends MapElement {
         switch (this.type) {
             case 'Coffie':
                 this.points = 20;
-                this.blocksAdded = 1;
+                this.blocksAdded = 5;
                 break;
             case 'Beer':
                 this.points = 20;
-                this.blocksAdded = 1;
+                this.blocksAdded = 5;
                 break;
             case 'Weed':
                 this.points = 20;
-                this.blocksAdded = 1;
+                this.blocksAdded = 5;
                 break;
             case 'Krant':
                 this.points = 20;
-                this.blocksAdded = 1;
+                this.blocksAdded = 5;
                 break;
             case 'MainObject':
                 this.points = 100;

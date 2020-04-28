@@ -52,7 +52,7 @@ export class MenuScene extends Phaser.Scene {
                     // Fade-out camera
                     this.cameras.main.fade(400, 0, 0, 0);
                     this.scene.transition({
-                        target: "Game",
+                        target: "Hub",
                         duration: 500,
                         allowInput: false,
                     });
@@ -92,7 +92,7 @@ export class MenuScene extends Phaser.Scene {
         const x = this.width / 2;
         const y = this.height / 4;
 
-        this.add.circle(x, y, 20, 0x999999, 1);
+        this.add.circle(x, y - 5, 30, 0x999999, 1);
         this.add
             .image(x, y, imageName)
             .setOrigin(0.5, 0.5)
@@ -101,9 +101,10 @@ export class MenuScene extends Phaser.Scene {
             .setPipeline('Light2D');
 
         this.lights.enable();
-        const snakeLight: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        const snakeLight1: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        const snakeLight2: GameObjects.Light = this.lights.addLight(x, y, 400, 0x42b983, 1);
         this.lights.setAmbientColor(0x313339);
-        const moonLight: GameObjects.Light = this.lights.addLight(x, y, 125, 0xffffff, 1);
+        const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 
         // The mouse is fun, but the moon is calling us more. Agreed -Andrea
         // this.input.on('pointermove', function (event: MouseEvent) {
@@ -112,8 +113,10 @@ export class MenuScene extends Phaser.Scene {
         // });
 
         this.events.on('snakeMovement', function (event: number[]) {
-            snakeLight.x = event[0] * 10;
-            snakeLight.y = event[1] * 10;
+            snakeLight1.x = event[0] * 10;
+            snakeLight1.y = event[1] * 10;
+            snakeLight2.x = event[2] * 10;
+            snakeLight2.y = event[3] * 10;
         });
     }
 
@@ -194,7 +197,7 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private renderSnakes() {
-        this.events.emit('snakeMovement', [this.snakes[0].x, this.snakes[0].y]);
+        this.events.emit('snakeMovement', [this.snakes[0].x, this.snakes[0].y, this.snakes[3].x, this.snakes[3].y]);
         this.snakes.forEach(snake => {
             if (snake?.bodyParts != null) {
                 snake.bodyParts.forEach(part => {

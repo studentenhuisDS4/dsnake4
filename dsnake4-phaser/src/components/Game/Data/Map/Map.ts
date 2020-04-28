@@ -32,6 +32,9 @@ export class Map {
         return this.Map2D[x][y].type;
     }
 
+    /**
+     * Removes eaten food from map, recalculates Map2D, returns the properties of the eaten food
+     */
     public EatFood(x: number, y: number) {
         for (let i = 0; i < this.childElements.length; i++) {
             let el = this.childElements[i];
@@ -46,6 +49,14 @@ export class Map {
 
             }
         }
+    }
+
+    public addFood(food: Food) {
+        this.appendElement(food);
+    }
+
+    public validateFoodLocation(x: number, y: number): boolean {
+        return true
     }
 
     public getMapCell(x: number, y: number) {

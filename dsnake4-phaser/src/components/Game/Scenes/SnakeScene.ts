@@ -6,8 +6,8 @@ import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
-    active: false,
-    visible: false,
+    active: true,
+    visible: true,
     key: 'Game',
 };
 

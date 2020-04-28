@@ -6,31 +6,58 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
-strategy:
-  matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
+jobs:
+- job:
+  pool:
+    vmImage: 'ubuntu-latest'
+  strategy:
+    matrix:
+      node_12_x:
+        node_version: 12.x
+  steps:
+    - task: NodeTool@0 
+      inputs:
+        versionSpec: $(node_version)
+    - script: |
+        npm install
+        npm run build
+      displayName: 'npm install and build'
+    - task: CopyFiles@2
+      inputs:
+        Contents: 'build/**' # Pull the build directory (React)
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    - task: PublishBuildArtifacts@1
+      inputs: 
+        pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
+        ArtifactName: 'www' # output artifact named www
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+# - job: python-snake
+#   pool:
+#     vmImage: 'ubuntu-latest'
+#   strategy:
+#     matrix:
+#       Python35:
+#         python.version: '3.5'
+#       Python36:
+#         python.version: '3.6'
+#       Python37:
+#         python.version: '3.7'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install pipenv
-    pipenv install
-    # pip install -r requirements.txt
-  displayName: 'Install dependencies'
+#   steps:
+#   - task: UsePythonVersion@0
+#     inputs:
+#       versionSpec: '$(python.version)'
+#     displayName: 'Use Python $(python.version)'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+#   - script: |
+#       python -m pip install --upgrade pip
+#       pip install pipenv
+#       pipenv install
+#       # pip install -r requirements.txt
+#     displayName: 'Install dependencies'
+
+#   - script: |
+#       pip install pytest pytest-azurepipelines
+#       pytest
+#     displayName: 'pytest'
+

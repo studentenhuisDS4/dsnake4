@@ -94,7 +94,6 @@ export class Map {
             foodValidation = this.validateFoodLocation(x, y, height, width);
         }
         this.addFood(new Food(new MapCell(x, y, CellType.Pickup, foodColors[type]), type, height, width));
-        console.log(type, foodColors[type]);
         
     }
 

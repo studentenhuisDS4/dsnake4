@@ -4,17 +4,18 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Launch Chrome against localhost",
+            "name": "Vue + Phaser + DSnake4",
             "sourceMaps": true,
             "url": "http://localhost:8080",
             "webRoot": "${workspaceRoot}",
             "preLaunchTask": "npmServe",
         },
         {
-            "name":"Python: Module",
+            "name":"Python + DSnake4",
             "type":"python",
             "request":"launch",
-            "module":"main"
+            "module":"main",
+            "cwd": "${workspaceFolder}/dsnake4-python"
         }
     ]
 }

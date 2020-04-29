@@ -808,8 +808,12 @@ client = ServerClient()
 connected = connect_server(client)
 
 while True:
-    connected, status, nickname = menu(
-        window=window, client=client, g=g, nick=nickname, connected=connected)
+    try:
+        connected, status, nickname = menu(
+            window=window, client=client, g=g, nick=nickname, connected=connected)
+    except SystemExit:
+        print("Menu quit by exit")
+        break
 
     score = 0
     game_ended = False

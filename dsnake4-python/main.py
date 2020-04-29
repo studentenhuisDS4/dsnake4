@@ -4,6 +4,7 @@ import os
 
 from Game import Game
 from Map_Objects import *
+from Map import Map
 from Snake import Snake
 from Food import Food
 from Sprites import Spritesheet

@@ -5,6 +5,7 @@ from Map_Objects import *
 from Snake import Snake
 from Food import Food
 from Shop import *
+from Map import Map
 
 
 class Game(object):

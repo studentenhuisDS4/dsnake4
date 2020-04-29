@@ -1,6 +1,5 @@
 import pygame as pygame
 import random as r
-from copy import deepcopy
 
 
 class Snake(object):

@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\andre\\miniconda3\\python.exe",
+    "python.pythonPath": "C:\\Users\\d.zwart\\.virtualenvs\\dsnake4-python-ZmC1eaU_\\Scripts\\python.exe",
     "git.ignoreLimitWarning": true,
     "files.exclude": {
         "**/node_modules": true

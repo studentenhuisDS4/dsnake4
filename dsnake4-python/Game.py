@@ -57,7 +57,7 @@ class Game(object):
 
         self.s = Snake(self)
 
-        self.map = Map(self)
+        self.map = Map(g=self)
         self.map.open_tropen()
         self.map.open_first_stair()
         self.map.open_schuur_stair()

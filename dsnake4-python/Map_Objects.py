@@ -92,7 +92,7 @@ class Map(object):
 
     under_effect_of_weed = False
 
-    def __init__(self, g):
+    def __init__(self, g=None):
         self.init_first_floor()
         self.init_second_floor()
         self.init_third_floor()
@@ -100,7 +100,8 @@ class Map(object):
         self.init_shop()
         self.init_stairs()
         self.init_furniture()
-        self.init_food(g)
+        if g != None:
+            self.init_food(g)
 
     def init_first_floor(self):
         # contour walls

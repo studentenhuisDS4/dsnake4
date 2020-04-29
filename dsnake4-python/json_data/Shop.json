@@ -1,0 +1,57 @@
+{
+    "walls": [
+        {
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "direction": "Right",
+            "removable": false,
+            "length": 104,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 104,
+                "y": 0
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 0,
+                "y": 0
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 35,
+                "y": 0
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 69,
+                "y": 0
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
+        }
+    ],
+    "stairs": [
+        {}
+    ]
+}

@@ -179,3 +179,49 @@ export class Food extends MapElement {
     }
 
 }
+
+export class Stair extends MapElement {
+    public TopLeftCell: MapCell;
+    public width: number;
+    public height: number;
+    public identifier: string;
+
+    //I might want to rethink stair structure -Andrea
+    public entryDirection?: Direction;
+    public enterOffsetX?: number;
+    public enterOffsetY?: number;
+
+    constructor(TopLeftCell: MapCell, height: number, width: number, identifier: string){
+        super();
+        this.TopLeftCell = TopLeftCell;
+        this.height = height;
+        this.width = width;
+        this.identifier = identifier;
+
+        this.generateCells();
+
+    }
+
+    public generateCells(): void {
+        this.resetCells();
+        for (let i = 0; i < this.height; i++) {
+            for (let j = 0; j < this.width; j++) {
+                const newCell = this.TopLeftCell.clone();
+                newCell.x += i;
+                newCell.y += j;
+                if (newCell.validateCoordinates()) {
+                    this.cells.push(newCell);
+                } else {
+                    // Skip throwing error, but a DEBUG warning might be nice.
+                    // console.log("The cell was setup outside the map and cant be rendered. Skipped cell.")
+                }
+            }
+        }
+    }
+
+    public resetCells(): void {
+        this.cells = [];
+    }
+
+
+}

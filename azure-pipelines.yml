@@ -4,8 +4,7 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
 trigger:
-  branches:
-    - master
+  - master
   paths:
     include: 
     - dsnake4-phaser/*

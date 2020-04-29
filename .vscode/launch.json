@@ -25,7 +25,7 @@
             "webRoot": "${workspaceRoot}/dsnake4-phaser/src/",
             "preLaunchTask": "npmServe",
             "timeout": 5000, // Allow the browser to spawn
-            "port": 9223,
+            "port": 9222,
             "sourceMaps": true,
             "breakOnLoad": true,
             "sourceMapPathOverrides": {

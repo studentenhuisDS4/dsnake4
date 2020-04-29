@@ -1,20 +1,42 @@
-import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel } from '../Generics';
+import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel, Vector2 } from '../Generics';
 
 /**
  * Class `MapCell` represents a single cell on the grid with a certain type.
  */
 export class MapCell {
-    x: number; // 0-oriented (until CELLS_X -1)
-    y: number; // 0-oriented (until CELLS_Y -1)
+    position: Vector2;
     type: CellType;
     color: number;
 
-    constructor(x: number, y: number, type: CellType, color?: number) {
+    /**
+     * Gets x-position of body part (readonly)
+     */
+    get x(): number {
+        return this.position.x;
+    }
+
+    // Backwards compat
+    set x(value: number) {
+        this.position.x = value;
+    }
+
+    /**
+     * Gets y-position of body part (readonly)
+     */
+    get y(): number {
+        return this.position.y;
+    }
+
+    // Backwards compat
+    set y(value: number) {
+        this.position.y = value;
+    }
+
+    constructor(position: Vector2, type: CellType, color?: number) {
         if (type == null) {
             throw new Error("The MapCell type should be type 'Void', but not null | undefined.");
         } else {
-            this.x = x;
-            this.y = y;
+            this.position = position;
             if (this.validateCoordinates()) {
                 this.type = type;
                 this.color = (color == undefined) ? 0xEEEEEE : color;
@@ -24,9 +46,11 @@ export class MapCell {
         }
     }
 
-    // Static function to clone object (not a deep clone!)
-    clone() {
-        return Object.create(this);
+    // Static function to clone object (and manual deep clone!)
+    clone(): MapCell {
+        let newElement = Object.create(this);
+        newElement.position = Object.create(this.position);
+        return newElement;
     }
 
     public validateCoordinates() {

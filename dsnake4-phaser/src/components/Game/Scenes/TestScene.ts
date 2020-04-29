@@ -19,12 +19,14 @@ export class TestRunnerScene extends Phaser.Scene {
         console.warn("Registering and preloading tests.");
         this.testSuites.forEach(testSuite => {
             testSuite.preload(this.load);
-            testSuite.execute();
         });
     }
 
     create() {
         console.log("TEST SCENE - created");
+        this.testSuites.forEach(testSuite => {
+            testSuite.execute();
+        });
         console.warn("Ran: " + this.testSuites.length + " testSuites.");
         this.testSuites.forEach(suite => {
             console.log(suite.name);

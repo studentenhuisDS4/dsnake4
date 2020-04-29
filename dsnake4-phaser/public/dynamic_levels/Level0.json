@@ -1,0 +1,17 @@
+{
+    "name": "First floor",
+    "level": 0,
+    "walls": [
+        {
+            "position": {
+                "x": 15,
+                "y": 15
+            },
+            "direction": "Down",
+            "length": 6
+        }
+    ],
+    "stairs": [
+        {}
+    ]
+}

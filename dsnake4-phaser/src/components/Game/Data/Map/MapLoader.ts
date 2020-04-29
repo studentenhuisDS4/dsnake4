@@ -82,6 +82,9 @@ export class MapLoader {
         jsonLevel.walls?.forEach(wall => {
             newMap.appendElement(new Wall(wall.position, wall.length, wall.direction, wall.removable));
         });
+        jsonLevel.stairs?.forEach(stair => {
+            newMap.appendElement(new Stair(wall.position, wall.length, wall.direction, wall.removable));
+        });
         return newMap;
     }
 }

@@ -1,8 +1,10 @@
 {
     "walls": [
         {
-            "x": 0,
-            "y": 5,
+            "position": {
+                "x": 0,
+                "y": 0
+            },
             "direction": "Down",
             "removable": true,
             "length": 3,
@@ -10,8 +12,6 @@
         }
     ],
     "stairs": [
-        {
-            
-        }
+        {}
     ]
 }

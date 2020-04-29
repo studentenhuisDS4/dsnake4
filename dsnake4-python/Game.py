@@ -106,7 +106,6 @@ class Game(object):
                         self.s.turn('DOWN')
                         moved = True
 
-        
         self.speed = 15
         if self.double_speed and self.boost_counter > 0:
             self.speed = 30
@@ -139,7 +138,7 @@ class Game(object):
         self.food_eating()
 
         self.reduce_weed_counter()
-        
+
         return climbed, self.points, False, False
 
     def init_main_obj(self):
@@ -248,8 +247,8 @@ class Game(object):
                     return True
 
         for fur in self.map.furniture:
-            for i in range(fur.bottom_right[0] - fur.top_left[0]):
-                for j in range(fur.bottom_right[1] - fur.top_left[1]):
+            for i in range(fur.width):
+                for j in range(fur.height):
                     if (fur.top_left[0] + i, fur.top_left[1] + j, self.current_floor) == self.s.body[0] and fur.active:
                         print('Collided with furniture')
                         return True
@@ -278,8 +277,8 @@ class Game(object):
 
     def stair_climbing(self):
         for stair in self.map.get_stairs_at_floor(self.s.body[0][2]):
-            for i in range(stair.bottom_right[0] - stair.top_left[0]):
-                for j in range(stair.bottom_right[1] - stair.top_left[1]):
+            for i in range(stair.width):
+                for j in range(stair.height):
                     if (stair.top_left[0] + i, stair.top_left[1] + j, self.current_floor) == self.s.body[0]:
                         stair_identifier = stair.identifier
                         stair_to = None
@@ -294,14 +293,32 @@ class Game(object):
                                         stair_to = st
                                         next_floor = i
 
-                        stair_length = stair_to.bottom_right[abs(
-                            stair_to.direction[1])] - stair_to.top_left[abs(stair_to.direction[1])]
+                        # (offsetx, offsety) = stair.top_left
 
-                        self.s.move(
-                            move_to=(stair_to.climb_start[0], stair_to.climb_start[1], stair_to.floor))
+                        offset = (self.s.body[0][0] - stair.top_left[0])*abs(stair.direction[1]) + (
+                            self.s.body[0][1] - stair.top_left[1])*abs(stair.direction[0])
+
+                        if stair_to.direction == (0, 1):
+                            new_x = stair_to.top_left[0] + offset
+                            new_y = stair_to.top_left[1]
+                            n_moves = stair_to.height
+                        elif stair_to.direction == (0, -1):
+                            new_x = stair_to.top_left[0] + offset
+                            new_y = stair_to.top_left[1] + stair_to.height
+                            n_moves = stair_to.height
+                        elif stair_to.direction == (1, 0):
+                            new_x = stair_to.top_left[0]
+                            new_y = stair_to.top_left[1] + offset
+                            n_moves = stair_to.width
+                        elif stair_to.direction == (-1, 0):
+                            new_x = stair_to.top_left[0] + stair_to.width
+                            new_y = stair_to.top_left[1] + offset
+                            n_moves = stair_to.width
+
+                        self.s.move(move_to=(new_x, new_y, stair_to.floor))
                         self.s.turn(stair_to.direction)
-
-                        for i in range(stair_length):
+                        
+                        for i in range(n_moves):
                             self.s.move()
 
                         # check for self-collisions
@@ -323,8 +340,8 @@ class Game(object):
 
     def shop_buying(self):
         for se in self.map.shop_elements:
-            for i in range(se.bottom_right[0] - se.top_left[0]):
-                for j in range(se.bottom_right[1] - se.top_left[1]):
+            for i in range(se.width):
+                for j in range(se.height):
                     if se.item.key != '404' and (se.top_left[0] + i, se.top_left[1] + j, self.current_floor) == self.s.body[0] and self.points >= se.item.cost and se.item.weight > 0:
                         self.points -= se.item.cost
 
@@ -391,7 +408,6 @@ class Game(object):
             self.map.get_sober()
             self.shop.add_item(ShopItem(cost=100, name='Weed', description='Go through walls',
                                         key='wee', section=2, weight=1))
-
         else:
             self.weed_counter -= 1
 

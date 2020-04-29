@@ -25,24 +25,24 @@ class Wall(object):
 class Block(object):
     floor = 0
     top_left = (0, 0)
-    bottom_right = (0, 0)
+    height = 0
+    width = 0
 
-    def __init__(self, floor, top_left, bottom_right):
+    def __init__(self, floor, top_left, height, width):
         self.floor = floor
         self.top_left = top_left
-        self.bottom_right = bottom_right
+        self.height = height
+        self.width = width
 
 
 class Stair(Block):
     identifier = 0
     direction = (0, 0)
-    climb_start = (0, 0)
 
-    def __init__(self, floor, top_left, bottom_right, identifier, direction, climb_start):
-        super().__init__(floor, top_left, bottom_right)
+    def __init__(self, floor, top_left, height, width, identifier, direction):
+        super().__init__(floor, top_left, height, width)
         self.identifier = identifier
         self.direction = direction
-        self.climb_start = climb_start
 
 
 class ShopElement(Block):
@@ -50,8 +50,8 @@ class ShopElement(Block):
     text_color = (0, 0, 0)
     item = None
 
-    def __init__(self, floor, top_left, bottom_right):
-        super().__init__(floor, top_left, bottom_right)
+    def __init__(self, floor, top_left, height, width):
+        super().__init__(floor, top_left, height, width)
 
 
 class Furniture(Block):
@@ -59,8 +59,8 @@ class Furniture(Block):
     active = False
     counter = 0
 
-    def __init__(self, floor, top_left, bottom_right, image_index):
-        super().__init__(floor, top_left, bottom_right)
+    def __init__(self, floor, top_left, height, width, image_index):
+        super().__init__(floor, top_left, height, width)
         self.image_index = image_index
 
     def activate(self):
@@ -138,9 +138,11 @@ class Map(object):
         self.walls.append(Wall(0, (25, 30), 15, 1))
 
         # protecting stairs
-        self.walls.append(Wall(0, (56, 27), 3, 0, breakable=False))
+        self.walls.append(Wall(0, (56, 26), 4, 0, breakable=False))
         self.walls.append(Wall(0, (59, 27), 3, 1, breakable=False))
         self.walls.append(Wall(0, (56, 30), 4, 0, breakable=False))
+        self.walls.append(Wall(0, (78, 1), 4, 1, breakable=False))
+
         # Binnenplaats stair wall
         self.walls.append(Wall(0, (55, 27), 3, 1, breakable=False))
         self.bin_stair_wall = len(self.walls) - 1
@@ -153,7 +155,7 @@ class Map(object):
         self.grot1_stair_wall = len(self.walls) - 1
 
         # Front yard corridor
-        self.walls.append(Wall(0, (1, 24), 2, 0))
+        self.walls.append(Wall(0, (1, 21), 2, 0))
 
         # Tropen wall
         self.walls.append(Wall(0, (12, 1), 7, 0, breakable=False))
@@ -279,8 +281,9 @@ class Map(object):
     def init_tropen(self):
         # contour walls
         self.walls.append(Wall(3, (0, 0), 104, 0, breakable=False))
-        self.walls.append(Wall(3, (104, 0), 104, 1, breakable=False))
-        self.walls.append(Wall(3, (0, 59), 104, 0, breakable=False))
+        self.walls.append(Wall(3, (104, 0), 59, 1, breakable=False))
+        self.walls.append(Wall(3, (0, 59), 50, 0, breakable=False))
+        self.walls.append(Wall(3, (55, 59), 50, 0, breakable=False))
         self.walls.append(Wall(3, (0, 0), 59, 1, breakable=False))
 
         # dividing walls
@@ -302,50 +305,48 @@ class Map(object):
     def init_shop(self):
         # contour walls
         self.walls.append(Wall(4, (0, 0), 104, 0, breakable=False))
-        self.walls.append(Wall(4, (104, 0), 20, 1, breakable=False))
-        self.walls.append(Wall(4, (0, 0), 20, 1, breakable=False))
+        self.walls.append(Wall(4, (0, 59), 40, 0, breakable=False))
+        self.walls.append(Wall(4, (65, 59), 40, 0, breakable=False))
+        self.walls.append(Wall(4, (104, 0), 60, 1, breakable=False))
+        self.walls.append(Wall(4, (0, 0), 60, 1, breakable=False))
         self.walls.append(Wall(4, (35, 0), 20, 1, breakable=False))
         self.walls.append(Wall(4, (69, 0), 20, 1, breakable=False))
 
         self.shop_elements = []
 
-        self.shop_elements.append(ShopElement(4, (1, 1), (35, 20)))
-        self.shop_elements.append(ShopElement(4, (36, 1), (69, 20)))
-        self.shop_elements.append(ShopElement(4, (70, 1), (104, 20)))
+        self.shop_elements.append(ShopElement(4, (1, 1), 19, 34))
+        self.shop_elements.append(ShopElement(4, (36, 1), 19, 33))
+        self.shop_elements.append(ShopElement(4, (70, 1), 19, 34))
 
     def init_stairs(self):
         self.stairs = []
 
-        self.stairs.append(Stair(0, (56, 28), (59, 30), 0, (-1, 0), (58, 28)))
-        self.stairs.append(Stair(1, (55, 1), (58, 3), 0, (0, 1), (56, 1)))
+        self.stairs.append(Stair(0, (56, 27), 3, 3, 0, (-1, 0)))
+        self.stairs.append(Stair(1, (55, 1), 2, 3, 0, (0, 1)))
 
-        self.stairs.append(Stair(0, (42, 46), (45, 49), 1, (-1, 0), (44, 47)))
-        self.stairs.append(Stair(1, (37, 10), (40, 13), 1, (0, 1), (38, 10)))
+        self.stairs.append(Stair(0, (42, 46), 3, 3, 1, (-1, 0)))
+        self.stairs.append(Stair(1, (37, 10), 3, 3, 1, (0, 1)))
 
-        self.stairs.append(Stair(1, (1, 24), (4, 27), 2, (1, 0), (1, 25)))
-        self.stairs.append(Stair(2, (52, 43), (55, 46), 2, (-1, 0), (54, 44)))
+        self.stairs.append(Stair(1, (1, 24), 3, 3, 2, (1, 0)))
+        self.stairs.append(Stair(2, (52, 43), 3, 3, 2, (-1, 0)))
 
-        self.stairs.append(
-            Stair(1, (101, 21), (104, 24), 3, (-1, 0), (103, 22)))
-        self.stairs.append(Stair(2, (57, 11), (60, 14), 3, (1, 0), (57, 12)))
+        self.stairs.append(Stair(1, (101, 21), 3, 3, 3, (-1, 0)))
+        self.stairs.append(Stair(2, (57, 11), 3, 3, 3, (1, 0)))
 
-        self.stairs.append(Stair(0, (1, 25), (3, 30), 4, (1, 0), (1, 27)))
-        self.stairs.append(Stair(1, (1, 51), (3, 59), 4, (1, 0), (1, 55)))
+        self.stairs.append(Stair(0, (1, 22), 8, 2, 4, (1, 0)))
+        self.stairs.append(Stair(1, (1, 51), 8, 2, 4, (1, 0)))
 
-        self.stairs.append(Stair(0, (13, 0), (18, 1), 5, (0, 1), (15, 1)))
-        self.stairs.append(Stair(3, (41, 58), (65, 59), 5, (0, -1), (53, 58)))
+        self.stairs.append(Stair(0, (13, 0), 1, 5, 5, (0, 1)))
+        self.stairs.append(Stair(3, (50, 59), 1, 5, 5, (0, -1)))
 
-        self.stairs.append(Stair(0, (75, 1), (104, 5), 6, (0, 1), (90, 1)))
-        self.stairs.append(Stair(4, (0, 59), (105, 60), 6, (0, -1), (53, 58)))
-        self.stairs.append(Stair(4, (0, 20), (1, 59), 6, (0, -1), (53, 97)))
-        self.stairs.append(
-            Stair(4, (104, 20), (105, 59), 6, (0, -1), (53, 97)))
+        self.stairs.append(Stair(0, (79, 1), 4, 25, 6, (0, 1)))
+        self.stairs.append(Stair(4, (40, 59), 1, 25, 6, (0, -1)))
 
     def init_furniture(self):
         self.furniture = []
 
-        self.furniture.append(Furniture(1, (45, 56), (48, 59), 0))
-        self.furniture.append(Furniture(1, (61, 1), (64, 5), 1))
+        self.furniture.append(Furniture(1, (45, 56), 3, 3, 0))
+        self.furniture.append(Furniture(1, (61, 1), 4, 3, 1))
 
     def init_food(self, g):
         self.food = []
@@ -420,9 +421,15 @@ class Map(object):
                     return True
 
         for stair in self.get_stairs_at_floor(pos[2]):
-            for i in range(stair.bottom_right[0] - stair.top_left[0]):
-                for j in range(stair.bottom_right[1] - stair.top_left[1]):
+            for i in range(stair.width):
+                for j in range(stair.height):
                     if (stair.top_left[0] + i, stair.top_left[1] + j) == (pos[0], pos[1]):
+                        return True
+
+        for fur in self.furniture:
+            for i in range(fur.width):
+                for j in range(fur.height):
+                    if (fur.top_left[0] + i, fur.top_left[1] + j, fur.floor) == pos and fur.active:
                         return True
 
         for f in g.main_obj:
@@ -558,8 +565,8 @@ class Map(object):
                                          (i*dis+1, j*dis+1, dis-1, dis-1), int(dis/6))
 
         for stair in self.get_stairs_at_floor(g.current_floor):
-            for i in range(stair.bottom_right[0] - stair.top_left[0]):
-                for j in range(stair.bottom_right[1] - stair.top_left[1]):
+            for i in range(stair.width):
+                for j in range(stair.height):
                     pygame.draw.rect(surface, (14, 37, 255), ((
                         i+stair.top_left[0])*dis+1, (j+stair.top_left[1])*dis+1, dis-1, dis-1))
 
@@ -584,8 +591,8 @@ class Map(object):
         dis = g.width/g.columns
 
         for s in self.shop_elements:
-            for i in range(s.bottom_right[0] - s.top_left[0]):
-                for j in range(s.bottom_right[1] - s.top_left[1]):
+            for i in range(s.width):
+                for j in range(s.height):
                     pygame.draw.rect(surface, s.color, ((
                         i+s.top_left[0])*dis+1, (j+s.top_left[1])*dis+1, dis, dis))
             name = g.font.render(s.item.name, False, s.text_color)

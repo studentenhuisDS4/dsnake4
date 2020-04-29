@@ -38,7 +38,7 @@ jobs:
         feedsToUsePublish: 'internal'
         vstsFeedPublish: '1ec9d425-a99e-48b2-983f-b31bc9281b63/1a0470b0-ee13-4441-b6a5-42df5b2d73e7'
         vstsFeedPackagePublish: 'dsnake4-phaser'
-        versionOption: 'minor'
+        versionOption: 'patch'
         verbosity: 'Warning'
 # - job: python-snake
 #   pool:

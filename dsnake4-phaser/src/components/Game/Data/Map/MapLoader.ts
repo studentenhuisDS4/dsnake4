@@ -2,6 +2,7 @@ import { Map } from './Map';
 import { ILevel } from './JsonInterfaces';
 import { MapLevel, MapLevelAssets } from '../Generics';
 import { Wall } from './Wall';
+import { Stair } from './Stair';
 import { Loader, Cache } from 'phaser';
 
 /**
@@ -83,7 +84,7 @@ export class MapLoader {
             newMap.appendElement(new Wall(wall.position, wall.length, wall.direction, wall.removable));
         });
         jsonLevel.stairs?.forEach(stair => {
-            newMap.appendElement(new Stair(wall.position, wall.length, wall.direction, wall.removable));
+            newMap.appendElement(new Stair(stair.identifier, stair.position, stair.height, stair.width, stair.exitDirection));
         });
         return newMap;
     }

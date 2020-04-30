@@ -69,6 +69,7 @@ export class MapLoader {
             let jsonLevel: ILevel = cache.json.get(mapLevel.toString()) as ILevel;
             return this.convertLevelFile(jsonLevel);
         } catch (e) {
+            console.log(e);
             throw new Error("Error during loading level '" + mapLevel + "'. Please check if you cached/preloaded it properly.");
         }
     }

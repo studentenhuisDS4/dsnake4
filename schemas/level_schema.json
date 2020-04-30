@@ -14,13 +14,7 @@
         "IStairs": {
             "additionalProperties": false,
             "properties": {
-                "enterOffsetX": {
-                    "type": "number"
-                },
-                "enterOffsetY": {
-                    "type": "number"
-                },
-                "entryDirection": {
+                "exitDirection": {
                     "$ref": "#/definitions/Direction"
                 },
                 "height": {
@@ -28,12 +22,6 @@
                 },
                 "identifier": {
                     "type": "string"
-                },
-                "opened": {
-                    "type": "boolean"
-                },
-                "opens": {
-                    "$ref": "#/definitions/MapLevel"
                 },
                 "position": {
                     "$ref": "#/definitions/Vector2"

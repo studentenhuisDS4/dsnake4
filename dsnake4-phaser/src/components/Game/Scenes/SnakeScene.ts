@@ -43,11 +43,13 @@ export class SnakeScene extends Phaser.Scene {
         // Choose to load assets dynamically or statically
         // MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
         MapLoader.cacheLevelsStatic(this.cache);
+        MapLoader.preloadJsonLevels(this.load);
+        MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
     }
 
     public create() {
         // Priority of drawing matters!
-
+        this.mapController.loadLevelMap(MapLoader.loadLevel(this.cache, MapLevel.FirstFloor));
         this.renderGrid();
         this.mapController.renderCurrentMap();
 

@@ -49,7 +49,7 @@ export class MapController {
 
     public renderCurrentMap() {
         this.inputKeys = this.scene.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
-        this.loadLevelMap();
+        // this.loadLevelMap();
 
         this.renderMapCells();
         this.renderSnake();
@@ -93,25 +93,27 @@ export class MapController {
         this.checkSnakeEating()
     }
 
-    private loadLevelMap() {
-        const offsetX = 30;
-        const offsetY = 30;
+    public loadLevelMap(map: Map) {
+        this.map = map;
+        this.map.flattenMap();
+        // const offsetX = 30;
+        // const offsetY = 30;
 
-        // Load elements into the map
-        this.map = MapLoader.loadLevel(this.scene.cache, Level.FirstFloor)
-            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Up'))
-            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Down'))
-            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Left'))
-            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Right'))
-            .appendElement(new Food(new MapCell(new Vector2(2, 2), CellType.Pickup, 0xFFFF00), 'Beer', 2, 2))
-            .appendElement(new Food(new MapCell(new Vector2(11, 11), CellType.Pickup, 0x00EE00), 'Weed', 1, 1))
-            .appendElement(new Food(new MapCell(new Vector2(41, 41), CellType.Pickup, 0x8D9293), 'Krant', 1, 1))
-            .appendElement(new Wall(new Vector2(1, 1), 105, 'Right'))
-            .appendElement(new Wall(new Vector2(1, 1), 60, 'Down'))
-            .appendElement(new Wall(new Vector2(1, 60), 105, 'Right'))
-            .appendElement(new Wall(new Vector2(105, 1), 60, 'Down'))
-            // Perform processing to 2D-array
-            .flattenMap();
+        // // Load elements into the map
+        // this.map = MapLoader.loadLevel(this.scene.cache, Level.FirstFloor)
+        //     .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Up'))
+        //     .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Down'))
+        //     .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Left'))
+        //     .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Right'))
+        //     .appendElement(new Food(new MapCell(new Vector2(2, 2), CellType.Pickup, 0xFFFF00), 'Beer', 2, 2))
+        //     .appendElement(new Food(new MapCell(new Vector2(11, 11), CellType.Pickup, 0x00EE00), 'Weed', 1, 1))
+        //     .appendElement(new Food(new MapCell(new Vector2(41, 41), CellType.Pickup, 0x8D9293), 'Krant', 1, 1))
+        //     .appendElement(new Wall(new Vector2(1, 1), 105, 'Right'))
+        //     .appendElement(new Wall(new Vector2(1, 1), 60, 'Down'))
+        //     .appendElement(new Wall(new Vector2(1, 60), 105, 'Right'))
+        //     .appendElement(new Wall(new Vector2(105, 1), 60, 'Down'))
+        //     // Perform processing to 2D-array
+        //     .flattenMap();
     }
 
     public reset() {
@@ -120,6 +122,7 @@ export class MapController {
     }
 
     private renderMapCells() {
+        console.log('Start Rendering');
         this.renderedCells = [];
         this.map.Map2D
             .forEach(row => row
@@ -133,6 +136,7 @@ export class MapController {
                         this.cellWidth - 2, this.cellHeight - 2,
                         cell.color);
                 }));
+        console.log('Finished Rendering');
     }
 
     private updateRenderedMap() {

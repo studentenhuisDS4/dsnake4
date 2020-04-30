@@ -1,5 +1,5 @@
 import { MapElement, MapCell } from './MapElements';
-import { Direction, Vector2, CellType } from '../Generics';
+import { Direction, Vector2, CellType, Colors } from '../Generics';
 
 export class Stair extends MapElement {
     public identifier: string;
@@ -27,7 +27,7 @@ export class Stair extends MapElement {
                 const newPos = new Vector2(this.position.x, this.position.y) // this.position.clone();
                 newPos.x += i;
                 newPos.y += j;
-                let newCell = new MapCell(newPos, CellType.Stairs, 0x909001);
+                let newCell = new MapCell(newPos, CellType.Stairs, Colors['Stair']);
                 if (newCell.validateCoordinates()) {
                     this.cells.push(newCell);
                 } else {

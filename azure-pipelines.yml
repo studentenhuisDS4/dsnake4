@@ -3,8 +3,14 @@
 # Add steps that analyze code, save the dist with the build record, publish to a PyPI-compatible index, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/python
 
+
 trigger:
-- master
+  branches:
+    include:
+      - master
+  paths:
+    include: 
+      - dsnake4-phaser/*
 
 jobs:
 - job:
@@ -31,6 +37,7 @@ jobs:
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
         ArtifactName: 'dsnake4-phaser' # output artifact named snake-app
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     - task: UniversalPackages@0
       inputs:
         command: 'publish'
@@ -40,6 +47,7 @@ jobs:
         vstsFeedPackagePublish: 'dsnake4-phaser'
         versionOption: 'patch'
         verbosity: 'Warning'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
 # - job: python-snake
 #   pool:
 #     vmImage: 'ubuntu-latest'

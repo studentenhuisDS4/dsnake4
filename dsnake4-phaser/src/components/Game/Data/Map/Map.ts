@@ -2,6 +2,7 @@ import { MapElement, MapCell, Food } from './MapElements';
 import { CELLS_Y, CELLS_X, CellType, MapLevel, Vector2 } from '../Generics';
 import { ILevel } from './JsonInterfaces';
 
+
 export class Map {
     /* 
     This class should calculate the map from all children elements.
@@ -53,6 +54,61 @@ export class Map {
 
             }
         }
+    }
+
+    public addFood(food: Food) {
+        this.appendElement(food);
+    }
+
+    public addRandomFood(type?: FoodType, width?: number, height?: number) {
+        let foodValidation: boolean = false;
+
+        if (type == undefined) {
+            let t = Math.floor(Math.random() * 4);
+            switch (t) {
+                case 0:
+                    type = 'Coffie';
+                    break;
+                case 1:
+                    type = 'Beer';
+                    break;
+                case 2:
+                    type = 'Weed';
+                    break;
+                case 3:
+                    type = 'Krant';
+                    break;
+                default:
+                    type = 'Coffie';
+                    console.log('Error creating food');
+            }
+        }
+        if (height == undefined) {
+            height = 1;
+        }
+        if (width == undefined) {
+            width = 1;
+        }
+
+        let x: number = 0;
+        let y: number = 0;
+        while (!foodValidation) {
+            x = Math.floor(Math.random() * CELLS_X) + 1;
+            y = Math.floor(Math.random() * CELLS_Y) + 1;
+
+            foodValidation = this.validateFoodLocation(x, y, height, width);
+        }
+        this.addFood(new Food(new MapCell(x, y, CellType.Pickup, foodColors[type]), type, height, width));
+        
+    }
+
+    public validateFoodLocation(x: number, y: number, height: number, width: number): boolean {
+        for (let i = 0; i < height; i++) {
+            for (let j = 0; j < width; j++) {
+                if (this.Map2D[x + i][y + j].type != CellType.Void) { return false; }
+            }
+        }
+        return true;
     }
 
     public getMapCell(x: number, y: number) {

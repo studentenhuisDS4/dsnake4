@@ -7,8 +7,8 @@ import { Scene } from 'phaser';
 import { MapLoader } from '../Data/Map/MapLoader';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
-    active: false,
-    visible: false,
+    active: true,
+    visible: true,
     key: 'Game',
 };
 
@@ -17,6 +17,9 @@ export const SnakeDelayMs: number = 75; // Snake speed
 export class SnakeScene extends Phaser.Scene {
     private cellWidth!: number;
     private cellHeight!: number;
+
+    shiftX!: number;
+    shiftY!: number;
 
     // Snake game loop
     private mapController: MapController;
@@ -41,6 +44,7 @@ export class SnakeScene extends Phaser.Scene {
 
     public create() {
         // Priority of drawing matters!
+
         this.renderGrid();
         this.mapController.renderCurrentMap();
 
@@ -70,11 +74,13 @@ export class SnakeScene extends Phaser.Scene {
 
     private renderGrid() {
         this.add.grid(
-            SW / 2, SH / 2,
+            SW / 2 + this.shiftX, SH / 2 + this.shiftY,
             SW + 1, SH + 1,
             this.cellWidth, this.cellHeight,
             0x000000, 0, 0x222222, 0.9);
     }
 
-
+    public getScore(){
+        return this.mapController.points;
+    }
 }

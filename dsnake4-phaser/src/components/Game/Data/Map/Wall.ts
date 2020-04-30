@@ -1,5 +1,5 @@
 import { MapVector, MapCell } from './MapElements';
-import { Direction } from '../Generics';
+import { Direction, Vector2, CellType } from '../Generics';
 
 export class Wall extends MapVector {
     readonly removable: boolean = false;
@@ -9,8 +9,8 @@ export class Wall extends MapVector {
         return this.visible;
     }
 
-    constructor(startCell: MapCell, length: number, direction: Direction, removable?: boolean) {
-        super(startCell, length, direction);
+    constructor(position: Vector2, length: number, direction: Direction, removable?: boolean) {
+        super(new MapCell(position, CellType.Wall), length, direction);
 
         if (removable != null) {
             this.removable = removable;

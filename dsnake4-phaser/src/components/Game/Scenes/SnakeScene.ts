@@ -1,9 +1,10 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y } from '../Data/Generics';
+import { CELLS_X, CELLS_Y, MapLevel } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
+import { MapLoader } from '../Data/Map/MapLoader';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -21,7 +22,7 @@ export class SnakeScene extends Phaser.Scene {
     shiftY!: number;
 
     // Snake game loop
-    private mapController!: MapController;
+    private mapController: MapController;
     inputKeys!: KeyBindings;
 
     constructor() {
@@ -29,21 +30,21 @@ export class SnakeScene extends Phaser.Scene {
 
         this.cellWidth = SW / CELLS_X;
         this.cellHeight = SH / CELLS_Y;
+
+        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight);
     }
 
     public preload() {
-        this.load.setPath('img/assets/');
-        this.load.image('logo', 'logo.png');
+        this.load.image('logo', 'img/assets/logo.png');
+
+        // Choose to load assets dynamically or statically
+        // MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
+        MapLoader.cacheLevelsStatic(this.cache);
     }
 
-    public create(data: number[]) {
-        console.log("SNAKE SCENE - created");
-        console.log("Level1 data:", this.cache.json.get("Level1"));
-        this.shiftX = data[0];
-        this.shiftY = data[1];
-        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight, this.shiftX, this.shiftY);
+    public create() {
+        // Priority of drawing matters!
 
-        // Priority : layering
         this.renderGrid();
         this.mapController.renderCurrentMap();
 
@@ -60,11 +61,13 @@ export class SnakeScene extends Phaser.Scene {
         this.mapController.timedUpdate();
 
         if (this.mapController.checkSnakeCollision()) {
-            this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
+            let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
 
             this.scene.pause();
             setTimeout(() => {
-                this.scene.restart();
+                this.mapController.reset();
+                deathText.destroy();
+                this.scene.resume();
             }, 1000);
         }
     }

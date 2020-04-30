@@ -4,7 +4,10 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
+import { defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel } from './Generics';
+import { ILevel } from './Map/JsonInterfaces';
+import { Wall } from './Map/Wall';
+import { MapLoader } from './Map/MapLoader';
 
 export class MapController {
     private scene: Scene;
@@ -13,22 +16,25 @@ export class MapController {
 
     cellHeight: number;
     cellWidth: number;
-    shiftX: number;
-    shiftY: number;
+    shiftX!: number;
+    shiftY!: number;
     inputKeys!: KeyBindings;
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
 
-    points: number;
-
-    constructor(scene: Scene, cellWidth: number, cellHeight: number, shiftX: number, shiftY: number) {
+    /**
+     * Creates an instance of map controller.
+     * Note: preloading JSON level is the responsibility of the Scene (take a look at MapLoader)
+     * @param scene 
+     * @param cellWidth 
+     * @param cellHeight 
+     */
+    constructor(scene: Scene, cellWidth: number, cellHeight: number) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
-        this.shiftX = shiftX;
-        this.shiftY = shiftY;
-        this.map = new Map(Level.FirstFloor);
+        this.map = new Map({} as ILevel);
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
@@ -37,33 +43,17 @@ export class MapController {
         this.points = 0;
     }
 
-    public loadLevel() {
-        this.scene.load.json;
-    }
-
     public renderCurrentMap() {
-        console.log("Controller setup");
         this.inputKeys = this.scene.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
+        this.loadLevelMap();
 
-        this.constructMap();
         this.renderMapCells();
         this.renderSnake();
     }
 
     public onSceneUpdate() {
-        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
-            this.snake.rotateUp();
-        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
-            this.snake.rotateLeft();
-        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
-            this.snake.rotateDown();
-        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
-            this.snake.rotateRight();
-        }
-        if (this.checkSnakeEating()) {
-            this.updateRenderedMap();
-        }
-
+        this.updateRenderedMap();
+        this.renderSnake();
     }
 
     public checkSnakeCollision() {
@@ -72,7 +62,7 @@ export class MapController {
 
     private checkSnakeEating(): boolean {
         if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
-            let vars: number[] | undefined = this.map.EatFood(this.snake.x, this.snake.y);
+            let vars: number[] | undefined = this.map.eatFood(this.snake.x, this.snake.y);
             if (vars != undefined) {
                 this.snake.addUndigestedFood(vars[1]);
                 this.points += vars[0];
@@ -86,37 +76,44 @@ export class MapController {
     }
 
     public timedUpdate() {
+        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
+            this.snake.rotateUp();
+        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
+            this.snake.rotateLeft();
+        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
+            this.snake.rotateDown();
+        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
+            this.snake.rotateRight();
+        }
         this.snake.moveSnake();
-        this.renderSnake();
+        this.checkSnakeEating()
     }
 
-    private constructMap() {
+    private loadLevelMap() {
         const offsetX = 30;
         const offsetY = 30;
 
         // Load elements into the map
-        this.map
-            .appendElement(new Stair(new MapCell(60, 20, CellType.Stairs, 0x634100), 3, 3, '000'))
-            // .appendElement(new Stair(new MapCell(100, 40, CellType.Stairs, 0x634100), 2, 2, '001'))
-            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Up'))
-            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Down'))
-            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Left'))
-            // .appendElement(new MapVector(new MapCell(offsetX, offsetY, CellType.Wall), 3, 'Right'))
-            .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 105, 'Right'))
-            .appendElement(new MapVector(new MapCell(1, 1, CellType.Wall), 60, 'Down'))
-            .appendElement(new MapVector(new MapCell(1, 60, CellType.Wall), 105, 'Right'))
-            .appendElement(new MapVector(new MapCell(105, 1, CellType.Wall), 60, 'Down'));
-
-        // Perform processing to 2D-array
-        this.map.flattenMap();
-        this.map.addRandomFood();
-        this.map.flattenMap();
-        this.map.addRandomFood();
-        this.map.flattenMap();
-        this.map.addRandomFood();
-        this.map.flattenMap();
+        this.map = MapLoader.loadLevel(this.scene.cache, Level.FirstFloor)
+            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Up'))
+            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Down'))
+            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Left'))
+            .appendElement(new MapVector(new MapCell(new Vector2(offsetX, offsetY), CellType.Wall), 3, 'Right'))
+            .appendElement(new Food(new MapCell(new Vector2(2, 2), CellType.Pickup, 0xFFFF00), 'Beer', 2, 2))
+            .appendElement(new Food(new MapCell(new Vector2(11, 11), CellType.Pickup, 0x00EE00), 'Weed', 1, 1))
+            .appendElement(new Food(new MapCell(new Vector2(41, 41), CellType.Pickup, 0x8D9293), 'Krant', 1, 1))
+            .appendElement(new Wall(new Vector2(1, 1), 105, 'Right'))
+            .appendElement(new Wall(new Vector2(1, 1), 60, 'Down'))
+            .appendElement(new Wall(new Vector2(1, 60), 105, 'Right'))
+            .appendElement(new Wall(new Vector2(105, 1), 60, 'Down'))
+            // Perform processing to 2D-array
+            .flattenMap();
     }
 
+    public reset() {
+        this,this.snake.reset();
+        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
+    }
 
     private renderMapCells() {
         this.renderedCells = [];

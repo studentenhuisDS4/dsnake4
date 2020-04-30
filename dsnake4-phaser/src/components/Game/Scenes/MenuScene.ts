@@ -27,20 +27,16 @@ export class MenuScene extends Phaser.Scene {
 
     constructor() {
         super(sceneConfig);
-
         this.width = SW;
         this.height = SH;
     }
 
     preload() {
         this.load.setPath('img/assets/');
-        // this.load.image('logo', 'logo.png');
         this.load.image('logo', ['menu.png', 'menu_n.png']);
     }
 
     public create() {
-        console.log("MENU SCENE - created");
-
         this.createLogo('logo');
         const offset = 60;
         this.createMenu(this.width / 2, this.height / 2 + offset + 60, 30, [

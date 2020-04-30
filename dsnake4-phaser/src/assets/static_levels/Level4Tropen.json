@@ -1,0 +1,17 @@
+{
+    "name": "Tropen",
+    "level": 4,
+    "walls": [
+        {
+            "position": {
+                "x": 1,
+                "y": 2
+            },
+            "direction": "Down",
+            "length": 3
+        }
+    ],
+    "stairs": [
+        {}
+    ]
+}

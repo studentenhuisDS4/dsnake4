@@ -236,4 +236,12 @@ export class Snake {
             }
         }) != null;
     }
+
+    public reset() {
+        this.bodyParts.forEach(part => {
+            part.gameObject.destroy();
+        });
+
+        this.emptySnake();
+    }
 }

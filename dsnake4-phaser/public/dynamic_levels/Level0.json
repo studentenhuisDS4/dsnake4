@@ -1,14 +1,14 @@
 {
+    "name": "First floor",
+    "level": 0,
     "walls": [
         {
             "position": {
-                "x": 0,
-                "y": 0
+                "x": 15,
+                "y": 15
             },
             "direction": "Down",
-            "removable": true,
-            "length": 3,
-            "visible": true
+            "length": 6
         }
     ],
     "stairs": [

@@ -12,18 +12,11 @@ export interface IWall {
 }
 
 export interface IStairs {
-    identifier: string;     // Linked stair
-    
+    identifier: string;
     position: Vector2;
     width: number;
     height: number;
-    opened: boolean;
-    opens: MapLevel;
-
-    // Customize how the snake will enter the level from these stairs
-    entryDirection?: Direction;
-    enterOffsetX?: number;
-    enterOffsetY?: number;
+    exitDirection: Direction;
 }
 
 export interface ILevel {

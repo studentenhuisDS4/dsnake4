@@ -1,6 +1,4 @@
 {
-    "name": "First floor",
-    "level": 0,
     "walls": [
         {
             "position": {
@@ -345,11 +343,11 @@
         {
             "position": {
                 "x": 56,
-                "y": 28
+                "y": 27
             },
             "direction": "Down",
             "removable": false,
-            "length": 3,
+            "length": 4,
             "visible": true
         },
         {

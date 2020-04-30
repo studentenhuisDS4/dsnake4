@@ -1,17 +1,86 @@
 {
-    "name": "Shop",
-    "level": 3,
     "walls": [
         {
             "position": {
                 "x": 1,
-                "y": 2
+                "y": 1
+            },
+            "direction": "Right",
+            "removable": false,
+            "length": 104,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 1,
+                "y": 60
+            },
+            "direction": "Right",
+            "removable": false,
+            "length": 40,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 66,
+                "y": 60
+            },
+            "direction": "Right",
+            "removable": false,
+            "length": 40,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 105,
+                "y": 1
             },
             "direction": "Down",
-            "length": 3
+            "removable": false,
+            "length": 60,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 1,
+                "y": 1
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 60,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 36,
+                "y": 1
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 70,
+                "y": 1
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 20,
+            "visible": true
         }
     ],
     "stairs": [
-        {}
+        {
+            "position": {
+                "x": 41,
+                "y": 60
+            },
+            "exitDirection": "Up",
+            "width": 25,
+            "height": 1,
+            "identifier": "6"
+        }
     ]
 }

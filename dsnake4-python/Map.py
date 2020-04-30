@@ -73,12 +73,12 @@ class Map(object):
 
         # protecting stairs
         self.walls.append(Wall(0, (56, 26), 4, 0, breakable=False))
-        self.walls.append(Wall(0, (59, 27), 3, 1, breakable=False))
+        self.walls.append(Wall(0, (59, 26), 4, 1, breakable=False))
         self.walls.append(Wall(0, (56, 30), 4, 0, breakable=False))
         self.walls.append(Wall(0, (78, 1), 4, 1, breakable=False))
 
         # Binnenplaats stair wall
-        self.walls.append(Wall(0, (55, 27), 3, 1, breakable=False))
+        self.walls.append(Wall(0, (55, 26), 4, 1, breakable=False))
         self.bin_stair_wall = len(self.walls) - 1
 
         self.walls.append(Wall(0, (42, 49), 3, 0, breakable=False))

@@ -113,7 +113,6 @@ export class MapController {
     }
 
     private renderMapCells() {
-        console.log('Start Rendering');
         this.renderedCells = [];
         this.map.Map2D
             .forEach(row => row
@@ -127,7 +126,6 @@ export class MapController {
                         this.cellWidth - 2, this.cellHeight - 2,
                         cell.color);
                 }));
-        console.log('Finished Rendering');
     }
 
     private updateRenderedMap() {

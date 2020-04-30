@@ -86,9 +86,10 @@ export class MenuScene extends Phaser.Scene {
 
     createLogo(imageName: string) {
         const x = this.width / 2;
-        const y = this.height / 4;
+        const y = this.height / 4 + 40;
 
-        this.add.circle(x, y - 5, 30, 0x999999, 1);
+        this.add.circle(x, y - 15, 35, 0x999999, 1);
+        this.add.circle(x + 15, y - 25, 30, 0x000000, 1);
         this.add
             .image(x, y, imageName)
             .setOrigin(0.5, 0.5)
@@ -97,9 +98,12 @@ export class MenuScene extends Phaser.Scene {
             .setPipeline('Light2D');
 
         this.lights.enable();
+
+        const snakeLights: GameObjects.Light[] = [];
         // 0x42b983 color of the light before
-        const snakeLight1: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
-        const snakeLight2: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
+        for (let i = 0; i < 6; i++) {
+            snakeLights[i] = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        }
         this.lights.setAmbientColor(0x313339);
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 
@@ -109,11 +113,12 @@ export class MenuScene extends Phaser.Scene {
         //     light.y = event.y;
         // });
 
-        this.events.on('snakeMovement', function (event: number[]) {
-            snakeLight1.x = event[0] * 10;
-            snakeLight1.y = event[1] * 10;
-            snakeLight2.x = event[2] * 10;
-            snakeLight2.y = event[3] * 10;
+        this.events.on('snakeMovement', function (event: Snake[]) {
+            for (let i = 0; i < 6; i++) {
+                snakeLights[i].x = event[i].x * 10;
+                snakeLights[i].y = event[i].y * 10;
+            }
+            moonLight.intensity = Math.max(Math.min(moonLight.intensity + (Math.random() * 0.05 - 0.025), 1), 0);
         });
     }
 
@@ -146,14 +151,13 @@ export class MenuScene extends Phaser.Scene {
     }
 
     createSnakes() {
-        const x = 10;
         const len = 20
-        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
-        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 36), len, 'Down'));
-        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
-        this.snakes.push(new Snake(new Vector2(x, 16), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Down'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Right'));
+        this.snakes.push(new Snake(new Vector2(Math.floor(Math.random() * 70) + 20, Math.floor(Math.random() * 40) + 10), len, 'Right'));
     }
 
     private limitSnake(snake: Snake) {
@@ -194,7 +198,6 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private renderSnakes() {
-        this.events.emit('snakeMovement', [this.snakes[0].x, this.snakes[0].y, this.snakes[3].x, this.snakes[3].y]);
         this.snakes.forEach(snake => {
             if (snake?.bodyParts != null) {
                 snake.bodyParts.forEach(part => {
@@ -202,6 +205,7 @@ export class MenuScene extends Phaser.Scene {
                 });
             }
         });
+        this.events.emit('snakeMovement', this.snakes);
     }
 
     private renderSnakePart(part: BodyPart) {

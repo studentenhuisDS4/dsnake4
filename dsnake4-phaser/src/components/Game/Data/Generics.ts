@@ -26,8 +26,8 @@ export const MapLevelAssets = [
     { 'MapLevel': MapLevel.FirstFloor, 'path': DynamicLevelPath + 'Level0.json', 'static': level0 },
     { 'MapLevel': MapLevel.SecondFloor, 'path': DynamicLevelPath + 'Level1.json', 'static': level1 },
     { 'MapLevel': MapLevel.ThirdFloor, 'path': DynamicLevelPath + 'Level2.json', 'static': level2 },
-    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
-    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
+    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
+    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
 ];
 
 export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject';
@@ -65,10 +65,12 @@ export class Vector2 {
         return new Vector2(this.x, this.y);
     }
 }
-export const foodColors = {
-    'Coffie': 0x6f4e37,
-    'Beer': 0xCDAA37,
-    'Weed': 0x00FF00,
-    'Krant': 0x999999,
-    'MainObject': 0xFF0000
+
+export const Colors = {
+    'Coffie': 0x60381C,
+    'Beer': 0xf6c101,
+    'Weed': 0x75AA45,
+    'Krant': 0xCCCCCC,
+    'MainObject': 0xFF0000,
+    'Stair': 0x994C14
 };

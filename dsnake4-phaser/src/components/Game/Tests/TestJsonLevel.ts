@@ -20,7 +20,7 @@ export class TestJsonLevel extends TestBase {
     }
 
     preload(loader: Loader.LoaderPlugin) {
-        loader.json(this.lvl1, "dynamic_levels/LevelTest.json");
+        loader.json(this.lvl1, "dynamic_levels/Level0.json");
         MapLoader.preloadJsonLevels(loader);
     }
 
@@ -52,6 +52,7 @@ export class TestJsonLevel extends TestBase {
      */
     private checkDynamicAsset() {
         const data = this.scene.cache.json.get(this.lvl1);
+        console.log(data);
         assertNotFalsy(data);
     }
 

@@ -2,8 +2,8 @@ from Map_Objects import *
 from Map import Map
 import json
 
-level_name = "Shop"
-floor = 4
+level_name = "Level4Tropen"
+floor = 3
 
 level_map = Map()
 
@@ -47,5 +47,5 @@ for s in level_map.get_stairs_at_floor(floor):
         "identifier": str(s.identifier)
     })
 
-with open('dsnake4-python/json_data/' + level_name + '.json', 'w') as outfile:
+with open('dsnake4-phaser/src/assets/static_levels/' + level_name + '.json', 'w') as outfile:
     json.dump({"walls": walls, "stairs": stairs}, outfile)

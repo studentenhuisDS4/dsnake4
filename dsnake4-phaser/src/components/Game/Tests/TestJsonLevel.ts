@@ -20,7 +20,7 @@ export class TestJsonLevel extends TestBase {
     }
 
     preload(loader: Loader.LoaderPlugin) {
-        loader.json(this.lvl1, "levels/LevelTest.json");
+        loader.json(this.lvl1, "dynamic_levels/LevelTest.json");
         MapLoader.preloadJsonLevels(loader);
     }
 

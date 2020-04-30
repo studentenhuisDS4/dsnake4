@@ -4,7 +4,7 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel, foodColors} from './Generics';
+import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel} from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
 import { Wall } from './Map/Wall';
 import { MapLoader } from './Map/MapLoader';

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y, MapLevel } from '../Data/Generics';
+import { CELLS_X, CELLS_Y, MapLevel, Vector2 } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { MapLoader } from '../Data/Map/MapLoader';
@@ -25,13 +25,16 @@ export class SnakeScene extends Phaser.Scene {
     private mapController: MapController;
     inputKeys!: KeyBindings;
 
-    constructor() {
+    constructor(offset: Vector2) {
         super(sceneConfig);
 
         this.cellWidth = SW / CELLS_X;
         this.cellHeight = SH / CELLS_Y;
 
-        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight);
+        this.shiftX = offset.x;
+        this.shiftY = offset.y;
+
+        this.mapController = new MapController(this as Scene, this.cellWidth, this.cellHeight, offset);
     }
 
     public preload() {

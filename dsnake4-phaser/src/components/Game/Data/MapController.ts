@@ -4,7 +4,7 @@ import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
 import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel } from './Generics';
+import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel, foodColors} from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
 import { Wall } from './Map/Wall';
 import { MapLoader } from './Map/MapLoader';
@@ -20,6 +20,8 @@ export class MapController {
     shiftY!: number;
     inputKeys!: KeyBindings;
 
+    points: number;
+
     renderedCells!: Phaser.GameObjects.Rectangle[][];
 
     /**
@@ -29,18 +31,20 @@ export class MapController {
      * @param cellWidth 
      * @param cellHeight 
      */
-    constructor(scene: Scene, cellWidth: number, cellHeight: number) {
+    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
         this.map = new Map({} as ILevel);
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
+        this.points = 0;
+
+        this.shiftX = shift.x;
+        this.shiftY = shift.y;
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
         console.log("Shifted by: ", this.shiftX, this.shiftY);
-
-        this.points = 0;
     }
 
     public renderCurrentMap() {
@@ -65,7 +69,7 @@ export class MapController {
             let vars: number[] | undefined = this.map.eatFood(this.snake.x, this.snake.y);
             if (vars != undefined) {
                 this.snake.addUndigestedFood(vars[1]);
-                this.points += vars[0];
+                // this.points += vars[0];
                 // Will perform actions based on the food eaten
                 this.map.addRandomFood();
                 this.map.flattenMap();
@@ -111,7 +115,7 @@ export class MapController {
     }
 
     public reset() {
-        this,this.snake.reset();
+        this.snake.reset();
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
     }
 

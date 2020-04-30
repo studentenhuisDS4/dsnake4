@@ -43,6 +43,15 @@ export const defaultTextStyle = {
     backgroundColor: 'rgba(0,0,0,0)'
 };
 
+export const snakeTextStyle = {
+    fontSize: 14,
+    fontStyle: 'normal',
+    // fontFamily: 'Consolas',
+    color: "#42FF83",
+    backgroundColor: 'rgba(0,0,0,0)'
+};
+
+
 export class Vector2 {
     x: number;
     y: number;

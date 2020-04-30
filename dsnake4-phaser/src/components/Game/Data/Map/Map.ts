@@ -1,5 +1,5 @@
 import { MapElement, MapCell, Food } from './MapElements';
-import { CELLS_Y, CELLS_X, CellType, MapLevel, Vector2 } from '../Generics';
+import { CELLS_Y, CELLS_X, CellType, MapLevel, Vector2, foodColors, FoodType } from '../Generics';
 import { ILevel } from './JsonInterfaces';
 
 
@@ -98,7 +98,7 @@ export class Map {
 
             foodValidation = this.validateFoodLocation(x, y, height, width);
         }
-        this.addFood(new Food(new MapCell(x, y, CellType.Pickup, foodColors[type]), type, height, width));
+        this.addFood(new Food(new MapCell(new Vector2(x, y), CellType.Pickup, foodColors[type]), type, height, width));
         
     }
 

@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y, defaultTextStyle } from '../Data/Generics';
+import { CELLS_X, CELLS_Y, defaultTextStyle, Vector2 } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { SnakeScene } from './SnakeScene';
@@ -38,7 +38,7 @@ export class HubScene extends Phaser.Scene {
 
     public create() {
 
-        this.gameScene = this.game.scene.add('GameScene', SnakeScene, false, [0, 50])
+        this.gameScene = this.game.scene.add('GameScene', new SnakeScene(new Vector2(0, 50)), false)
 
         this.time.addEvent({ callback: this.onTimedUpdate, callbackScope: this, loop: true });
     }

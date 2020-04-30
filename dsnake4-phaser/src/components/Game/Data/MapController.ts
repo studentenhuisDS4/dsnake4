@@ -47,18 +47,8 @@ export class MapController {
     }
 
     public onSceneUpdate() {
-        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
-            this.snake.rotateUp();
-        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
-            this.snake.rotateLeft();
-        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
-            this.snake.rotateDown();
-        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
-            this.snake.rotateRight();
-        }
-        if (this.checkSnakeEating()) {
-            this.updateRenderedMap();
-        }
+        this.updateRenderedMap();
+        this.renderSnake();
     }
 
     public checkSnakeCollision() {
@@ -77,8 +67,17 @@ export class MapController {
     }
 
     public timedUpdate() {
+        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
+            this.snake.rotateUp();
+        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
+            this.snake.rotateLeft();
+        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
+            this.snake.rotateDown();
+        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
+            this.snake.rotateRight();
+        }
         this.snake.moveSnake();
-        this.renderSnake();
+        this.checkSnakeEating()
     }
 
     private loadLevelMap() {
@@ -100,6 +99,11 @@ export class MapController {
             .appendElement(new Wall(new Vector2(105, 1), 60, 'Down'))
             // Perform processing to 2D-array
             .flattenMap();
+    }
+
+    public reset() {
+        this,this.snake.reset();
+        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
     }
 
     private renderMapCells() {

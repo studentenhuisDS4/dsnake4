@@ -57,11 +57,13 @@ export class SnakeScene extends Phaser.Scene {
         this.mapController.timedUpdate();
 
         if (this.mapController.checkSnakeCollision()) {
-            this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
+            let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
 
             this.scene.pause();
             setTimeout(() => {
-                this.scene.restart();
+                this.mapController.reset();
+                deathText.destroy();
+                this.scene.resume();
             }, 1000);
         }
     }

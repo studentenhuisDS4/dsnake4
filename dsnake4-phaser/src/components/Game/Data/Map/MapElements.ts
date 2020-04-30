@@ -160,8 +160,8 @@ export class Food extends MapElement {
 
     public generateCells(): void {
         this.resetCells();
-        for (let i = 0; i < this.height; i++) {
-            for (let j = 0; j < this.width; j++) {
+        for (let i = 0; i < this.width; i++) {
+            for (let j = 0; j < this.height; j++) {
                 const newCell = this.TopLeftCell.clone();
                 newCell.x += i;
                 newCell.y += j;

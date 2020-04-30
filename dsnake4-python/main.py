@@ -4,6 +4,7 @@ import os
 
 from Game import Game
 from Map_Objects import *
+from Map import Map
 from Snake import Snake
 from Food import Food
 from Sprites import Spritesheet
@@ -399,7 +400,7 @@ def get_nickname(window, nick):
 
 
 def pause_menu(window=None, g=None):
-    (w, h) = pygame.display.get_surface().get_size()
+    # (w, h) = pygame.display.get_surface().get_size()
     choice = ""
     font = pygame.font.SysFont('Consolas', 28)
     pause_font = pygame.font.SysFont('Consolas', 60)
@@ -429,7 +430,7 @@ def pause_menu(window=None, g=None):
     quit_box = pygame.Rect(rect_x, 310, 156, 32)
     quit_color = color_inactive
     quit_surface = font.render("QUIT", True, quit_color)
-    background_surface = pygame.Surface((w, h), pygame.SRCALPHA)
+    background_surface = pygame.Surface((g.width, g.height), pygame.SRCALPHA)
     pygame.draw.rect(background_surface, (0, 0, 0, transparency),
                      background_surface.get_rect())
     window.blit(background_surface, (0, 0))
@@ -768,10 +769,10 @@ game_objects_rect = {"colored_beer": (0, 0, 11, 45),
                      "coffie_cup": (39, 9, 23, 28),
                      "colored_krant": (71, 6, 22, 13),
                      "gray_krant": (71, 27, 22, 13)}
-game_objects_sheet = Spritesheet("images/sprite_objects.png")
+game_objects_sheet = Spritesheet("dsnake4-python/images/sprite_objects.png")
 
 main_objects_sheet = Spritesheet(
-    "images/sprite_main_objects.png", total_objects=30, objects_in_line=5, object_size=(30, 30))
+    "dsnake4-python/images/sprite_main_objects.png", total_objects=30, objects_in_line=5, object_size=(30, 30))
 
 objects_images.append(game_objects_sheet.image_at(
     game_objects_rect["coffie_cup"]))
@@ -787,11 +788,11 @@ objects_images.append(pygame.transform.scale(objects_images[3], (int(
     objects_images[3].get_rect().size[0]*1.5), int(objects_images[3].get_rect().size[1]*1.5))))
 objects_images.append(pygame.transform.scale(objects_images[4], (int(
     objects_images[4].get_rect().size[0]*1.5), int(objects_images[4].get_rect().size[1]*1.5))))
-furniture_images.append(pygame.image.load("images/Mail_Box.png"))
-furniture_images.append(pygame.image.load("images/Cassette_Machine.png"))
-objects_images.append(pygame.image.load("images/Cassette.png"))
+furniture_images.append(pygame.image.load("dsnake4-python/images/Mail_Box.png"))
+furniture_images.append(pygame.image.load("dsnake4-python/images/Cassette_Machine.png"))
+objects_images.append(pygame.image.load("dsnake4-python/images/Cassette.png"))
 objects_images.append(pygame.transform.scale(
-    pygame.image.load("images/weed.png"), (16, 32)))
+    pygame.image.load("dsnake4-python/images/weed.png"), (16, 32)))
 
 for i in range(main_objects_sheet.total_objects):
     x = (i % main_objects_sheet.objects_in_line) * \

@@ -2,8 +2,8 @@
     "walls": [
         {
             "position": {
-                "x": 0,
-                "y": 0
+                "x": 1,
+                "y": 1
             },
             "direction": "Right",
             "removable": false,
@@ -12,8 +12,8 @@
         },
         {
             "position": {
-                "x": 18,
-                "y": 0
+                "x": 19,
+                "y": 1
             },
             "direction": "Right",
             "removable": false,
@@ -22,8 +22,8 @@
         },
         {
             "position": {
-                "x": 104,
-                "y": 0
+                "x": 105,
+                "y": 1
             },
             "direction": "Down",
             "removable": false,
@@ -32,8 +32,8 @@
         },
         {
             "position": {
-                "x": 0,
-                "y": 59
+                "x": 1,
+                "y": 60
             },
             "direction": "Right",
             "removable": false,
@@ -42,8 +42,8 @@
         },
         {
             "position": {
-                "x": 0,
-                "y": 0
+                "x": 1,
+                "y": 1
             },
             "direction": "Down",
             "removable": false,
@@ -52,8 +52,8 @@
         },
         {
             "position": {
-                "x": 0,
-                "y": 10
+                "x": 1,
+                "y": 11
             },
             "direction": "Right",
             "removable": true,
@@ -62,8 +62,8 @@
         },
         {
             "position": {
-                "x": 19,
-                "y": 10
+                "x": 20,
+                "y": 11
             },
             "direction": "Right",
             "removable": true,
@@ -72,8 +72,8 @@
         },
         {
             "position": {
-                "x": 30,
-                "y": 0
+                "x": 31,
+                "y": 1
             },
             "direction": "Down",
             "removable": true,
@@ -82,8 +82,8 @@
         },
         {
             "position": {
-                "x": 30,
-                "y": 7
+                "x": 31,
+                "y": 8
             },
             "direction": "Down",
             "removable": true,
@@ -92,8 +92,8 @@
         },
         {
             "position": {
-                "x": 0,
-                "y": 30
+                "x": 1,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -102,8 +102,8 @@
         },
         {
             "position": {
-                "x": 11,
-                "y": 30
+                "x": 12,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -112,8 +112,8 @@
         },
         {
             "position": {
-                "x": 33,
-                "y": 30
+                "x": 34,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -122,8 +122,8 @@
         },
         {
             "position": {
-                "x": 52,
-                "y": 30
+                "x": 53,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -132,8 +132,8 @@
         },
         {
             "position": {
-                "x": 68,
-                "y": 30
+                "x": 69,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -142,8 +142,8 @@
         },
         {
             "position": {
-                "x": 85,
-                "y": 30
+                "x": 86,
+                "y": 31
             },
             "direction": "Right",
             "removable": true,
@@ -152,8 +152,8 @@
         },
         {
             "position": {
-                "x": 90,
-                "y": 25
+                "x": 91,
+                "y": 26
             },
             "direction": "Down",
             "removable": true,
@@ -162,8 +162,8 @@
         },
         {
             "position": {
-                "x": 90,
-                "y": 45
+                "x": 91,
+                "y": 46
             },
             "direction": "Down",
             "removable": true,
@@ -172,8 +172,8 @@
         },
         {
             "position": {
-                "x": 93,
-                "y": 42
+                "x": 94,
+                "y": 43
             },
             "direction": "Right",
             "removable": true,
@@ -182,8 +182,8 @@
         },
         {
             "position": {
-                "x": 75,
-                "y": 30
+                "x": 76,
+                "y": 31
             },
             "direction": "Down",
             "removable": true,
@@ -192,8 +192,8 @@
         },
         {
             "position": {
-                "x": 75,
-                "y": 57
+                "x": 76,
+                "y": 58
             },
             "direction": "Down",
             "removable": true,
@@ -202,8 +202,8 @@
         },
         {
             "position": {
-                "x": 90,
-                "y": 25
+                "x": 91,
+                "y": 26
             },
             "direction": "Right",
             "removable": true,
@@ -212,8 +212,8 @@
         },
         {
             "position": {
-                "x": 98,
-                "y": 25
+                "x": 99,
+                "y": 26
             },
             "direction": "Right",
             "removable": true,
@@ -222,8 +222,8 @@
         },
         {
             "position": {
-                "x": 45,
-                "y": 30
+                "x": 46,
+                "y": 31
             },
             "direction": "Down",
             "removable": true,
@@ -232,8 +232,8 @@
         },
         {
             "position": {
-                "x": 45,
-                "y": 41
+                "x": 46,
+                "y": 42
             },
             "direction": "Down",
             "removable": true,
@@ -242,8 +242,8 @@
         },
         {
             "position": {
-                "x": 45,
-                "y": 54
+                "x": 46,
+                "y": 55
             },
             "direction": "Down",
             "removable": true,
@@ -252,8 +252,8 @@
         },
         {
             "position": {
-                "x": 0,
-                "y": 45
+                "x": 1,
+                "y": 46
             },
             "direction": "Right",
             "removable": true,
@@ -262,8 +262,8 @@
         },
         {
             "position": {
-                "x": 25,
-                "y": 45
+                "x": 26,
+                "y": 46
             },
             "direction": "Right",
             "removable": true,
@@ -272,8 +272,8 @@
         },
         {
             "position": {
-                "x": 20,
-                "y": 45
+                "x": 21,
+                "y": 46
             },
             "direction": "Down",
             "removable": true,
@@ -282,8 +282,8 @@
         },
         {
             "position": {
-                "x": 20,
-                "y": 54
+                "x": 21,
+                "y": 55
             },
             "direction": "Down",
             "removable": true,
@@ -292,8 +292,8 @@
         },
         {
             "position": {
-                "x": 25,
-                "y": 30
+                "x": 26,
+                "y": 31
             },
             "direction": "Down",
             "removable": true,
@@ -302,28 +302,8 @@
         },
         {
             "position": {
-                "x": 56,
+                "x": 57,
                 "y": 27
-            },
-            "direction": "Right",
-            "removable": false,
-            "length": 3,
-            "visible": true
-        },
-        {
-            "position": {
-                "x": 59,
-                "y": 27
-            },
-            "direction": "Down",
-            "removable": false,
-            "length": 3,
-            "visible": true
-        },
-        {
-            "position": {
-                "x": 56,
-                "y": 30
             },
             "direction": "Right",
             "removable": false,
@@ -332,8 +312,8 @@
         },
         {
             "position": {
-                "x": 55,
-                "y": 27
+                "x": 60,
+                "y": 28
             },
             "direction": "Down",
             "removable": false,
@@ -342,8 +322,38 @@
         },
         {
             "position": {
-                "x": 42,
-                "y": 49
+                "x": 57,
+                "y": 31
+            },
+            "direction": "Right",
+            "removable": false,
+            "length": 4,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 79,
+                "y": 2
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 4,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 56,
+                "y": 28
+            },
+            "direction": "Down",
+            "removable": false,
+            "length": 3,
+            "visible": true
+        },
+        {
+            "position": {
+                "x": 43,
+                "y": 50
             },
             "direction": "Right",
             "removable": false,
@@ -352,8 +362,8 @@
         },
         {
             "position": {
-                "x": 41,
-                "y": 45
+                "x": 42,
+                "y": 46
             },
             "direction": "Right",
             "removable": false,
@@ -362,8 +372,8 @@
         },
         {
             "position": {
-                "x": 45,
-                "y": 46
+                "x": 46,
+                "y": 47
             },
             "direction": "Down",
             "removable": false,
@@ -372,8 +382,8 @@
         },
         {
             "position": {
-                "x": 41,
-                "y": 46
+                "x": 42,
+                "y": 47
             },
             "direction": "Down",
             "removable": false,
@@ -382,8 +392,8 @@
         },
         {
             "position": {
-                "x": 1,
-                "y": 24
+                "x": 2,
+                "y": 22
             },
             "direction": "Right",
             "removable": true,
@@ -392,8 +402,8 @@
         },
         {
             "position": {
-                "x": 12,
-                "y": 1
+                "x": 13,
+                "y": 2
             },
             "direction": "Right",
             "removable": false,
@@ -402,6 +412,55 @@
         }
     ],
     "stairs": [
-        {}
+        {
+            "position": {
+                "x": 57,
+                "y": 28
+            },
+            "exitDirection": "Left",
+            "width": 3,
+            "height": 3,
+            "identifier": "0"
+        },
+        {
+            "position": {
+                "x": 43,
+                "y": 47
+            },
+            "exitDirection": "Left",
+            "width": 3,
+            "height": 3,
+            "identifier": "1"
+        },
+        {
+            "position": {
+                "x": 2,
+                "y": 23
+            },
+            "exitDirection": "Right",
+            "width": 2,
+            "height": 8,
+            "identifier": "4"
+        },
+        {
+            "position": {
+                "x": 14,
+                "y": 1
+            },
+            "exitDirection": "Down",
+            "width": 5,
+            "height": 1,
+            "identifier": "5"
+        },
+        {
+            "position": {
+                "x": 80,
+                "y": 2
+            },
+            "exitDirection": "Down",
+            "width": 25,
+            "height": 4,
+            "identifier": "6"
+        }
     ]
 }

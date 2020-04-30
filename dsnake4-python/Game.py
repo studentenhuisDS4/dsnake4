@@ -294,8 +294,6 @@ class Game(object):
                                         stair_to = st
                                         next_floor = i
 
-                        # (offsetx, offsety) = stair.top_left
-
                         offset = (self.s.body[0][0] - stair.top_left[0])*abs(stair.direction[1]) + (
                             self.s.body[0][1] - stair.top_left[1])*abs(stair.direction[0])
 
@@ -305,14 +303,14 @@ class Game(object):
                             n_moves = stair_to.height
                         elif stair_to.direction == (0, -1):
                             new_x = stair_to.top_left[0] + offset
-                            new_y = stair_to.top_left[1] + stair_to.height
+                            new_y = stair_to.top_left[1] + stair_to.height - 1
                             n_moves = stair_to.height
                         elif stair_to.direction == (1, 0):
                             new_x = stair_to.top_left[0]
                             new_y = stair_to.top_left[1] + offset
                             n_moves = stair_to.width
                         elif stair_to.direction == (-1, 0):
-                            new_x = stair_to.top_left[0] + stair_to.width
+                            new_x = stair_to.top_left[0] + stair_to.width - 1
                             new_y = stair_to.top_left[1] + offset
                             n_moves = stair_to.width
 

@@ -1,14 +1,9 @@
-import { MapVector, MapCell, Food } from './Map/MapElements';
-import { Stair} from './Map/Stair';
+import { Stair } from './Map/Stair';
 import { Scene } from 'phaser';
-import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
-import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { snakeTextStyle, MapLevel as Level, CellType, Vector2 } from './Generics';
+import { MapLevel as Level, CellType, Vector2 } from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
-import { Wall } from './Map/Wall';
-import { MapLoader } from './Map/MapLoader';
 
 export class MapController {
     private scene: Scene;

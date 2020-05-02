@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
-import { Stair} from '../Data/Map/Stair';
+import { Stair } from '../Data/Map/Stair';
 import { MapController } from '../Data/MapController';
 import { BodyPart, Snake } from '../Data/Snake';
-import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, directionToVector2 } from '../Data/Generics';
+import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2 } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
@@ -111,9 +111,6 @@ export class SnakeScene extends Phaser.Scene {
         if (stair != undefined) {
             this.stairClimbing(stair);
             let stairTo = this.getStairTo(stair.identifier);
-
-
-
         }
 
         if (wallCollision) {

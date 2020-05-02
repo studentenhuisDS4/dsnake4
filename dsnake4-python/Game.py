@@ -330,7 +330,6 @@ class Game(object):
                         if stair_to.floor == 4:
                             self.map.update_shop_color(self)
 
-                        self.s.dirnx, self.s.dirny = (stair_to.direction)
                         self.current_floor = next_floor
 
                         return True, False

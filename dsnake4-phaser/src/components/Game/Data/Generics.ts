@@ -5,6 +5,21 @@ import { default as level3 } from '@/assets/static_levels/Level3Shop.json';
 import { default as level4 } from '@/assets/static_levels/Level4Tropen.json';
 export type Direction = 'Up' | 'Right' | 'Left' | 'Down';
 
+export function directionToVector2(direction: Direction | undefined): Vector2 | undefined {
+    switch (direction) {
+        case 'Up':
+            return new Vector2(0, -1);
+        case 'Right':
+            return new Vector2(1, 0);
+        case 'Left':
+            return new Vector2(-1, 0);
+        case 'Down':
+            return new Vector2(0, 1);
+        default:
+            return undefined;
+    }
+}
+
 export enum CellType {
     'Wall',
     'Pickup',

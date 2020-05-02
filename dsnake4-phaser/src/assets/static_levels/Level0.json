@@ -313,11 +313,11 @@
         {
             "position": {
                 "x": 60,
-                "y": 28
+                "y": 27
             },
             "direction": "Down",
             "removable": false,
-            "length": 3,
+            "length": 4,
             "visible": true
         },
         {
@@ -334,16 +334,6 @@
             "position": {
                 "x": 79,
                 "y": 2
-            },
-            "direction": "Down",
-            "removable": false,
-            "length": 4,
-            "visible": true
-        },
-        {
-            "position": {
-                "x": 56,
-                "y": 27
             },
             "direction": "Down",
             "removable": false,
@@ -382,32 +372,12 @@
         },
         {
             "position": {
-                "x": 42,
-                "y": 47
-            },
-            "direction": "Down",
-            "removable": false,
-            "length": 4,
-            "visible": true
-        },
-        {
-            "position": {
                 "x": 2,
                 "y": 22
             },
             "direction": "Right",
             "removable": true,
             "length": 2,
-            "visible": true
-        },
-        {
-            "position": {
-                "x": 13,
-                "y": 2
-            },
-            "direction": "Right",
-            "removable": false,
-            "length": 7,
             "visible": true
         }
     ],

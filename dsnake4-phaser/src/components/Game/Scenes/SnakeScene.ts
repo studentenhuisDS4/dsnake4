@@ -28,9 +28,10 @@ export class SnakeScene extends Phaser.Scene {
     currentLevel!: Level;
     points: number;
 
-    // Snake game loop
     private mapControllers: MapController[];
     inputKeys!: KeyBindings;
+
+    private backgroundMusic!: Phaser.Sound.BaseSound;
 
     constructor(offset: Vector2) {
         super(sceneConfig);
@@ -56,7 +57,8 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     public preload() {
-        this.load.image('logo', 'img/assets/logo.png');
+        // this.load.image('logo', 'img/assets/logo.png');
+        this.cache.audio.add('background', 'assets/sounds/bgMusic.mp3');
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -64,7 +66,7 @@ export class SnakeScene extends Phaser.Scene {
         // MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
     }
 
-    public create() {
+    public create() {        
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         this.renderGrid();
@@ -76,6 +78,10 @@ export class SnakeScene extends Phaser.Scene {
         this.renderSnake();
 
         this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
+
+        this.backgroundMusic = this.sound.add('background');
+        console.log(this.backgroundMusic);
+        this.backgroundMusic.play({volume: 2, loop: true});
     }
 
     public update() {
@@ -110,7 +116,6 @@ export class SnakeScene extends Phaser.Scene {
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
         if (stair != undefined) {
             this.stairClimbing(stair);
-            let stairTo = this.getStairTo(stair.identifier);
         }
 
         if (wallCollision) {

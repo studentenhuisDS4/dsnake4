@@ -33,6 +33,10 @@ export class SnakeScene extends Phaser.Scene {
 
     private backgroundMusic!: Phaser.Sound.BaseSound;
     private stairSound!: Phaser.Sound.BaseSound;
+    private wallImpactSound!: Phaser.Sound.BaseSound;
+    private movementSound!: Phaser.Sound.BaseSound;
+    private eatingSound!: Phaser.Sound.BaseSound;
+
 
     constructor(offset: Vector2) {
         super(sceneConfig);
@@ -61,6 +65,9 @@ export class SnakeScene extends Phaser.Scene {
         // this.load.image('logo', 'img/assets/logo.png');
         this.load.audio('background', '/audio/bgMusic.mp3');
         this.load.audio('stair', '/audio/stair_sound.mp3');
+        this.load.audio('wall', '/audio/impactWall.ogg');
+        this.load.audio('movement', '/audio/movement.ogg');
+        this.load.audio('eating', '/audio/handleCoins.ogg');
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -83,7 +90,10 @@ export class SnakeScene extends Phaser.Scene {
 
         this.backgroundMusic = this.sound.add('background');
         this.stairSound = this.sound.add('stair');
-        this.backgroundMusic.play({volume: 2, loop: true});
+        this.wallImpactSound = this.sound.add('wall');
+        this.movementSound = this.sound.add('movement');
+        this.eatingSound = this.sound.add('eating');
+        this.backgroundMusic.play({volume: 0.1, loop: true});
     }
 
     public update() {
@@ -95,6 +105,7 @@ export class SnakeScene extends Phaser.Scene {
 
     // Control over MapController's updates
     private onTimedUpdate() {
+        let direction = this.snake.direction;
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
             this.snake.rotateUp();
         } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
@@ -104,12 +115,17 @@ export class SnakeScene extends Phaser.Scene {
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
         }
+        if (direction != this.snake.direction) {
+            this.movementSound.play({volume: 0.1, loop: false});
+
+        }
         this.snake.moveSnake();
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
         if (foodEaten != undefined) {
             this.points += foodEaten.points;
             this.snake.addUndigestedFood(foodEaten.blocksAdded);
+            this.eatingSound.play({volume: 0.5, loop: false});
             // boost charge
         }
 
@@ -118,10 +134,11 @@ export class SnakeScene extends Phaser.Scene {
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
         if (stair != undefined) {
             this.stairClimbing(stair);
-            this.stairSound.play({volume: 2, loop: false});
+            this.stairSound.play({volume: 0.1, loop: false, rate: 2});
         }
 
         if (wallCollision) {
+            this.wallImpactSound.play({volume: .5, loop: false});
             let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
 
             this.scene.pause();

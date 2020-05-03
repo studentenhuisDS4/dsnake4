@@ -3,11 +3,13 @@ import { SW, SH } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
 import { MapController } from '../Data/MapController';
 import { BodyPart, Snake } from '../Data/Snake';
-import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2 } from '../Data/Generics';
+import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, MapLevel, CellType, Colors } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
+import { MainObject, MapCell } from '../Data/Map/MapElements';
 import { MapLoader } from '../Data/Map/MapLoader';
+import { Vector } from 'matter';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -25,8 +27,10 @@ export class SnakeScene extends Phaser.Scene {
     shiftY!: number;
 
     snake!: Snake;
+
     currentLevel!: Level;
     points: number;
+    mainObjects!: MainObject[];
 
     private mapControllers: MapController[];
     inputKeys!: KeyBindings;
@@ -58,7 +62,6 @@ export class SnakeScene extends Phaser.Scene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.Shop));
 
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right', this.currentLevel);
-
     }
 
     public preload() {
@@ -75,7 +78,7 @@ export class SnakeScene extends Phaser.Scene {
         // MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
     }
 
-    public create() {        
+    public create() {
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         this.renderGrid();
@@ -93,7 +96,7 @@ export class SnakeScene extends Phaser.Scene {
         this.wallImpactSound = this.sound.add('wall');
         this.movementSound = this.sound.add('movement');
         this.eatingSound = this.sound.add('eating');
-        this.backgroundMusic.play({volume: 0.1, loop: true});
+        this.backgroundMusic.play({ volume: 0.5, loop: true });
     }
 
     public update() {
@@ -116,7 +119,7 @@ export class SnakeScene extends Phaser.Scene {
             this.snake.rotateRight();
         }
         if (direction != this.snake.direction) {
-            this.movementSound.play({volume: 0.1, loop: false});
+            this.movementSound.play({ volume: 0.1, loop: false });
 
         }
         this.snake.moveSnake();
@@ -125,7 +128,7 @@ export class SnakeScene extends Phaser.Scene {
         if (foodEaten != undefined) {
             this.points += foodEaten.points;
             this.snake.addUndigestedFood(foodEaten.blocksAdded);
-            this.eatingSound.play({volume: 0.5, loop: false});
+            this.eatingSound.play({ volume: 0.5, loop: false });
             // boost charge
         }
 
@@ -134,11 +137,11 @@ export class SnakeScene extends Phaser.Scene {
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
         if (stair != undefined) {
             this.stairClimbing(stair);
-            this.stairSound.play({volume: 0.1, loop: false, rate: 2});
+            this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
         }
 
         if (wallCollision) {
-            this.wallImpactSound.play({volume: .5, loop: false});
+            this.wallImpactSound.play({ volume: .5, loop: false });
             let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
 
             this.scene.pause();
@@ -189,7 +192,6 @@ export class SnakeScene extends Phaser.Scene {
             newY = stairTo.position.y + offset;
             nMoves = stairTo.width;
         }
-        console.log(newX, newY, nMoves, nextLevel, stairTo);
         this.snake.moveSnakeTo(new Vector2(newX, newY), nextLevel);
         this.snake.rotateSnake(stairTo.exitDirection);
 
@@ -261,6 +263,21 @@ export class SnakeScene extends Phaser.Scene {
 
     public getScore() {
         return this.points;
+    }
+
+    private generateMainObjects() {
+        this.mainObjects = [];
+        // this.mainObjects.
+        //     .push(new MainObject(new MapCell(new Vector2(13, 37), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Ben\'s Room', MapLevel.FirstFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(10, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Sven\'s Room', MapLevel.FirstFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(35, 38), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Andrea\'s Room', MapLevel.FirstFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(88, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jeffery\'s Room', MapLevel.SecondFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(98, 35), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Daan\'s Room', MapLevel.FirstFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(98, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Hannele\'s Room', MapLevel.FirstFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(8, 10), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Cork\'s Room', MapLevel.SecondFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(11, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Miel\'s Room', MapLevel.SecondFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(31, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Margot\'s Room', MapLevel.SecondFloor))
+        //     .push(new MainObject(new MapCell(new Vector2(88, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jeffery\'s Room', MapLevel.SecondFloor))
     }
 
     private reset() {

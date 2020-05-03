@@ -203,3 +203,14 @@ export class Food extends MapElement {
     }
 
 }
+
+export class MainObject extends Food {
+    location: string;
+    floor: MapLevel;
+
+    constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number, location: string, floor: MapLevel){
+        super(TopLeftCell, type, height, width);
+        this.location = location;
+        this.floor = floor;
+    }
+}

@@ -32,6 +32,7 @@ export class SnakeScene extends Phaser.Scene {
     inputKeys!: KeyBindings;
 
     private backgroundMusic!: Phaser.Sound.BaseSound;
+    private stairSound!: Phaser.Sound.BaseSound;
 
     constructor(offset: Vector2) {
         super(sceneConfig);
@@ -58,7 +59,8 @@ export class SnakeScene extends Phaser.Scene {
 
     public preload() {
         // this.load.image('logo', 'img/assets/logo.png');
-        this.cache.audio.add('background', 'assets/sounds/bgMusic.mp3');
+        this.load.audio('background', '/audio/bgMusic.mp3');
+        this.load.audio('stair', '/audio/stair_sound.mp3');
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -80,7 +82,7 @@ export class SnakeScene extends Phaser.Scene {
         this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
         this.backgroundMusic = this.sound.add('background');
-        console.log(this.backgroundMusic);
+        this.stairSound = this.sound.add('stair');
         this.backgroundMusic.play({volume: 2, loop: true});
     }
 
@@ -116,6 +118,7 @@ export class SnakeScene extends Phaser.Scene {
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
         if (stair != undefined) {
             this.stairClimbing(stair);
+            this.stairSound.play({volume: 2, loop: false});
         }
 
         if (wallCollision) {

@@ -67,7 +67,7 @@ export class SnakeScene extends Phaser.Scene {
 
     public preload() {
         // this.load.image('logo', 'img/assets/logo.png');
-        this.load.audio('background', '/audio/DSnake4.mp3');
+        this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
         this.load.audio('stair', '/audio/stair_sound.mp3');
         this.load.audio('wall', '/audio/impactWall.ogg');
         this.load.audio('movement', '/audio/movement.ogg');

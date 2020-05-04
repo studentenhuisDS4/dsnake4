@@ -35,7 +35,7 @@ export class MenuScene extends Phaser.Scene {
 
     preload() {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
-        this.load.audio('background', '/audio/DSnake4.mp3');
+        this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
     }
 
     public create() {

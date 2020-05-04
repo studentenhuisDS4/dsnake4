@@ -1,8 +1,9 @@
-import { Direction, CELLS_Y, CELLS_X, Vector2 } from './Generics';
+import { Direction, CELLS_Y, CELLS_X, Vector2, MapLevel as Level } from './Generics';
 type BodyPartType = 'Head' | 'Body' | 'Tail';
 
 export class BodyPart {
     public position: Vector2;
+    public level?: Level;
     public type: BodyPartType;
     public gameObject!: Phaser.GameObjects.Text;
     public foodStored: boolean;
@@ -23,10 +24,11 @@ export class BodyPart {
         return this.position.y;
     }
 
-    constructor(position: Vector2, type: BodyPartType) {
+    constructor(position: Vector2, type: BodyPartType, level?: Level) {
         this.position = position;
         this.type = type;
         this.foodStored = false;
+        this.level = level;
     }
 
     public toCharacter() {
@@ -45,6 +47,7 @@ export class BodyPart {
 
 export class Snake {
     position: Vector2;
+    level?: Level;
     direction: Direction;
     bodyParts!: BodyPart[];
 
@@ -55,8 +58,9 @@ export class Snake {
         return this.position.y;
     }
 
-    constructor(position: Vector2, initialLength: number, initialDirection: Direction = 'Up') {
+    constructor(position: Vector2, initialLength: number, initialDirection: Direction = 'Up', initialLevel?: Level) {
         this.position = position;
+        this.level = initialLevel;
         this.direction = initialDirection;
 
         this.emptySnake();
@@ -71,7 +75,7 @@ export class Snake {
         let xPart = this.position.x;
         let yPart = this.position.y;
 
-        this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Head'));
+        this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Head', this.level));
         for (let i = 0; i < length - 1; i++) {
             let resultX;
             let resultY;
@@ -93,15 +97,19 @@ export class Snake {
             // Dont allow overflow of body part
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
-                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Tail'));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Tail', this.level));
                 } else {
-                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Body'));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Body', this.level));
                 }
             }
             else {
                 throw new Error("Trying to render Snake BodyPart outside game area.");
             }
         }
+    }
+
+    public rotateSnake(direction: Direction | undefined) {
+        if (direction != undefined) { this.direction = direction; }
     }
 
     public rotateLeft() {
@@ -148,6 +156,42 @@ export class Snake {
         }
     }
 
+    public moveSnakeTo(pos: Vector2, level?: Level) {
+        this.position = pos;
+        this.level = level;
+
+        let newX = this.position.x;
+        let newY = this.position.y;
+        let newL = this.level;
+        let newFoodStored = false;
+        let increaseLength: boolean = this.completeDigestion();
+
+        this.bodyParts.forEach(part => {
+            const currX = part.position.x;
+            const currY = part.position.y;
+            const cuurL = part.level;
+            const currF = part.foodStored;
+
+            part.position.x = newX;
+            part.position.y = newY;
+            part.level = newL;
+            part.foodStored = newFoodStored;
+
+            newX = currX;
+            newY = currY;
+            newL = cuurL;
+            newFoodStored = currF;
+
+            if (increaseLength && part.type == 'Tail') {
+                part.type = 'Body';
+            }
+        });
+
+        if (increaseLength) {
+            this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Tail', this.level));
+        }
+    }
+
     public moveSnake() {
         switch (this.direction) {
             case 'Up':
@@ -166,20 +210,24 @@ export class Snake {
 
         let newX = this.position.x;
         let newY = this.position.y;
+        let newL = this.level;
         let newFoodStored = false;
         let increaseLength: boolean = this.completeDigestion();
 
         this.bodyParts.forEach(part => {
             const currX = part.position.x;
             const currY = part.position.y;
+            const cuurL = part.level;
             const currF = part.foodStored;
 
             part.position.x = newX;
             part.position.y = newY;
+            part.level = newL;
             part.foodStored = newFoodStored;
 
             newX = currX;
             newY = currY;
+            newL = cuurL;
             newFoodStored = currF;
 
             if (increaseLength && part.type == 'Tail') {
@@ -188,7 +236,7 @@ export class Snake {
         });
 
         if (increaseLength) {
-            this.bodyParts.push(new BodyPart(new Vector2(newX,newY), 'Tail'));
+            this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Tail', this.level));
         }
     }
 
@@ -231,7 +279,7 @@ export class Snake {
 
     public selfCollision() {
         return this.bodyParts.find(part => {
-            if (part.type != 'Head' && part.position.x == this.position.x && part.position.y == this.position.y) {
+            if (part.type != 'Head' && part.position.x == this.position.x && part.position.y == this.position.y && part.level == this.level) {
                 return true;
             }
         }) != null;

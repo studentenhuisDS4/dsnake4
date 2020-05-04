@@ -25,6 +25,8 @@ export class MenuScene extends Phaser.Scene {
     cellWidth: number = 10;
     cellHeight: number = 10;
 
+    backgroundMusic!: Phaser.Sound.BaseSound
+
     constructor() {
         super(sceneConfig);
         this.width = SW;
@@ -32,8 +34,8 @@ export class MenuScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.setPath('img/assets/');
-        this.load.image('logo', ['menu.png', 'menu_n.png']);
+        this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
+        this.load.audio('background', '/audio/DSnake4.mp3');
     }
 
     public create() {
@@ -82,6 +84,8 @@ export class MenuScene extends Phaser.Scene {
 
             }, callbackScope: this, loop: true
         });
+        this.backgroundMusic = this.sound.add('background');
+        this.backgroundMusic.play({ volume: 1, loop: true });
     }
 
     createLogo(imageName: string) {

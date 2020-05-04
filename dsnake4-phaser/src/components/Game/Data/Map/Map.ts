@@ -1,4 +1,6 @@
 import { MapElement, MapCell, Food } from './MapElements';
+import { Wall} from './Wall'
+import { Stair} from './Stair'
 import { CELLS_Y, CELLS_X, CellType, MapLevel, Vector2, Colors, FoodType } from '../Generics';
 import { ILevel } from './JsonInterfaces';
 
@@ -12,7 +14,7 @@ export class Map {
     */
     readonly mapLevel: MapLevel;
     readonly jsonData: ILevel;
-    private childElements: MapElement[];
+    public childElements: MapElement[];
     public Map2D!: MapCell[][];
 
     /**
@@ -25,27 +27,27 @@ export class Map {
         this.childElements = [];
     }
 
-    public checkCollision(x: number, y: number): CellType {
-        if (x <= 0 || x >= CELLS_X) {
-            console.log('hit x wall', x);
+    public checkCollision(pos: Vector2): CellType {
+        if (pos.x <= 0 || pos.x > CELLS_X) {
+            console.log('hit x wall', pos.x);
             return CellType.Wall;
         }
-        if (y <= 0 || y >= CELLS_Y) {
-            console.log('hit y wall', x);
+        if (pos.y <= 0 || pos.y > CELLS_Y) {
+            console.log('hit y wall', pos.x);
             return CellType.Wall;
         }
-        if (this.Map2D[x] == null || this.Map2D[x][y] == null) {
+        if (this.Map2D[pos.x] == null || this.Map2D[pos.x][pos.y] == null) {
             return CellType.Void;
         }
-        return this.Map2D[x][y].type;
+        return this.Map2D[pos.x][pos.y].type;
     }
 
-    public eatFood(x: number, y: number) {
+    public eatFood(pos: Vector2) {
         for (let i = 0; i < this.childElements.length; i++) {
             let el = this.childElements[i];
             if (el instanceof Food) {
-                if (el.TopLeftCell.x <= x && el.TopLeftCell.x + el.width >= x && el.TopLeftCell.y <= y && el.TopLeftCell.y + el.height >= y) {
-                    let properties: number[] = [el.points, el.blocksAdded, el.boostCharge];
+                if (el.TopLeftCell.x <= pos.x && el.TopLeftCell.x + el.width >= pos.x && el.TopLeftCell.y <= pos.y && el.TopLeftCell.y + el.height >= pos.y) {
+                    let properties = { 'points': el.points, 'blocksAdded': el.blocksAdded, 'boostCharge': el.boostCharge };
                     this.childElements.splice(i, 1);
                     this.flattenMap();
 
@@ -56,8 +58,20 @@ export class Map {
         }
     }
 
+    public stairClimbed(pos: Vector2): Stair | undefined {
+        for (let el of this.childElements) {
+            for  (let cell of el.cells) {
+                if (cell.position.x == pos.x && cell.position.y == pos.y && this.Map2D[cell.position.x][cell.position.y].type == CellType.Stairs) {
+                    return el as Stair;
+                }
+            }
+        }
+        console.log('stairClimbed went wrong');
+        return undefined;
+    }
+
     public addFood(food: Food) {
-        this.appendElement(food);
+        this.appendElement(food, true);
     }
 
     public addRandomFood(type?: FoodType, width?: number, height?: number) {
@@ -99,7 +113,7 @@ export class Map {
             foodValidation = this.validateFoodLocation(x, y, height, width);
         }
         this.addFood(new Food(new MapCell(new Vector2(x, y), CellType.Pickup, Colors[type]), type, height, width));
-        
+
     }
 
     public validateFoodLocation(x: number, y: number, height: number, width: number): boolean {

@@ -1,26 +1,20 @@
-import { MapVector, MapCell, Food, Stair } from './Map/MapElements';
+import { Stair } from './Map/Stair';
 import { Scene } from 'phaser';
-import { BodyPart, Snake } from './Snake';
 import { KeyBindings } from './KeyBindings';
-import { JustDown } from '../imports';
 import { Map } from './Map/Map';
-import { snakeTextStyle, defaultTextStyle, MapLevel as Level, CellType, Vector2, MapLevel} from './Generics';
+import { MapLevel as Level, CellType, Vector2 } from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
-import { Wall } from './Map/Wall';
-import { MapLoader } from './Map/MapLoader';
 
 export class MapController {
     private scene: Scene;
-    private map: Map;
-    private snake: Snake;
+    public map: Map;
+    public level: Level;
 
     cellHeight: number;
     cellWidth: number;
     shiftX!: number;
     shiftY!: number;
     inputKeys!: KeyBindings;
-
-    points: number;
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
 
@@ -31,14 +25,13 @@ export class MapController {
      * @param cellWidth 
      * @param cellHeight 
      */
-    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2) {
+    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2, level: Level) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
         this.map = new Map({} as ILevel);
-        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
-        this.points = 0;
+        this.level = level;
 
         this.shiftX = shift.x;
         this.shiftY = shift.y;
@@ -48,68 +41,73 @@ export class MapController {
     }
 
     public renderCurrentMap() {
-        this.inputKeys = this.scene.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
         // this.loadLevelMap();
 
         this.renderMapCells();
-        this.renderSnake();
     }
 
     public onSceneUpdate() {
         this.updateRenderedMap();
-        this.renderSnake();
     }
 
-    public checkSnakeCollision() {
-        return this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Wall;
+    public checkWallCollision(snakePosition: Vector2) {
+        return this.map.checkCollision(snakePosition) == CellType.Wall;
     }
 
-    private checkSnakeEating(): boolean {
-        if (this.map.checkCollision(this.snake.x, this.snake.y) == CellType.Pickup) {
-            let vars: number[] | undefined = this.map.eatFood(this.snake.x, this.snake.y);
-            if (vars != undefined) {
-                this.snake.addUndigestedFood(vars[1]);
-                // this.points += vars[0];
-                // Will perform actions based on the food eaten
-                this.map.addRandomFood();
-                this.map.flattenMap();
-                return true;
-            }
+    public checkSnakeEating(snakePosition: Vector2) {
+        if (this.map.checkCollision(snakePosition) == CellType.Pickup) {
+            return this.map.eatFood(snakePosition);
         }
-        return false;
+        return undefined;
     }
 
-    public timedUpdate() {
-        if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
-            this.snake.rotateUp();
-        } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
-            this.snake.rotateLeft();
-        } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
-            this.snake.rotateDown();
-        } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
-            this.snake.rotateRight();
+    public checkStairCollision(snakePosition: Vector2): Stair | undefined {
+        if (this.map.checkCollision(snakePosition) == CellType.Stairs) {
+            return this.map.stairClimbed(snakePosition);
         }
-        this.snake.moveSnake();
-        this.checkSnakeEating()
+        return undefined;
     }
+
+    // public timedUpdate() {
+    //     if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
+    //         this.snake.rotateUp();
+    //     } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
+    //         this.snake.rotateLeft();
+    //     } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
+    //         this.snake.rotateDown();
+    //     } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
+    //         this.snake.rotateRight();
+    //     }
+    //     this.snake.moveSnake();
+    //     this.checkSnakeEating()
+    // }
 
     public loadLevelMap(map: Map) {
         this.map = map;
         this.map.flattenMap();
 
         // Load elements into the map
-        this.map.addRandomFood('Beer', 2, 2);
-        this.map.addRandomFood('MainObject', 2, 2);
-        this.map.addRandomFood('Weed', 2, 2);
-        this.map.addRandomFood('Krant', 2, 2);
-        this.map.addRandomFood('Coffie', 2, 2);
+        // this.map.addRandomFood('Beer', 2, 2);
+        // this.map.addRandomFood('MainObject', 2, 2);
+        // this.map.addRandomFood('Weed', 2, 2);
+        // this.map.addRandomFood('Krant', 2, 2);
+        // this.map.addRandomFood('Coffie', 2, 2);
 
-        this.map.flattenMap();
+        // this.map.flattenMap();
     }
 
     public reset() {
-        this.snake.reset();
-        this.snake = new Snake(new Vector2(15, 16), 3, 'Right');
+
+    }
+
+    public getStairs() {
+        let stairs: Stair[] = [];
+        for (let el of this.map.childElements) {
+            if ((el as Stair)?.identifier != undefined) {
+                stairs.push(el as Stair);
+            }
+        }
+        return stairs;
     }
 
     private renderMapCells() {
@@ -128,7 +126,7 @@ export class MapController {
                 }));
     }
 
-    private updateRenderedMap() {
+    public updateRenderedMap() {
         this.map.Map2D
             .forEach(row => row
                 .forEach(cell => {
@@ -139,23 +137,19 @@ export class MapController {
                 }));
     }
 
-    private renderSnake() {
-        if (this.snake?.bodyParts != null) {
-            this.snake.bodyParts.forEach(part => {
-                this.renderSnakePart(part);
-            });
-        }
+    public setMapVisible() {
+        this.renderedCells.forEach(row => row
+            .forEach(cell => {
+                cell.visible = true;
+            })
+        );
     }
 
-    private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + 1 + this.shiftX;
-        const pixelY = (part.y - 1) * this.cellHeight - 2 + this.shiftY;
-        if (part.gameObject == null) {
-            part.gameObject = this.scene.add.text(pixelX, pixelY, part.toCharacter(), snakeTextStyle);
-        }
-        else {
-            part.gameObject.text = part.toCharacter();
-            part.gameObject.setPosition(pixelX, pixelY);
-        }
+    public setMapInvisible() {
+        this.renderedCells.forEach(row => row
+            .forEach(cell => {
+                cell.visible = false;
+            })
+        );
     }
 }

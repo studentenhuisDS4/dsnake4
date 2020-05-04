@@ -87,13 +87,13 @@ export class MapController {
         this.map.flattenMap();
 
         // Load elements into the map
-        this.map.addRandomFood('Beer', 2, 2);
-        this.map.addRandomFood('MainObject', 2, 2);
-        this.map.addRandomFood('Weed', 2, 2);
-        this.map.addRandomFood('Krant', 2, 2);
-        this.map.addRandomFood('Coffie', 2, 2);
+        // this.map.addRandomFood('Beer', 2, 2);
+        // this.map.addRandomFood('MainObject', 2, 2);
+        // this.map.addRandomFood('Weed', 2, 2);
+        // this.map.addRandomFood('Krant', 2, 2);
+        // this.map.addRandomFood('Coffie', 2, 2);
 
-        this.map.flattenMap();
+        // this.map.flattenMap();
     }
 
     public reset() {

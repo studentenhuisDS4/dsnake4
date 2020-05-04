@@ -66,7 +66,7 @@ export class SnakeScene extends Phaser.Scene {
 
     public preload() {
         // this.load.image('logo', 'img/assets/logo.png');
-        this.load.audio('background', '/audio/bgMusic.mp3');
+        this.load.audio('background', '/audio/DSnake4.mp3');
         this.load.audio('stair', '/audio/stair_sound.mp3');
         this.load.audio('wall', '/audio/impactWall.ogg');
         this.load.audio('movement', '/audio/movement.ogg');
@@ -97,6 +97,9 @@ export class SnakeScene extends Phaser.Scene {
         this.movementSound = this.sound.add('movement');
         this.eatingSound = this.sound.add('eating');
         this.backgroundMusic.play({ volume: 0.5, loop: true });
+
+        this.generateMainObjects();
+        this.addAllMainObjects();
     }
 
     public update() {
@@ -267,22 +270,48 @@ export class SnakeScene extends Phaser.Scene {
 
     private generateMainObjects() {
         this.mainObjects = [];
-        // this.mainObjects.
-        //     .push(new MainObject(new MapCell(new Vector2(13, 37), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Ben\'s Room', MapLevel.FirstFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(10, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Sven\'s Room', MapLevel.FirstFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(35, 38), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Andrea\'s Room', MapLevel.FirstFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(88, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jeffery\'s Room', MapLevel.SecondFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(98, 35), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Daan\'s Room', MapLevel.FirstFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(98, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Hannele\'s Room', MapLevel.FirstFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(8, 10), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Cork\'s Room', MapLevel.SecondFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(11, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Miel\'s Room', MapLevel.SecondFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(31, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Margot\'s Room', MapLevel.SecondFloor))
-        //     .push(new MainObject(new MapCell(new Vector2(88, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jeffery\'s Room', MapLevel.SecondFloor))
+        let merelRoom = Math.random();
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(13, 37), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Ben\'s Room', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(10, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Sven\'s Room', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(35, 38), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Andrea\'s Room', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(88, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jeffery\'s Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(98, 35), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Daan\'s Room', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(98, 52), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Hannele\'s Room', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(8, 10), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Cork\'s Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(11, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Miel\'s Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(31, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Margot\'s Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(55, 25), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the GR', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(78, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Janis\' Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(97, 40), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Luuk\'s Room', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(40, 10), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jerry\'s Room', MapLevel.ThirdFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(14, 10), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Quentin\'s Room', MapLevel.ThirdFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(12, 30), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Marloes\' Room', MapLevel.ThirdFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(95, 20), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Marcus\' Room', MapLevel.ThirdFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(70, 48), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Lotte\'s Room', MapLevel.ThirdFloor));
+        if (merelRoom < 0.5) {
+            this.mainObjects.push(new MainObject(new MapCell(new Vector2(21, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Merel\'s Lower Room', MapLevel.SecondFloor));
+        } else {
+            this.mainObjects.push(new MainObject(new MapCell(new Vector2(44, 30), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Merel\'s Upper Room', MapLevel.ThirdFloor));
+        }
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(28, 48), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Charlie\'s Room', MapLevel.Tropen));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(78, 46), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Fenna\'s Room', MapLevel.Tropen));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(28, 26), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'David\'s Room', MapLevel.Tropen));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(34, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Jarno\'s Room', MapLevel.Tropen));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(71, 8), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'Ilse\'s Room', MapLevel.Tropen));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(50, 45), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Kitchen', MapLevel.FirstFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 55), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Front Yard', MapLevel.SecondFloor));
+        this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 15), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Binnenplaats', MapLevel.FirstFloor));
     }
 
     private reset() {
         this.snake.reset();
         this.snake = new Snake(new Vector2(15, 16), 3, 'Right', Level.FirstFloor);
         this.changeLevel(Level.FirstFloor);
+    }
+
+    private addAllMainObjects() {
+        for (let mo of this.mainObjects) {
+            this.mapControllers.find(mc => mc.level === mo.level)?.map.appendElement(mo, true);
+        }
     }
 }

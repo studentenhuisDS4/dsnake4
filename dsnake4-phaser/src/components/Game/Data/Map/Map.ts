@@ -71,7 +71,7 @@ export class Map {
     }
 
     public addFood(food: Food) {
-        this.appendElement(food);
+        this.appendElement(food, true);
     }
 
     public addRandomFood(type?: FoodType, width?: number, height?: number) {

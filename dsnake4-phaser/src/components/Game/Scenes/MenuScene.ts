@@ -54,6 +54,7 @@ export class MenuScene extends Phaser.Scene {
                         duration: 500,
                         allowInput: false,
                     });
+                    this.backgroundMusic.pause();
                 }
             },
             {

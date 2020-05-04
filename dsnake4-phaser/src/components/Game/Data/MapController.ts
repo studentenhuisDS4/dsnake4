@@ -119,9 +119,9 @@ export class MapController {
                         this.renderedCells[cell.x] = [];
                     }
                     this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2 + this.shiftX,
-                        cell.y * this.cellHeight - this.cellHeight / 2 + this.shiftY,
-                        this.cellWidth - 2, this.cellHeight - 2,
+                        cell.x * this.cellWidth - this.cellWidth / 2 - 1 + this.shiftX,
+                        cell.y * this.cellHeight - this.cellHeight / 2 - 1 + this.shiftY,
+                        this.cellWidth, this.cellHeight,
                         cell.color);
                 }));
     }
@@ -133,7 +133,12 @@ export class MapController {
                     if (this.renderedCells[cell.x] == null) {
                         this.renderedCells[cell.x] = [];
                     }
-                    this.renderedCells[cell.x][cell.y].setFillStyle(cell.color);
+                    if (cell.type == CellType.Void) {
+                        this.renderedCells[cell.x][cell.y].setFillStyle(cell.color, 0);
+
+                    } else {
+                        this.renderedCells[cell.x][cell.y].setFillStyle(cell.color);
+                    }
                 }));
     }
 

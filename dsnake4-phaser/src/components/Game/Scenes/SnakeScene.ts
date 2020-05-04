@@ -42,6 +42,7 @@ export class SnakeScene extends Phaser.Scene {
     private eatingSound!: Phaser.Sound.BaseSound;
 
 
+
     constructor(offset: Vector2) {
         super(sceneConfig);
 
@@ -71,6 +72,7 @@ export class SnakeScene extends Phaser.Scene {
         this.load.audio('wall', '/audio/impactWall.ogg');
         this.load.audio('movement', '/audio/movement.ogg');
         this.load.audio('eating', '/audio/handleCoins.ogg');
+        this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -81,7 +83,34 @@ export class SnakeScene extends Phaser.Scene {
     public create() {
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
-        this.renderGrid();
+
+        this.add
+            .image(this.shiftX, this.shiftY, 'floor')
+            .setOrigin(0, 0)
+            .setAlpha(0.7)
+            .setScale(0.24, 0.24)
+            .setPipeline('Light2D');
+        this.lights.enable();
+        this.lights.setAmbientColor(0x313339);
+        // this.lights.addLight(500, 300, 200, 0xffffff, 1);
+
+        const snakeLight = this.lights.addLight(0, 0, 400, 0x42b983, 1);
+
+        // The mouse is fun, but the moon is calling us more. Agreed -Andrea
+        // this.input.on('pointermove', function (event: MouseEvent) {
+        //     light.x = event.x;
+        //     light.y = event.y;
+        // });
+
+        this.events.on('gameSnakeMove', function (event: Snake, shiftX: number, shiftY: number) {
+            for (let i = 0; i < 6; i++) {
+                snakeLight.x = event.position.x * 10 + shiftX;
+                snakeLight.y = event.position.y * 10 + shiftX;
+            }
+        });
+
+        // this.renderGrid();
+
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
             mc.renderCurrentMap();
@@ -239,6 +268,7 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     private renderSnake() {
+        this.events.emit('gameSnakeMove', this.snake, this.shiftX, this.shiftY);
         if (this.snake?.bodyParts != null) {
             this.snake.bodyParts.forEach(part => {
                 this.renderSnakePart(part);

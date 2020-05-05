@@ -74,6 +74,7 @@ export class SnakeScene extends Phaser.Scene {
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
         this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite2.png', { frameWidth: 20, frameHeight: 20 });
+        this.load.spritesheet('snake', 'img/assets/snakeSprite.png', { frameWidth: 10, frameHeight: 10 });
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -120,8 +121,6 @@ export class SnakeScene extends Phaser.Scene {
         this.movementSound = this.sound.add('movement');
         this.eatingSound = this.sound.add('eating');
         this.backgroundMusic.play({ volume: 0.5, loop: true });
-
-        let beerCaps = this.add.sprite(50, 50, 'beerCaps', Math.floor(Math.random() * 6));
 
         this.generateMainObjects();
         this.addAllMainObjects();
@@ -273,14 +272,14 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + 1 + this.shiftX;
-        const pixelY = (part.y - 1) * this.cellHeight - 2 + this.shiftY;
+        const pixelX = (part.x - 1) * this.cellWidth + this.shiftX - 1;
+        const pixelY = (part.y - 1) * this.cellHeight + this.shiftY - 1;
         if (part.gameObject == null) {
-            part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), snakeTextStyle);
+
+            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0, 0);
         }
         else {
             if (part.level == this.currentLevel) {
-                part.gameObject.text = part.toCharacter();
                 part.gameObject.setPosition(pixelX, pixelY);
                 part.gameObject.visible = true;
             }
@@ -309,7 +308,7 @@ export class SnakeScene extends Phaser.Scene {
                 if (elem instanceof Food && elem.type == 'Beer' && elem.image == undefined) {
                     let x = elem.TopLeftCell.x * this.cellWidth + this.shiftX - 1;
                     let y = elem.TopLeftCell.y * this.cellHeight + this.shiftY - 1;
-                    elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random()*6));
+                    elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random() * 6));
                 }
             });
         }

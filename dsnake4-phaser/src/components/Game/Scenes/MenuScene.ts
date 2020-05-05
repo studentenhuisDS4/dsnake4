@@ -214,13 +214,13 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + 1;
-        const pixelY = (part.y - 1) * this.cellHeight - 2;
+        const pixelX = (part.x - 1) * this.cellWidth - 1;
+        const pixelY = (part.y - 1) * this.cellHeight - 1;
         if (part.gameObject == null) {
-            part.gameObject = this.add.text(pixelX, pixelY, part.toCharacter(), defaultTextStyle);
+            
+            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt());
         }
         else {
-            part.gameObject.text = part.toCharacter();
             part.gameObject.setPosition(pixelX, pixelY);
         }
     }

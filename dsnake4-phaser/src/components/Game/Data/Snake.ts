@@ -5,7 +5,7 @@ export class BodyPart {
     public position: Vector2;
     public level?: Level;
     public type: BodyPartType;
-    public gameObject!: Phaser.GameObjects.Text;
+    public gameObject!: Phaser.GameObjects.Sprite;
     public foodStored: boolean;
 
     public floor!: number;
@@ -29,6 +29,18 @@ export class BodyPart {
         this.type = type;
         this.foodStored = false;
         this.level = level;
+    }
+    public toInt() {
+        switch (this.type) {
+            case 'Head':
+                return 2;
+            case 'Body':
+                return 1;
+            case 'Tail':
+                return 0;
+            default:
+                return 1;
+        }
     }
 
     public toCharacter() {

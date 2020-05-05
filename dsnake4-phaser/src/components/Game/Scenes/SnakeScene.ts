@@ -3,7 +3,7 @@ import { SW, SH } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
 import { MapController } from '../Data/MapController';
 import { BodyPart, Snake } from '../Data/Snake';
-import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, MapLevel, CellType, Colors } from '../Data/Generics';
+import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, MapLevel, CellType, Colors, Direction } from '../Data/Generics';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
@@ -74,7 +74,7 @@ export class SnakeScene extends Phaser.Scene {
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
         this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite2.png', { frameWidth: 20, frameHeight: 20 });
-        this.load.spritesheet('snake', 'img/assets/snakeSprite.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -266,17 +266,31 @@ export class SnakeScene extends Phaser.Scene {
         this.events.emit('gameSnakeMove', this.snake, this.shiftX, this.shiftY);
         if (this.snake?.bodyParts != null) {
             this.snake.bodyParts.forEach(part => {
-                this.renderSnakePart(part);
+                this.renderSnakePart(part, this.snake.direction);
             });
         }
     }
 
-    private renderSnakePart(part: BodyPart) {
+    private renderSnakePart(part: BodyPart, direction: Direction) {
         const pixelX = (part.x - 1) * this.cellWidth + this.shiftX - 1;
         const pixelY = (part.y - 1) * this.cellHeight + this.shiftY - 1;
         if (part.gameObject == null) {
-
-            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0, 0);
+            let rotation: number = 0;
+            switch (direction){
+                case 'Right':
+                    rotation = 0;
+                    break;
+                case 'Left':
+                    rotation = Math.PI;
+                    break;
+                case 'Up':
+                    rotation = Math.PI / 2;
+                    break;
+                case 'Down':
+                    rotation = Math.PI / 2 * 3;
+                    break;
+            }
+            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0, 0).setRotation(rotation);
         }
         else {
             if (part.level == this.currentLevel) {

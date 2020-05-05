@@ -4,6 +4,7 @@ import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
 import { MapLevel as Level, CellType, Vector2 } from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
+import { Food, MapCell } from './Map/MapElements';
 
 export class MapController {
     private scene: Scene;
@@ -18,6 +19,8 @@ export class MapController {
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
 
+    beerCapsImage?: Phaser.GameObjects.Image;
+
     /**
      * Creates an instance of map controller.
      * Note: preloading JSON level is the responsibility of the Scene (take a look at MapLoader)
@@ -25,7 +28,7 @@ export class MapController {
      * @param cellWidth 
      * @param cellHeight 
      */
-    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2, level: Level) {
+    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2, level: Level, beerCapsImage?: Phaser.GameObjects.Image) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
@@ -35,9 +38,10 @@ export class MapController {
 
         this.shiftX = shift.x;
         this.shiftY = shift.y;
+        
+        this.beerCapsImage = beerCapsImage;
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
-        console.log("Shifted by: ", this.shiftX, this.shiftY);
     }
 
     public renderCurrentMap() {
@@ -46,9 +50,9 @@ export class MapController {
         this.renderMapCells();
     }
 
-    public onSceneUpdate() {
-        this.updateRenderedMap();
-    }
+    // public onSceneUpdate() {
+    //     this.updateRenderedMap();
+    // }
 
     public checkWallCollision(snakePosition: Vector2) {
         return this.map.checkCollision(snakePosition) == CellType.Wall;
@@ -68,32 +72,13 @@ export class MapController {
         return undefined;
     }
 
-    // public timedUpdate() {
-    //     if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
-    //         this.snake.rotateUp();
-    //     } else if (JustDown(this.inputKeys.A) || JustDown(this.inputKeys.LEFT)) {
-    //         this.snake.rotateLeft();
-    //     } else if (JustDown(this.inputKeys.S) || JustDown(this.inputKeys.DOWN)) {
-    //         this.snake.rotateDown();
-    //     } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
-    //         this.snake.rotateRight();
-    //     }
-    //     this.snake.moveSnake();
-    //     this.checkSnakeEating()
-    // }
-
     public loadLevelMap(map: Map) {
         this.map = map;
         this.map.flattenMap();
 
-        // Load elements into the map
-        // this.map.addRandomFood('Beer', 2, 2);
-        // this.map.addRandomFood('MainObject', 2, 2);
-        // this.map.addRandomFood('Weed', 2, 2);
-        // this.map.addRandomFood('Krant', 2, 2);
-        // this.map.addRandomFood('Coffie', 2, 2);
-
-        // this.map.flattenMap();
+        this.map.addRandomFood('Beer', 2, 2,);
+        this.map.addRandomFood('Beer', 2, 2,);
+        this.map.addRandomFood('Beer', 2, 2,);
     }
 
     public reset() {
@@ -126,21 +111,6 @@ export class MapController {
                 }));
     }
 
-    public updateRenderedMap() {
-        this.map.Map2D
-            .forEach(row => row
-                .forEach(cell => {
-                    if (this.renderedCells[cell.x] == null) {
-                        this.renderedCells[cell.x] = [];
-                    }
-                    if (cell.type == CellType.Void) {
-                        this.renderedCells[cell.x][cell.y].setFillStyle(cell.color, 0);
-
-                    } else {
-                        this.renderedCells[cell.x][cell.y].setFillStyle(cell.color);
-                    }
-                }));
-    }
 
     public setMapVisible() {
         this.renderedCells.forEach(row => row
@@ -148,6 +118,11 @@ export class MapController {
                 cell.visible = true;
             })
         );
+        this.map.childElements.forEach(el => {
+            if (el instanceof Food && el.image != undefined) {
+                el.image.visible = true;
+            }
+        });
     }
 
     public setMapInvisible() {
@@ -156,5 +131,10 @@ export class MapController {
                 cell.visible = false;
             })
         );
+        this.map.childElements.forEach(el => {
+            if (el instanceof Food && el.image != undefined) {
+                el.image.visible = false;
+            }
+        });
     }
 }

@@ -7,7 +7,7 @@ import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, MapLevel,
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
-import { MainObject, MapCell } from '../Data/Map/MapElements';
+import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
 import { MapLoader } from '../Data/Map/MapLoader';
 import { Vector } from 'matter';
 
@@ -73,6 +73,7 @@ export class SnakeScene extends Phaser.Scene {
         this.load.audio('movement', '/audio/movement.ogg');
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
+        this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite2.png', { frameWidth: 20, frameHeight: 20 });
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -96,20 +97,13 @@ export class SnakeScene extends Phaser.Scene {
 
         const snakeLight = this.lights.addLight(0, 0, 400, 0x42b983, 1);
 
-        // The mouse is fun, but the moon is calling us more. Agreed -Andrea
-        // this.input.on('pointermove', function (event: MouseEvent) {
-        //     light.x = event.x;
-        //     light.y = event.y;
-        // });
-
         this.events.on('gameSnakeMove', function (event: Snake, shiftX: number, shiftY: number) {
             for (let i = 0; i < 6; i++) {
                 snakeLight.x = event.position.x * 10 + shiftX;
-                snakeLight.y = event.position.y * 10 + shiftX;
+                snakeLight.y = event.position.y * 10 + shiftY;
             }
         });
 
-        // this.renderGrid();
 
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
@@ -127,13 +121,15 @@ export class SnakeScene extends Phaser.Scene {
         this.eatingSound = this.sound.add('eating');
         this.backgroundMusic.play({ volume: 0.5, loop: true });
 
+        let beerCaps = this.add.sprite(50, 50, 'beerCaps', Math.floor(Math.random() * 6));
+
         this.generateMainObjects();
         this.addAllMainObjects();
     }
 
     public update() {
         // Propagate input
-        this.mapControllers.find(mc => mc.level == this.currentLevel)?.updateRenderedMap();
+        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
         // this.mapControllers.forEach(mc => mc.updateRenderedMap());
         this.renderSnake();
     }
@@ -291,6 +287,31 @@ export class SnakeScene extends Phaser.Scene {
             else {
                 part.gameObject.visible = false;
             }
+        }
+    }
+
+    public updateRenderedMap(mc: MapController | undefined) {
+        if (mc != undefined) {
+            mc.map.Map2D
+                .forEach(row => row
+                    .forEach(cell => {
+                        if (mc.renderedCells[cell.x] == null) {
+                            mc.renderedCells[cell.x] = [];
+                        }
+                        if (cell.type == CellType.Void) {
+                            mc.renderedCells[cell.x][cell.y].setFillStyle(cell.color, 0);
+
+                        } else {
+                            mc.renderedCells[cell.x][cell.y].setFillStyle(cell.color);
+                        }
+                    }));
+            mc.map.childElements.forEach(elem => {
+                if (elem instanceof Food && elem.type == 'Beer' && elem.image == undefined) {
+                    let x = elem.TopLeftCell.x * this.cellWidth + this.shiftX - 1;
+                    let y = elem.TopLeftCell.y * this.cellHeight + this.shiftY - 1;
+                    elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random()*6));
+                }
+            });
         }
     }
 

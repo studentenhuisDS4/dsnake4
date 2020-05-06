@@ -8,6 +8,7 @@ import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
 import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
+import { Wall } from '../Data/Map/Wall'
 import { MapLoader } from '../Data/Map/MapLoader';
 import { Vector } from 'matter';
 
@@ -29,8 +30,13 @@ export class SnakeScene extends Phaser.Scene {
     snake!: Snake;
 
     currentLevel!: Level;
-    points: number;
     mainObjects!: MainObject[];
+
+    points!: number;
+    totalLives: number = 3;
+    livesObtained!: number;
+    livesUsed!: number;
+    throughWalls!: boolean;
 
     private mapControllers: MapController[];
     inputKeys!: KeyBindings;
@@ -41,8 +47,6 @@ export class SnakeScene extends Phaser.Scene {
     private movementSound!: Phaser.Sound.BaseSound;
     private eatingSound!: Phaser.Sound.BaseSound;
 
-
-
     constructor(offset: Vector2) {
         super(sceneConfig);
 
@@ -52,9 +56,6 @@ export class SnakeScene extends Phaser.Scene {
         this.shiftX = offset.x;
         this.shiftY = offset.y;
 
-        this.points = 0;
-        this.currentLevel = Level.FirstFloor;
-
         this.mapControllers = [];
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.FirstFloor));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.SecondFloor));
@@ -62,7 +63,7 @@ export class SnakeScene extends Phaser.Scene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.Tropen));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.Shop));
 
-        this.snake = new Snake(new Vector2(15, 16), 3, 'Right', this.currentLevel);
+        this.resetGame();
     }
 
     public preload() {
@@ -159,26 +160,26 @@ export class SnakeScene extends Phaser.Scene {
             // boost charge
         }
 
-        let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position);
-
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
         if (stair != undefined) {
             this.stairClimbing(stair);
             this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
+            this.activateThroughWalls();
         }
+
+        let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position, this.throughWalls);
 
         if (wallCollision) {
             this.wallImpactSound.play({ volume: .5, loop: false });
-            let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
-
-            this.scene.pause();
-            setTimeout(() => {
-                // this.mapController.reset();
-                this.reset();
-                deathText.destroy();
-                this.scene.resume();
-            }, 1000);
+            this.fatalCollision();
         }
+
+        if (this.snake.selfCollision()) {
+            this.wallImpactSound.play({ volume: .5, loop: false });
+            this.fatalCollision();
+        }
+
+
     }
 
     private stairClimbing(stair: Stair) {
@@ -245,10 +246,12 @@ export class SnakeScene extends Phaser.Scene {
 
     private changeLevel(newLevel: Level) {
         this.mapControllers.forEach(mc => {
-            if (newLevel != mc.level) {
-                mc.setMapInvisible();
-            } else {
-                mc.setMapVisible();
+            if (mc.active) {
+                if (newLevel != mc.level) {
+                    mc.setMapInvisible();
+                } else {
+                    mc.setMapVisible();
+                }
             }
         });
         this.currentLevel = newLevel;
@@ -266,35 +269,35 @@ export class SnakeScene extends Phaser.Scene {
         this.events.emit('gameSnakeMove', this.snake, this.shiftX, this.shiftY);
         if (this.snake?.bodyParts != null) {
             this.snake.bodyParts.forEach(part => {
-                this.renderSnakePart(part, this.snake.direction);
+                this.renderSnakePart(part);
             });
         }
     }
 
-    private renderSnakePart(part: BodyPart, direction: Direction) {
-        const pixelX = (part.x - 1) * this.cellWidth + this.shiftX - 1;
-        const pixelY = (part.y - 1) * this.cellHeight + this.shiftY - 1;
+    private renderSnakePart(part: BodyPart) {
+        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2 + this.shiftX - 1;
+        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2 + this.shiftY - 1;
+        let rotation: number = 0;
+        switch (part.direction) {
+            case 'Right':
+                rotation = 0;
+                break;
+            case 'Left':
+                rotation = Math.PI;
+                break;
+            case 'Up':
+                rotation = - Math.PI / 2;
+                break;
+            case 'Down':
+                rotation = Math.PI / 2;
+                break;
+        }
         if (part.gameObject == null) {
-            let rotation: number = 0;
-            switch (direction){
-                case 'Right':
-                    rotation = 0;
-                    break;
-                case 'Left':
-                    rotation = Math.PI;
-                    break;
-                case 'Up':
-                    rotation = Math.PI / 2;
-                    break;
-                case 'Down':
-                    rotation = Math.PI / 2 * 3;
-                    break;
-            }
-            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0, 0).setRotation(rotation);
+            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0.5, 0.5).setRotation(rotation);
         }
         else {
             if (part.level == this.currentLevel) {
-                part.gameObject.setPosition(pixelX, pixelY);
+                part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
                 part.gameObject.visible = true;
             }
             else {
@@ -367,12 +370,74 @@ export class SnakeScene extends Phaser.Scene {
         this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 15), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Binnenplaats', MapLevel.FirstFloor));
     }
 
-    private reset() {
-        this.snake.reset();
-        this.snake = new Snake(new Vector2(15, 16), 3, 'Right', Level.FirstFloor);
-        this.changeLevel(Level.FirstFloor);
+    private activateThroughWalls() {
+        this.throughWalls = true;
+        this.mapControllers.forEach(mc => {
+            mc.map.childElements.forEach(elem => {
+                if (elem instanceof Wall && elem.removable && elem.prop) {
+                    elem.cells.forEach(cell => {
+                        mc.renderedCells[cell.x][cell.y].setVisible(false);
+                    });
+                }
+            });
+        });
+    }
+    private deactivateThroughWalls() {
+        this.throughWalls = false;
+        this.mapControllers.forEach(mc => {
+            mc.map.childElements.forEach(elem => {
+                if (elem instanceof Wall && elem.removable && elem.prop) {
+                    elem.cells.forEach(cell => {
+                        mc.renderedCells[cell.x][cell.y].setVisible(true);
+                    });
+                }
+            });
+        });
     }
 
+    public useLife(): boolean {
+        if (this.livesObtained - this.livesUsed > 0) {
+            this.livesUsed++;
+            return true;
+        }
+        return false;
+    }
+
+    private fatalCollision() {
+        if (this.useLife()) {
+            let useLife = this.add.text(SW / 2, SH / 2, "Life Used").setOrigin(0.5, 0.5);
+            this.scene.pause();
+            setTimeout(() => {
+                let snakeLength = this.snake.bodyParts.length;
+                this.snake.reset();
+                this.snake = new Snake(new Vector2(15, 16), snakeLength, 'Right', Level.FirstFloor);
+                useLife.destroy();
+                this.scene.resume();
+            }, 1000);
+
+        } else {
+            let deathText = this.add.text(SW / 2, SH / 2, "You died!").setOrigin(0.5, 0.5);
+            this.scene.pause();
+            setTimeout(() => {
+                this.resetGame();
+                deathText.destroy();
+                this.scene.resume();
+            }, 1000);
+        }
+    }
+
+    private resetGame() {
+        this.snake?.reset();
+        this.points = 0;
+        this.livesObtained = 0;
+        this.livesUsed = 0;
+        this.throughWalls = false;
+        this.snake = new Snake(new Vector2(15, 16), 20, 'Right', Level.FirstFloor);
+        if (this.mapControllers[0].map)
+            this.changeLevel(Level.FirstFloor);
+    }
+
+    // temporary function
     private addAllMainObjects() {
         for (let mo of this.mainObjects) {
             this.mapControllers.find(mc => mc.level === mo.level)?.map.appendElement(mo, true);

@@ -5,6 +5,7 @@ export class BodyPart {
     public position: Vector2;
     public level?: Level;
     public type: BodyPartType;
+    public direction: Direction;
     public gameObject!: Phaser.GameObjects.Sprite;
     public foodStored: boolean;
 
@@ -24,20 +25,22 @@ export class BodyPart {
         return this.position.y;
     }
 
-    constructor(position: Vector2, type: BodyPartType, level?: Level) {
+    constructor(position: Vector2, type: BodyPartType, direction: Direction, level?: Level) {
         this.position = position;
         this.type = type;
         this.foodStored = false;
         this.level = level;
+        this.direction = direction;
     }
+
     public toInt() {
         switch (this.type) {
             case 'Head':
-                return 2;
+                return 0;
             case 'Body':
                 return 1;
             case 'Tail':
-                return 0;
+                return 2;
             default:
                 return 1;
         }
@@ -87,7 +90,7 @@ export class Snake {
         let xPart = this.position.x;
         let yPart = this.position.y;
 
-        this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Head', this.level));
+        this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Head', 'Right', this.level));
         for (let i = 0; i < length - 1; i++) {
             let resultX;
             let resultY;
@@ -109,9 +112,9 @@ export class Snake {
             // Dont allow overflow of body part
             if (resultX != null || resultY != null) {
                 if (i == length - 2) {
-                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Tail', this.level));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Tail', 'Right', this.level));
                 } else {
-                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Body', this.level));
+                    this.bodyParts.push(new BodyPart(new Vector2(xPart, yPart), 'Body', 'Right', this.level));
                 }
             }
             else {
@@ -176,32 +179,37 @@ export class Snake {
         let newY = this.position.y;
         let newL = this.level;
         let newFoodStored = false;
+        let newDirection = this.direction;
         let increaseLength: boolean = this.completeDigestion();
 
         this.bodyParts.forEach(part => {
-            const currX = part.position.x;
-            const currY = part.position.y;
-            const cuurL = part.level;
-            const currF = part.foodStored;
-
-            part.position.x = newX;
-            part.position.y = newY;
-            part.level = newL;
-            part.foodStored = newFoodStored;
-
-            newX = currX;
-            newY = currY;
-            newL = cuurL;
-            newFoodStored = currF;
-
             if (increaseLength && part.type == 'Tail') {
-                part.type = 'Body';
+                const currPart = this.bodyParts.pop();
+                this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Body', newDirection, this.level));
+                if (currPart != undefined) {
+                    this.bodyParts.push(currPart);
+                }
+                // part.type = 'Body';
+            } else {
+                const currX = part.position.x;
+                const currY = part.position.y;
+                const cuurL = part.level;
+                const currF = part.foodStored;
+                const currD = part.direction;
+
+                part.position.x = newX;
+                part.position.y = newY;
+                part.level = newL;
+                part.foodStored = newFoodStored;
+                part.direction = newDirection
+
+                newX = currX;
+                newY = currY;
+                newL = cuurL;
+                newFoodStored = currF;
+                newDirection = currD
             }
         });
-
-        if (increaseLength) {
-            this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Tail', this.level));
-        }
     }
 
     public moveSnake() {
@@ -224,32 +232,37 @@ export class Snake {
         let newY = this.position.y;
         let newL = this.level;
         let newFoodStored = false;
+        let newDirection = this.direction;
         let increaseLength: boolean = this.completeDigestion();
 
         this.bodyParts.forEach(part => {
-            const currX = part.position.x;
-            const currY = part.position.y;
-            const cuurL = part.level;
-            const currF = part.foodStored;
-
-            part.position.x = newX;
-            part.position.y = newY;
-            part.level = newL;
-            part.foodStored = newFoodStored;
-
-            newX = currX;
-            newY = currY;
-            newL = cuurL;
-            newFoodStored = currF;
-
             if (increaseLength && part.type == 'Tail') {
-                part.type = 'Body';
+                const currPart = this.bodyParts.pop();
+                this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Body', newDirection, this.level));
+                if (currPart != undefined) {
+                    this.bodyParts.push(currPart);
+                }
+                // part.type = 'Body';
+            } else {
+                const currX = part.position.x;
+                const currY = part.position.y;
+                const cuurL = part.level;
+                const currF = part.foodStored;
+                const currD = part.direction;
+
+                part.position.x = newX;
+                part.position.y = newY;
+                part.level = newL;
+                part.foodStored = newFoodStored;
+                part.direction = newDirection
+
+                newX = currX;
+                newY = currY;
+                newL = cuurL;
+                newFoodStored = currF;
+                newDirection = currD
             }
         });
-
-        if (increaseLength) {
-            this.bodyParts.push(new BodyPart(new Vector2(newX, newY), 'Tail', this.level));
-        }
     }
 
     public addUndigestedFood(nBlocks: number) {
@@ -258,9 +271,7 @@ export class Snake {
             if (!this.bodyParts[i].foodStored) {
                 this.bodyParts[i].foodStored = true;
                 count++;
-            }
-            if (count == nBlocks) {
-                return;
+                if (count == nBlocks) { return; }
             }
         }
     }
@@ -272,6 +283,34 @@ export class Snake {
                 return true;
             }
         }) != null;
+    }
+
+    public reduce(length: number) {
+        let blocksRemoved = 0;
+
+        if (length <= 0) { return; }
+
+        for (let part of this.bodyParts) {
+            if (part.foodStored) {
+                part.foodStored = false;
+                blocksRemoved++;
+                if (blocksRemoved == length) { return; }
+            }
+        }
+        const bodyLength = this.bodyParts.length;
+        let tail = this.bodyParts.pop();
+        let lastBodyPart: BodyPart | undefined;
+        for (let i = 0; i < Math.min(length - blocksRemoved, bodyLength - 3); i++) {
+            lastBodyPart = this.bodyParts.pop();
+            lastBodyPart?.gameObject.destroy();
+        }
+        if (tail != undefined) {
+            this.bodyParts.push(tail);
+            if (lastBodyPart != undefined) {
+                tail.position = lastBodyPart.position;
+                tail.direction = lastBodyPart.direction;
+            }
+        }
     }
 
     public getHeadFoodStatus(): boolean {

@@ -2,6 +2,7 @@ import { Stair } from './Map/Stair';
 import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
+import { Wall } from '../Data/Map/Wall'
 import { MapLevel as Level, CellType, Vector2 } from './Generics';
 import { ILevel } from './Map/JsonInterfaces';
 import { Food, MapCell } from './Map/MapElements';
@@ -10,6 +11,8 @@ export class MapController {
     private scene: Scene;
     public map: Map;
     public level: Level;
+
+    public active: boolean = false;
 
     cellHeight: number;
     cellWidth: number;
@@ -38,7 +41,7 @@ export class MapController {
 
         this.shiftX = shift.x;
         this.shiftY = shift.y;
-        
+
         this.beerCapsImage = beerCapsImage;
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
@@ -54,8 +57,21 @@ export class MapController {
     //     this.updateRenderedMap();
     // }
 
-    public checkWallCollision(snakePosition: Vector2) {
-        return this.map.checkCollision(snakePosition) == CellType.Wall;
+    public checkWallCollision(snakePosition: Vector2, throughWalls: boolean) {
+        if (throughWalls) {
+            for (let elem of this.map.childElements) {
+                if (elem instanceof Wall) {
+                    for (let cell of elem.cells) {
+                        if (snakePosition.x == cell.position.x && snakePosition.y == cell.position.y && elem.removable == false && elem.prop) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } else {
+            return this.map.checkCollision(snakePosition) == CellType.Wall;
+        }
     }
 
     public checkSnakeEating(snakePosition: Vector2) {
@@ -74,11 +90,12 @@ export class MapController {
 
     public loadLevelMap(map: Map) {
         this.map = map;
+        this.active = true;
         this.map.flattenMap();
 
-        this.map.addRandomFood('Beer', 2, 2,);
-        this.map.addRandomFood('Beer', 2, 2,);
-        this.map.addRandomFood('Beer', 2, 2,);
+        this.map.addRandomFood('Beer', 2, 2);
+        this.map.addRandomFood('Beer', 2, 2);
+        this.map.addRandomFood('Beer', 2, 2);
     }
 
     public reset() {

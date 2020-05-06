@@ -11,20 +11,38 @@ walls = []
 stairs = []
 
 for w in level_map.get_walls_at_floor(floor):
-    direction = 'Down'
-    if w.direction == 0:
-        direction = 'Right'
+    if w.breakable:
+        direction = 'Down'
+        if w.direction == 0:
+            direction = 'Right'
 
-    walls.append({
-        "position": {
-            "x": w.start[0] + 1,
-            "y": w.start[1] + 1
-        },
-        "direction": direction,
-        "removable": w.breakable,
-        "length": w.length,
-        "visible": True
-    })
+        walls.append({
+            "position": {
+                "x": w.start[0] + 1,
+                "y": w.start[1] + 1
+            },
+            "direction": direction,
+            "removable": w.breakable,
+            "length": w.length,
+            "visible": True
+        })
+
+for w in level_map.get_walls_at_floor(floor):
+    if not w.breakable:
+        direction = 'Down'
+        if w.direction == 0:
+            direction = 'Right'
+
+        walls.append({
+            "position": {
+                "x": w.start[0] + 1,
+                "y": w.start[1] + 1
+            },
+            "direction": direction,
+            "removable": w.breakable,
+            "length": w.length,
+            "visible": True
+        })
 
 for s in level_map.get_stairs_at_floor(floor):
     if s.direction == (0, 1):

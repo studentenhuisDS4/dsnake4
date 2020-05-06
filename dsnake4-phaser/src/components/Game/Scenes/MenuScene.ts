@@ -36,6 +36,7 @@ export class MenuScene extends Phaser.Scene {
     preload() {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
+        this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
     }
 
     public create() {
@@ -214,14 +215,29 @@ export class MenuScene extends Phaser.Scene {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth - 1;
-        const pixelY = (part.y - 1) * this.cellHeight - 1;
+        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2 - 1;
+        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2 - 1;
+        let rotation: number = 0;
+        switch (part.direction) {
+            case 'Right':
+                rotation = 0;
+                break;
+            case 'Left':
+                rotation = Math.PI;
+                break;
+            case 'Up':
+                rotation = - Math.PI / 2;
+                break;
+            case 'Down':
+                rotation = Math.PI / 2;
+                break;
+        }
         if (part.gameObject == null) {
-            
-            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt());
+            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0.5, 0.5).setRotation(rotation);
         }
         else {
-            part.gameObject.setPosition(pixelX, pixelY);
+            part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
         }
+        
     }
 }

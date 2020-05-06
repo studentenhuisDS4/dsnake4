@@ -73,7 +73,7 @@ export class SnakeScene extends TransformScene {
         this.load.audio('movement', '/audio/movement.ogg');
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
-        this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite2.png', { frameWidth: 20, frameHeight: 20 });
+        this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite20000.png', { frameWidth: 20, frameHeight: 20 });
         this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
 
         // Choose to load assets dynamically or statically
@@ -165,7 +165,11 @@ export class SnakeScene extends TransformScene {
         if (stair != undefined) {
             this.stairClimbing(stair);
             this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
-            this.activateThroughWalls();
+            if (this.throughWalls) {
+                this.deactivateThroughWalls();
+            } else {
+                this.activateThroughWalls();
+            }
         }
 
         let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position, this.throughWalls);
@@ -324,6 +328,9 @@ export class SnakeScene extends TransformScene {
                     }));
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Food && elem.type == 'Beer' && elem.image == undefined) {
+                    elem.cells.forEach( cell => {
+                        mc.renderedCells[cell.x][cell.y].setAlpha(0);
+                    });
                     let x = elem.TopLeftCell.x * this.cellWidth;
                     let y = elem.TopLeftCell.y * this.cellHeight;
                     elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random() * 6));
@@ -377,7 +384,7 @@ export class SnakeScene extends TransformScene {
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Wall && elem.removable) {
                     elem.cells.forEach(cell => {
-                        mc.renderedCells[cell.x][cell.y].setAlpha(0.4);
+                        mc.renderedCells[cell.x][cell.y].setAlpha(0.2);
                     });
                     elem.setStatus('seeThrough');
                 }
@@ -391,8 +398,6 @@ export class SnakeScene extends TransformScene {
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Wall && elem.status == 'seeThrough') {
                     elem.cells.forEach(cell => {
-                        let x = cell.x * this.cellWidth - this.cellWidth / 2 - 1;
-                        let y = cell.y * this.cellHeight - this.cellHeight / 2 - 1;
                         mc.renderedCells[cell.x][cell.y].setAlpha(1);
                     });
                     elem.setStatus('visible');

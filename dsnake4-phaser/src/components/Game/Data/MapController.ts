@@ -3,7 +3,7 @@ import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
 import { Wall } from '../Data/Map/Wall'
-import { MapLevel, CellType } from './Common';
+import { MapLevel, CellType, Colors } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
 import { Food, MapCell, MapVector } from './Map/MapElements';
 import { MapLoader } from './Map/MapLoader';

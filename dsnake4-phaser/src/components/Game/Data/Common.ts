@@ -53,7 +53,7 @@ export const snakeTextStyle = {
 
 export const Colors = {
     'Coffie': 0x60381C,
-    'Beer': 0xf6c101,
+    'Beer': 0x000000,
     'Weed': 0x75AA45,
     'Krant': 0xCCCCCC,
     'MainObject': 0xFF0000,

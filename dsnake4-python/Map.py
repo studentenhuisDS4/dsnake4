@@ -45,14 +45,15 @@ class Map(object):
         self.walls.append(Wall(0, (0, 59), 104, 0, breakable=False))
         self.walls.append(Wall(0, (0, 0), 59, 1, breakable=False))
 
-        self.walls.append(Wall(0, (0, 10), 12, 0))
+        self.walls.append(Wall(0, (1, 10), 12, 0))
         self.walls.append(Wall(0, (19, 10), 12, 0))
-        self.walls.append(Wall(0, (30, 0), 6, 1))
+        self.walls.append(Wall(0, (30, 1), 6, 1))
         self.walls.append(Wall(0, (30, 7), 4, 1))
-        self.walls.append(Wall(0, (0, 30), 10, 0))
+        self.walls.append(Wall(0, (3, 30), 7, 0))
         self.walls.append(Wall(0, (11, 30), 19, 0))
         self.walls.append(Wall(0, (33, 30), 15, 0))
-        self.walls.append(Wall(0, (52, 30), 12, 0))
+        self.walls.append(Wall(0, (52, 30), 4, 0))
+        self.walls.append(Wall(0, (60, 30), 4, 0))
         self.walls.append(Wall(0, (68, 30), 12, 0))
         self.walls.append(Wall(0, (85, 30), 5, 0))
         self.walls.append(Wall(0, (90, 25), 15, 1))
@@ -63,10 +64,10 @@ class Map(object):
         self.walls.append(Wall(0, (90, 25), 5, 0))
         self.walls.append(Wall(0, (98, 25), 6, 0))
         self.walls.append(Wall(0, (45, 30), 7, 1))
-        self.walls.append(Wall(0, (45, 41), 9, 1))
+        self.walls.append(Wall(0, (45, 41), 4, 1))
         self.walls.append(Wall(0, (45, 54), 6, 1))
-        self.walls.append(Wall(0, (0, 45), 21, 0))
-        self.walls.append(Wall(0, (25, 45), 20, 0))
+        self.walls.append(Wall(0, (1, 45), 20, 0))
+        self.walls.append(Wall(0, (25, 45), 17, 0))
         self.walls.append(Wall(0, (20, 45), 5, 1))
         self.walls.append(Wall(0, (20, 54), 6, 1))
         self.walls.append(Wall(0, (25, 30), 15, 1))
@@ -89,7 +90,8 @@ class Map(object):
         self.grot1_stair_wall = len(self.walls) - 1
 
         # Front yard corridor
-        self.walls.append(Wall(0, (1, 21), 2, 0))
+        self.walls.append(Wall(0, (1, 21), 2, 0, breakable=False))
+        self.walls.append(Wall(0, (1, 30), 2, 0, breakable=False))
 
         # Tropen wall
         self.walls.append(Wall(0, (12, 1), 7, 0, breakable=False))
@@ -102,28 +104,28 @@ class Map(object):
         self.walls.append(Wall(1, (0, 59), 104, 0, breakable=False))
         self.walls.append(Wall(1, (0, 0), 59, 1, breakable=False))
 
-        self.walls.append(Wall(1, (0, 50), 6, 0))
+        self.walls.append(Wall(1, (3, 50), 4, 0))
         self.walls.append(Wall(1, (9, 50), 26, 0))
         self.walls.append(Wall(1, (39, 50), 18, 0))
         self.walls.append(Wall(1, (64, 50), 14, 0))
         self.walls.append(Wall(1, (80, 50), 15, 0))
         self.walls.append(Wall(1, (98, 50), 6, 0))
 
-        self.walls.append(Wall(1, (0, 30), 7, 0))
+        self.walls.append(Wall(1, (1, 30), 7, 0))
         self.walls.append(Wall(1, (11, 30), 22, 0))
         self.walls.append(Wall(1, (37, 30), 3, 0))
         self.walls.append(Wall(1, (19, 30), 20, 1))
 
-        self.walls.append(Wall(1, (0, 20), 7, 0))
+        self.walls.append(Wall(1, (1, 20), 6, 0))
         self.walls.append(Wall(1, (11, 20), 4, 0))
         self.walls.append(Wall(1, (15, 16), 15, 0))
         self.walls.append(Wall(1, (15, 2), 19, 1))
-        self.walls.append(Wall(1, (30, 0), 9, 1))
+        self.walls.append(Wall(1, (30, 1), 8, 1))
         self.walls.append(Wall(1, (30, 13), 4, 1))
-        self.walls.append(Wall(1, (40, 0), 5, 1))
-        self.walls.append(Wall(1, (40, 9), 10, 1))
+        self.walls.append(Wall(1, (40, 1), 4, 1))
+        self.walls.append(Wall(1, (40, 13), 6, 1))
         self.walls.append(Wall(1, (40, 25), 25, 1))
-        self.walls.append(Wall(1, (70, 0), 18, 1))
+        self.walls.append(Wall(1, (70, 1), 17, 1))
 
         self.walls.append(Wall(1, (70, 15), 4, 0))
         self.walls.append(Wall(1, (79, 15), 25, 0))
@@ -137,6 +139,7 @@ class Map(object):
         # protecting stairs
         self.walls.append(Wall(1, (54, 1), 2, 1, breakable=False))
         self.walls.append(Wall(1, (58, 1), 2, 1, breakable=False))
+        self.walls.append(Wall(1, (1, 50), 2, 0, breakable=False))
         # GR stair wall
         self.walls.append(Wall(1, (54, 3), 5, 0, breakable=False))
         self.gr_stair_wall = len(self.walls) - 1
@@ -177,7 +180,7 @@ class Map(object):
 
         # left part
         self.walls.append(Wall(2, (28, 3), 17, 1))
-        self.walls.append(Wall(2, (0, 20), 24, 0))
+        self.walls.append(Wall(2, (1, 20), 24, 0))
         self.walls.append(Wall(2, (33, 20), 22, 0))
 
         self.walls.append(Wall(2, (3, 40), 20, 0))
@@ -193,10 +196,10 @@ class Map(object):
         # right part
         self.walls.append(Wall(2, (70, 25), 3, 1))
         self.walls.append(Wall(2, (70, 31), 9, 1))
-        self.walls.append(Wall(2, (56, 25), 14, 0))
+        self.walls.append(Wall(2, (57, 25), 14, 0))
         self.walls.append(Wall(2, (70, 40), 10, 0))
 
-        self.walls.append(Wall(2, (85, 0), 5, 1))
+        self.walls.append(Wall(2, (85, 1), 5, 1))
         self.walls.append(Wall(2, (85, 11), 48, 1))
 
         # protecting stairs
@@ -224,7 +227,7 @@ class Map(object):
         self.walls.append(Wall(3, (15, 0), 59, 1, breakable=False))
         self.walls.append(Wall(3, (90, 0), 59, 1, breakable=False))
 
-        self.walls.append(Wall(3, (15, 15), 25, 0))
+        self.walls.append(Wall(3, (16, 15), 24, 0))
         self.walls.append(Wall(3, (45, 15), 25, 0))
         self.walls.append(Wall(3, (75, 15), 15, 0))
         self.walls.append(Wall(3, (40, 15), 5, 1))

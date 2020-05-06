@@ -148,6 +148,8 @@ export class Food extends MapElement {
     public blocksAdded!: number;
     public boostCharge!: number;
 
+    public image?: Phaser.GameObjects.Sprite;
+
     constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number) {
         super();
         this.TopLeftCell = TopLeftCell;
@@ -208,7 +210,7 @@ export class MainObject extends Food {
     location: string;
     level: MapLevel;
 
-    constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number, location: string, level: MapLevel){
+    constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number, location: string, level: MapLevel) {
         super(TopLeftCell, type, height, width);
         this.location = location;
         this.level = level;

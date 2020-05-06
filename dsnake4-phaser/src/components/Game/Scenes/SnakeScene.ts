@@ -121,7 +121,7 @@ export class SnakeScene extends Phaser.Scene {
         this.wallImpactSound = this.sound.add('wall');
         this.movementSound = this.sound.add('movement');
         this.eatingSound = this.sound.add('eating');
-        this.backgroundMusic.play({ volume: 0.5, loop: true });
+        this.backgroundMusic.play({ volume: 0, loop: true });
 
         this.generateMainObjects();
         this.addAllMainObjects();
@@ -275,8 +275,8 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2 + this.shiftX - 1;
-        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2 + this.shiftY - 1;
+        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2 + this.shiftX;
+        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2 + this.shiftY;
         let rotation: number = 0;
         switch (part.direction) {
             case 'Right':
@@ -323,8 +323,8 @@ export class SnakeScene extends Phaser.Scene {
                     }));
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Food && elem.type == 'Beer' && elem.image == undefined) {
-                    let x = elem.TopLeftCell.x * this.cellWidth + this.shiftX - 1;
-                    let y = elem.TopLeftCell.y * this.cellHeight + this.shiftY - 1;
+                    let x = elem.TopLeftCell.x * this.cellWidth + this.shiftX;
+                    let y = elem.TopLeftCell.y * this.cellHeight + this.shiftY;
                     elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random() * 6));
                 }
             });
@@ -374,22 +374,27 @@ export class SnakeScene extends Phaser.Scene {
         this.throughWalls = true;
         this.mapControllers.forEach(mc => {
             mc.map.childElements.forEach(elem => {
-                if (elem instanceof Wall && elem.removable && elem.prop) {
+                if (elem instanceof Wall && elem.removable) {
                     elem.cells.forEach(cell => {
-                        mc.renderedCells[cell.x][cell.y].setVisible(false);
+                        mc.renderedCells[cell.x][cell.y].setAlpha(0.4);
                     });
+                    elem.setStatus('seeThrough');
                 }
             });
         });
+        this.changeLevel(this.currentLevel);
     }
     private deactivateThroughWalls() {
         this.throughWalls = false;
         this.mapControllers.forEach(mc => {
             mc.map.childElements.forEach(elem => {
-                if (elem instanceof Wall && elem.removable && elem.prop) {
+                if (elem instanceof Wall && elem.status == 'seeThrough') {
                     elem.cells.forEach(cell => {
-                        mc.renderedCells[cell.x][cell.y].setVisible(true);
+                        let x = cell.x * this.cellWidth - this.cellWidth / 2 - 1 + this.shiftX;
+                        let y = cell.y * this.cellHeight - this.cellHeight / 2 - 1 + this.shiftY;
+                        mc.renderedCells[cell.x][cell.y].setAlpha(1);
                     });
+                    elem.setStatus('visible');
                 }
             });
         });
@@ -432,9 +437,9 @@ export class SnakeScene extends Phaser.Scene {
         this.livesObtained = 0;
         this.livesUsed = 0;
         this.throughWalls = false;
+        this.deactivateThroughWalls();
         this.snake = new Snake(new Vector2(15, 16), 20, 'Right', Level.FirstFloor);
-        if (this.mapControllers[0].map)
-            this.changeLevel(Level.FirstFloor);
+        if (this.mapControllers[0].map) { this.changeLevel(Level.FirstFloor); }
     }
 
     // temporary function

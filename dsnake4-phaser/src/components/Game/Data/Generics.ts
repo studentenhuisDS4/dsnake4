@@ -87,5 +87,7 @@ export const Colors = {
     'Weed': 0x75AA45,
     'Krant': 0xCCCCCC,
     'MainObject': 0xFF0000,
-    'Stair': 0x994C14
+    'Stair': 0x994C14,
+    'Wall': 0xFFFFFF,
+    'seeThroughWall': 0x999999
 };

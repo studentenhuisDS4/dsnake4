@@ -87,7 +87,7 @@ export class MenuScene extends Phaser.Scene {
             }, callbackScope: this, loop: true
         });
         this.backgroundMusic = this.sound.add('background');
-        this.backgroundMusic.play({ volume: 1, loop: true });
+        this.backgroundMusic.play({ volume: 0, loop: true });
     }
 
     createLogo(imageName: string) {

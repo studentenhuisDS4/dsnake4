@@ -3,11 +3,8 @@ import { Direction, Vector2, CellType } from '../Generics';
 
 export class Wall extends MapVector {
     readonly removable: boolean = false;
-    
-    private visible: boolean = true;
-    public get prop(): boolean {
-        return this.visible;
-    }
+
+    public status: string = 'visible';
 
     constructor(position: Vector2, length: number, direction: Direction, removable?: boolean) {
         super(new MapCell(position, CellType.Wall), length, direction);
@@ -17,25 +14,13 @@ export class Wall extends MapVector {
         }
     }
 
-    public open() {
-        this.setVisibility(true);
-    }
-
-    public close() {
-        this.setVisibility(false);
-    }
-
-    private setVisibility(visible: boolean) {
-        if (this.removable) {
-            if (this.visible == true && visible == false) {
-                this.visible = false;
-            } else if(this.visible == false && visible == true) {
-                this.visible = true;
-            } else {
-                console.warn("Trying to set wall visibility to a state it's already in.");
-            }
-        } else {
-            throw Error("This Wall cannot be opened.");
+    public setStatus(status: string) {
+        if (status == 'invisible' && this.removable) {
+            this.status = status;
+        } else if (status == 'visible') {
+            this.status = status;
+        } else if (status == 'seeThrough' && this.removable) {
+            this.status = status;
         }
     }
 }

@@ -62,7 +62,7 @@ export class MapController {
             for (let elem of this.map.childElements) {
                 if (elem instanceof Wall) {
                     for (let cell of elem.cells) {
-                        if (snakePosition.x == cell.position.x && snakePosition.y == cell.position.y && elem.removable == false && elem.prop) {
+                        if (snakePosition.x == cell.position.x && snakePosition.y == cell.position.y && elem.status == 'visible') {
                             return true;
                         }
                     }
@@ -121,8 +121,8 @@ export class MapController {
                         this.renderedCells[cell.x] = [];
                     }
                     this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2 - 1 + this.shiftX,
-                        cell.y * this.cellHeight - this.cellHeight / 2 - 1 + this.shiftY,
+                        cell.x * this.cellWidth - this.cellWidth / 2 + this.shiftX,
+                        cell.y * this.cellHeight - this.cellHeight / 2 + this.shiftY,
                         this.cellWidth, this.cellHeight,
                         cell.color);
                 }));

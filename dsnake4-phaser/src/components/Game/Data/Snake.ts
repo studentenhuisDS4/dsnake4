@@ -8,6 +8,8 @@ export class BodyPart {
     public type: BodyPartType;
     public direction: Direction;
     public gameObject!: Phaser.GameObjects.Sprite;
+    public gameObjectDirection!: Direction;
+    public gameObjectType!: BodyPartType;
     public foodStored: boolean;
 
     public floor!: number;

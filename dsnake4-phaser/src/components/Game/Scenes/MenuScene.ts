@@ -32,7 +32,7 @@ export class MenuScene extends TransformScene {
     preload() {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
-        this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snake', 'img/assets/snake3.png', { frameWidth: 10, frameHeight: 10 });
     }
 
     public create() {

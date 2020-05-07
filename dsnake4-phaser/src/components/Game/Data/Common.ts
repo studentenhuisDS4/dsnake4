@@ -9,7 +9,8 @@ export enum CellType {
     'Wall',
     'Pickup',
     'Stairs',
-    'Void'
+    'Void',
+    'Shop'
 }
 
 export enum MapLevel {
@@ -59,5 +60,8 @@ export const Colors = {
     'MainObject': 0xFF0000,
     'Stair': 0x994C14,
     'Wall': 0xFFFFFF,
-    'seeThroughWall': 0x999999
+    'seeThroughWall': 0x999999,
+    'purchasable': 0x00ff00,
+    'nonPurchasable': 0xff0000,
+    'purchased': 0xf0f0f0
 };

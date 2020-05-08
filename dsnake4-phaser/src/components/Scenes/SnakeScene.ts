@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { SW, SH } from '../GameConfig';
+import { SW, SH, FPS } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
 import { ShopElement, ShopItem } from '../Data/Map/ShopElement';
 import { MapController } from '../Data/MapController';
@@ -19,8 +19,6 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     visible: true,
     key: 'Game',
 };
-
-export const SnakeDelayMs: number = 75; // Snake speed
 
 export class SnakeScene extends TransformScene {
     private cellWidth!: number;
@@ -127,7 +125,7 @@ export class SnakeScene extends TransformScene {
         this.changeLevel(this.currentLevel);
         this.renderSnake();
 
-        this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 3000 / FPS, callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
         this.backgroundMusic = this.sound.add('background');
         this.stairSound = this.sound.add('stair');
@@ -141,12 +139,6 @@ export class SnakeScene extends TransformScene {
     }
 
     public update() {
-        // Propagate input
-        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
-        this.renderSnake();
-    }
-
-    private onTimedUpdate() {
         let direction = this.snake.direction;
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
             this.snake.rotateUp();
@@ -159,8 +151,13 @@ export class SnakeScene extends TransformScene {
         }
         if (direction != this.snake.direction) {
             this.movementSound.play({ volume: 0.1, loop: false });
-
         }
+        // Propagate input
+        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
+        this.renderSnake();
+    }
+
+    private onTimedUpdate() {
         this.snake.moveSnake();
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);

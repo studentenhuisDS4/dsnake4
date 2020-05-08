@@ -33,7 +33,7 @@ export class HubScene extends Phaser.Scene {
         super(sceneConfig);
 
         this.width = SW;
-        this.height = SH + 50;
+        this.height = SH;
 
         const verticalOffset = new Vector2(0, 50);
         const childTransform = new Transform(verticalOffset, this.width, this.height);

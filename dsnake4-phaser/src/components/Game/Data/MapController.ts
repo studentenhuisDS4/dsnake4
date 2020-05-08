@@ -3,14 +3,16 @@ import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
 import { Wall } from '../Data/Map/Wall'
-import { MapLevel as Level, CellType, Vector2 } from './Generics';
+import { MapLevel, CellType } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
-import { Food, MapCell } from './Map/MapElements';
+import { Food, MapCell, MapVector } from './Map/MapElements';
+import { MapLoader } from './Map/MapLoader';
+import { Vector2 } from '../Generics';
 
 export class MapController {
     private scene: Scene;
     public map: Map;
-    public level: Level;
+    public level: MapLevel;
 
     public active: boolean = false;
 
@@ -30,17 +32,21 @@ export class MapController {
      * @param scene 
      * @param cellWidth 
      * @param cellHeight 
+     * @param offset 
      */
-    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2, level: Level, beerCapsImage?: Phaser.GameObjects.Image) {
+    constructor(
+        scene: Scene, 
+        cellWidth: number, 
+        cellHeight: number, 
+        level: MapLevel, 
+        beerCapsImage?: Phaser.GameObjects.Image
+    ) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
         this.cellWidth = cellWidth;
         this.map = new Map({} as ILevel);
         this.level = level;
-
-        this.shiftX = shift.x;
-        this.shiftY = shift.y;
 
         this.beerCapsImage = beerCapsImage;
 
@@ -92,14 +98,10 @@ export class MapController {
         this.map = map;
         this.active = true;
         this.map.flattenMap();
-
+        
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);
-    }
-
-    public reset() {
-
     }
 
     public getStairs() {

@@ -1,5 +1,6 @@
 import { MapElement, MapCell } from './MapElements';
-import { Direction, Vector2, CellType, Colors } from '../Generics';
+import { Direction, CellType, Colors } from '../Common';
+import { Vector2 } from '../../Generics';
 
 export class Stair extends MapElement {
     public identifier: string;

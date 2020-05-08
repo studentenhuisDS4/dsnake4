@@ -2,12 +2,13 @@ import * as Phaser from 'phaser';
 import { Snake, BodyPart } from '../Data/Snake';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
-import { SH, SW } from '../GameConfig';
 import { Button } from '@/components/GameObjects/Button';
 import { GameObjects } from 'phaser';
 import { MenuItem } from '@/components/GameObjects/MenuDefinition';
-import { defaultTextStyle, Vector2 } from '../Data/Generics';
+import { defaultTextStyle } from '../Data/Common';
+import { Vector2, Transform } from '../Generics';
 import { UnitTestScene } from './TestScene';
+import { TransformScene } from './TransformScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -15,10 +16,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     key: 'MainMenu',
 };
 
-export class MenuScene extends Phaser.Scene {
-    width: number;
-    height: number;
-
+export class MenuScene extends TransformScene {
     // Snake game loop
     inputKeys!: KeyBindings;
     snakes: Snake[] = [];
@@ -26,11 +24,9 @@ export class MenuScene extends Phaser.Scene {
     cellHeight: number = 10;
 
     backgroundMusic!: Phaser.Sound.BaseSound
-
-    constructor() {
-        super(sceneConfig);
-        this.width = SW;
-        this.height = SH;
+    
+    constructor(transform?: Transform) {
+        super(sceneConfig, transform);
     }
 
     preload() {
@@ -237,7 +233,6 @@ export class MenuScene extends Phaser.Scene {
         }
         else {
             part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
-        }
-        
+        } 
     }
 }

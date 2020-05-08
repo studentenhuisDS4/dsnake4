@@ -1,8 +1,8 @@
 import { MapElement, MapCell, Food } from './MapElements';
-import { Wall} from './Wall'
-import { Stair} from './Stair'
-import { CELLS_Y, CELLS_X, CellType, MapLevel, Vector2, Colors, FoodType } from '../Generics';
+import { Stair} from './Stair';
+import { CELLS_Y, CELLS_X, CellType, MapLevel, Colors, FoodType } from '../Common';
 import { ILevel } from './JsonInterfaces';
+import { Vector2 } from '../../Generics';
 
 
 export class Map {

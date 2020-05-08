@@ -1,10 +1,11 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
-import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y, defaultTextStyle, Vector2 } from '../Data/Generics';
-import { KeyBindings } from '../Data/KeyBindings';
+import { defaultTextStyle } from '../Data/Common';
 import { Scene } from 'phaser';
 import { SnakeScene } from './SnakeScene';
+import { PauseScene as PauseTFScene } from './PauseScene';
+import { SceneEvents } from './Events';
+import { Vector2, Transform } from '../Generics';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -18,17 +19,24 @@ export class HubScene extends Phaser.Scene {
     width: number;
     height: number;
 
-    gameScene!: Scene | SnakeScene;
+    gameScene: SnakeScene;
+    gameSceneObject!: Scene;
+    pauseScene: PauseTFScene;
+    pauseSceneObject!: Scene;
 
     nicknameText!: Phaser.GameObjects.Text;
     pointsText!: Phaser.GameObjects.Text;
 
     constructor() {
         super(sceneConfig);
+
         this.width = SW;
         this.height = SH + 50;
 
-
+        const verticalOffset = new Vector2(0, 50);
+        const childTransform = new Transform(verticalOffset, this.width, this.height);
+        this.gameScene = new SnakeScene(childTransform);
+        this.pauseScene = new PauseTFScene(childTransform);
     }
 
     public preload() {
@@ -37,13 +45,19 @@ export class HubScene extends Phaser.Scene {
     }
 
     public create() {
-
-        this.gameScene = this.game.scene.add('GameScene', new SnakeScene(new Vector2(0, 50)), false)
+        this.gameSceneObject = this.game.scene.add('GameScene', this.gameScene, false);
+        this.pauseSceneObject = this.game.scene.add('PauseScene', this.pauseScene, true);
 
         this.time.addEvent({ callback: this.onTimedUpdate, callbackScope: this, loop: true });
+        this.time.addEvent({ callback: this.pauseGame, delay: 1000, callbackScope: this, loop: false });
+        
+        this.game.events.addListener(SceneEvents.GameContinuedEvent, () => {
+            console.log('Pause cancelled. Continuing game.');
+        });
     }
 
-    public update() {
+    private pauseGame() {
+        this.gameScene.scene.pause();
     }
 
     // Control over MapController's updates

@@ -49,8 +49,14 @@ export class PauseScene extends TransformScene {
                 }
             },
             {
-                text: "Main Menu",
-            }
+                text: "RESTART",
+                onClick: () => {
+                    this.game.events.emit(SceneEvents.GameRestartEvent);
+                }
+            },
+            // {
+            //     text: "Main Menu",
+            // }
         ]);
         this.createTitle(this.width / 2, this.height * 1 / 2 + offset + 30, "--- PAUSED ---");
 

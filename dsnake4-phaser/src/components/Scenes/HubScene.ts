@@ -61,24 +61,34 @@ export class HubScene extends Phaser.Scene {
 
         this.time.addEvent({ callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
-        this.game.events.addListener(SceneEvents.GameContinuedEvent, () => {
-            if (this.gameSceneObject.scene.isActive() == false) {
-                console.log('Resuming. Continuing game.');
-                this.pauseSceneObject.scene.stop();
-                this.gameSceneObject.scene.resume();
-            } else {
-                throw Error("Cannot pause an already paused scene");
-            }
-        });
-        this.game.events.addListener(SceneEvents.GamePauseEvent, () => {
-            if (this.gameSceneObject.scene.isActive()) {
-                console.log('Pause called. Pausing game.');
-                this.gameSceneObject.scene.pause();
-                this.pauseSceneObject.scene.start();
-            } else {
-                throw Error("Cannot pause an already paused scene");
-            }
-        });
+        this.game.events
+            .addListener(SceneEvents.GameRestartEvent, () => {
+                if (this.gameSceneObject.scene.isActive() == false) {
+                    console.log('Resuming. Continuing game.');
+                    this.gameSceneObject.scene.restart();
+                    this.pauseScene.scene.stop();
+                } else {
+                    throw Error("Cannot pause an already paused scene");
+                }
+            })
+            .addListener(SceneEvents.GameContinuedEvent, () => {
+                if (this.gameSceneObject.scene.isActive() == false) {
+                    console.log('Resuming. Continuing game.');
+                    this.pauseSceneObject.scene.stop();
+                    this.gameSceneObject.scene.resume();
+                } else {
+                    throw Error("Cannot pause an already paused scene");
+                }
+            })
+            .addListener(SceneEvents.GamePauseEvent, () => {
+                if (this.gameSceneObject.scene.isActive()) {
+                    console.log('Pause called. Pausing game.');
+                    this.gameSceneObject.scene.pause();
+                    this.pauseSceneObject.scene.start();
+                } else {
+                    throw Error("Cannot pause an already paused scene");
+                }
+            });
     }
 
     // Control over MapController's updates

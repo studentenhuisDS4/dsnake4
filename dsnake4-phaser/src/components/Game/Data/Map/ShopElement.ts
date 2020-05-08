@@ -1,5 +1,6 @@
 import { MapCell, MapElement } from './MapElements';
-import { Vector2, CellType, Colors } from '../Generics';
+import { CellType, Colors } from '../Common';
+import { Vector2 } from '../../Generics';
 import { GameObjects } from 'phaser';
 
 export class ShopElement extends MapElement {

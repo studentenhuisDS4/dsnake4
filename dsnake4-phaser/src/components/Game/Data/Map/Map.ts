@@ -75,12 +75,12 @@ export class Map {
         return undefined;
     }
 
-    public shopItemHit(pos: Vector2): ShopItem | undefined {
+    public shopItemHit(pos: Vector2): ShopElement | undefined {
         for (let el of this.childElements) {
             if (el instanceof ShopElement) {
                 for (let cell of el.cells) {
                     if (cell.position.x == pos.x && cell.position.y == pos.y && this.Map2D[cell.position.x][cell.position.y].type == CellType.Shop) {
-                        return el?.item as ShopItem;
+                        return el as ShopElement;
                     }
                 }
             }

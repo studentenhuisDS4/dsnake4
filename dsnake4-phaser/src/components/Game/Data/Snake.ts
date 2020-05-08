@@ -307,7 +307,7 @@ export class Snake {
             if (part.foodStored) {
                 part.foodStored = false;
                 blocksRemoved++;
-                if (blocksRemoved == length) { return; }
+                if (blocksRemoved >= length) { return; }
             }
         }
         const bodyLength = this.bodyParts.length;

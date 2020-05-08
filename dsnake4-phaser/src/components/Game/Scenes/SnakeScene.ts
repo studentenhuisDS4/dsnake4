@@ -186,7 +186,6 @@ export class SnakeScene extends TransformScene {
         let shopItemHit = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkShopCollision(this.snake.position);
         if (shopItemHit != undefined) {
             this.shopBuying(shopItemHit);
-            this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
         }
 
         if (this.snake.selfCollision()) {
@@ -245,9 +244,38 @@ export class SnakeScene extends TransformScene {
         this.changeLevel(nextLevel);
     }
 
-    private shopBuying(item: ShopItem) {
+    private shopBuying(elem: ShopElement) {
+        if (elem.item == undefined) {
+            throw Error('Shop item undefined');
+        }
+        if (elem.status == 'Purchasable') {
+            this.points -= elem.item.cost;
+            switch (elem.item.code) {
+                case 'r10':
+                    this.snake.reduce(10);
+                    break;
+                case 'r20':
+                    this.snake.reduce(20);
+                    break;
+                case 'rhalf':
+                    this.snake.reduce(Math.floor(this.snake.bodyParts.length / 2));
+                    break;
+                case 'life':
+                    this.lives++;
+                    break;
+            }
+            elem.item.buy();
+
+
+            this.updateShop(false);
+        }
 
     }
+
+    private updateShop(refreshItems: boolean) {
+
+    }
+
     private getStairTo(identifier: string) {
         for (let mc of this.mapControllers) {
             if (mc.level != this.currentLevel) {

@@ -27,8 +27,8 @@ export const MapLevelAssets = [
     { 'MapLevel': MapLevel.FirstFloor, 'path': DynamicLevelPath + 'Level0.json', 'static': level0 },
     { 'MapLevel': MapLevel.SecondFloor, 'path': DynamicLevelPath + 'Level1.json', 'static': level1 },
     { 'MapLevel': MapLevel.ThirdFloor, 'path': DynamicLevelPath + 'Level2.json', 'static': level2 },
-    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
-    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
+    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
+    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
 ];
 
 export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject';

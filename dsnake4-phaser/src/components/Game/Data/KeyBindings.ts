@@ -10,4 +10,5 @@ export class KeyBindings {
     DOWN!: KEY;
     RIGHT!: KEY;
     UP!: KEY;
+    J!: KEY;
 }

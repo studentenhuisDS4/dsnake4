@@ -66,7 +66,4 @@ export class HubScene extends Phaser.Scene {
             this.pointsText.text = this.gameScene.getScore().toString();
         }
     }
-
-
-
 }

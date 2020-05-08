@@ -34,10 +34,14 @@ export class SnakeScene extends TransformScene {
 
     points!: number;
     lives!: number;
+    joostPotions!: number;
+    joostPotionCounter!: number;
+    readonly joostPotionDuration: number = 105;
     throughWalls!: boolean;
 
     // Snake game loop
     private mapControllers: MapController[];
+    private shopEl!: ShopElement[];
     inputKeys!: KeyBindings;
 
     private backgroundMusic!: Phaser.Sound.BaseSound;
@@ -59,7 +63,6 @@ export class SnakeScene extends TransformScene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Tropen));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Shop));
 
-        this.resetGame();
     }
 
     /**
@@ -89,7 +92,7 @@ export class SnakeScene extends TransformScene {
         this.applyCameraTransform();
 
         // Priority of drawing matters!
-        this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
+        this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT,J') as KeyBindings;
 
         this.add
             .image(0, 0, 'floor')
@@ -116,16 +119,14 @@ export class SnakeScene extends TransformScene {
             mc.renderCurrentMap();
         });
 
-        let shopEl: ShopElement[] = [];
-        shopEl[0] = new ShopElement(new Vector2(2, 2), 19, 34);
-        shopEl[1] = new ShopElement(new Vector2(37, 2), 19, 33);
-        shopEl[2] = new ShopElement(new Vector2(71, 2), 19, 34);
-        this.mapControllers[4].map.appendElement(shopEl[0], true);
-        this.mapControllers[4].map.appendElement(shopEl[1], true);
-        this.mapControllers[4].map.appendElement(shopEl[2], true);
+        this.shopEl = [];
+        this.shopEl[0] = new ShopElement(new Vector2(2, 2), 19, 34);
+        this.shopEl[1] = new ShopElement(new Vector2(37, 2), 19, 33);
+        this.shopEl[2] = new ShopElement(new Vector2(71, 2), 19, 34);
+        this.mapControllers[4].map.appendElement(this.shopEl[0], true);
+        this.mapControllers[4].map.appendElement(this.shopEl[1], true);
+        this.mapControllers[4].map.appendElement(this.shopEl[2], true);
 
-        this.changeLevel(this.currentLevel);
-        this.renderSnake();
 
         this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
@@ -138,6 +139,11 @@ export class SnakeScene extends TransformScene {
 
         this.generateMainObjects();
         this.addAllMainObjects();
+
+        this.resetGame();
+
+        this.changeLevel(this.currentLevel);
+        this.renderSnake();
     }
 
     public update() {
@@ -156,10 +162,18 @@ export class SnakeScene extends TransformScene {
             this.snake.rotateDown();
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
+        } else if (JustDown(this.inputKeys.J)) {
+            if (this.joostPotions > 0 && this.throughWalls == false) {
+                this.joostPotions--;
+                this.joostPotionCounter = this.joostPotionDuration;
+                this.activateThroughWalls();
+            } else {
+                console.log('Can\'t use potion right now')
+            }
         }
+
         if (direction != this.snake.direction) {
             this.movementSound.play({ volume: 0.1, loop: false });
-
         }
         this.snake.moveSnake();
 
@@ -175,6 +189,7 @@ export class SnakeScene extends TransformScene {
         if (stair != undefined) {
             this.stairClimbing(stair);
             this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
+            this.updateShop(false);
         }
 
         let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position, this.throughWalls);
@@ -186,11 +201,17 @@ export class SnakeScene extends TransformScene {
         let shopItemHit = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkShopCollision(this.snake.position);
         if (shopItemHit != undefined) {
             this.shopBuying(shopItemHit);
+            console.log(shopItemHit.item.cost);
         }
 
         if (this.snake.selfCollision()) {
             this.wallImpactSound.play({ volume: .5, loop: false });
             this.fatalCollision();
+        }
+
+        if (this.joostPotionCounter > 0) {
+            this.joostPotionCounter--;
+            if (this.joostPotionCounter == 0) { this.deactivateThroughWalls(); }
         }
 
 
@@ -263,8 +284,12 @@ export class SnakeScene extends TransformScene {
                 case 'life':
                     this.lives++;
                     break;
+                case 'joost':
+                    this.joostPotions++;
+                    break;
             }
             elem.item.buy();
+            elem.status = 'Purchased';
 
 
             this.updateShop(false);
@@ -273,7 +298,41 @@ export class SnakeScene extends TransformScene {
     }
 
     private updateShop(refreshItems: boolean) {
-
+        if (refreshItems) {
+            let newItems: number[] = [];
+            while (newItems.length < 3) {
+                let r = Math.floor(Math.random() * this.shopItems.length);
+                if (newItems.indexOf(r) === -1) { newItems.push(r); }
+            }
+            for (let i = 0; i < 3; i++) {
+                this.shopEl[i].item = this.shopItems[newItems[i]];
+                if (this.shopEl[i].item.cost > this.points) { this.shopEl[i].status = 'NonPurchasable'; }
+                else { this.shopEl[i].status = 'Purchasable'; }
+            }
+        }
+        this.mapControllers.forEach(mc => {
+            if (mc.level == MapLevel.Shop) {
+                mc.map.childElements.forEach(elem => {
+                    if (elem instanceof ShopElement) {
+                        let color: number = 0;
+                        if (elem.item.bought) { color = Colors.purchased; }
+                        else if (elem.item.cost < this.points) {
+                            elem.status = 'Purchasable';
+                            color = Colors.purchasable;
+                        }
+                        else {
+                            elem.status = 'NonPurchasable';
+                            color = Colors.nonPurchasable;
+                        }
+                        elem.cells.forEach(cell => {
+                            mc.map.Map2D[cell.x][cell.y].color = color;
+                            cell.color = color;
+                        });
+                    }
+                });
+            }
+        });
+        this.updateRenderedMap(this.mapControllers.find(mc => { mc.level == MapLevel.Shop }));
     }
 
     private getStairTo(identifier: string) {
@@ -284,7 +343,6 @@ export class SnakeScene extends TransformScene {
                         return { 'stair': s, 'level': mc.level };
                     }
                 }
-
             }
         }
         throw Error('Error finding the stair to climb to')
@@ -301,14 +359,6 @@ export class SnakeScene extends TransformScene {
             }
         });
         this.currentLevel = newLevel;
-    }
-
-    private renderGrid() {
-        this.add.grid(
-            this.width / 2, this.height / 2,
-            this.width + 1, this.height + 1,
-            this.cellWidth, this.cellHeight,
-            0x000000, 0, 0x222222, 0.9);
     }
 
     private renderSnake() {
@@ -396,7 +446,8 @@ export class SnakeScene extends TransformScene {
     }
 
     public getScore() {
-        return this.points;
+        if (this.points != undefined) { return this.points; }
+        else { return 0; }
     }
 
     private generateMainObjects() {
@@ -442,10 +493,12 @@ export class SnakeScene extends TransformScene {
         this.shopItems.push(new ShopItem('rhalf', 300))
         this.shopItems.push(new ShopItem('life', 200))
         this.shopItems.push(new ShopItem('joost', 150))
-        this.shopItems.push(new ShopItem('cm1', 300))
-        this.shopItems.push(new ShopItem('cm2', 300))
-        this.shopItems.push(new ShopItem('mb', 300))
-        this.shopItems.push(new ShopItem('wp', 300))
+
+        // Not Implemented Yet
+        // this.shopItems.push(new ShopItem('cm1', 300))
+        // this.shopItems.push(new ShopItem('cm2', 300))
+        // this.shopItems.push(new ShopItem('mb', 300))
+        // this.shopItems.push(new ShopItem('wp', 300))
     }
 
     private activateThroughWalls() {
@@ -511,9 +564,11 @@ export class SnakeScene extends TransformScene {
         this.snake?.reset();
         this.points = 0;
         this.lives = 0;
+        this.joostPotions = 3;
         this.throughWalls = false;
         this.deactivateThroughWalls();
         this.generateShop();
+        this.updateShop(true);
         this.snake = new Snake(new Vector2(15, 16), 20, 'Right', MapLevel.FirstFloor);
         if (this.mapControllers[0].map) { this.changeLevel(MapLevel.FirstFloor); }
     }

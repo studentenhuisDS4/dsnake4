@@ -18,8 +18,6 @@ export class MapController {
 
     cellHeight: number;
     cellWidth: number;
-    shiftX!: number;
-    shiftY!: number;
     inputKeys!: KeyBindings;
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
@@ -123,8 +121,8 @@ export class MapController {
                         this.renderedCells[cell.x] = [];
                     }
                     this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2 + this.shiftX,
-                        cell.y * this.cellHeight - this.cellHeight / 2 + this.shiftY,
+                        cell.x * this.cellWidth - this.cellWidth / 2,
+                        cell.y * this.cellHeight - this.cellHeight / 2,
                         this.cellWidth, this.cellHeight,
                         cell.color);
                 }));

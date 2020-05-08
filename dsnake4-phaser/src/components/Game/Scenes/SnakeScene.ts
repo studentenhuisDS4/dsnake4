@@ -83,6 +83,8 @@ export class SnakeScene extends TransformScene {
     }
 
     public create() {
+        this.applyCameraTransform();
+
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
 

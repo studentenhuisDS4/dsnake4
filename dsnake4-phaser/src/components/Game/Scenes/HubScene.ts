@@ -46,7 +46,7 @@ export class HubScene extends Phaser.Scene {
 
     public create() {
         this.gameSceneObject = this.game.scene.add('GameScene', this.gameScene, false);
-        this.pauseSceneObject = this.game.scene.add('PauseScene', this.pauseScene, true);
+        this.pauseSceneObject = this.game.scene.add('PauseScene', this.pauseScene, false);
 
         this.time.addEvent({ callback: this.onTimedUpdate, callbackScope: this, loop: true });
         this.time.addEvent({ callback: this.pauseGame, delay: 1000, callbackScope: this, loop: false });
@@ -57,7 +57,7 @@ export class HubScene extends Phaser.Scene {
     }
 
     private pauseGame() {
-        this.gameScene.scene.pause();
+        // this.gameScene.scene.pause();
     }
 
     // Control over MapController's updates

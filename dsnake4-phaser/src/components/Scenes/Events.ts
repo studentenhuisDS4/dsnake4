@@ -1,4 +1,5 @@
 export enum SceneEvents {
     GamePausedEvent = 'PauseCancelledEvent',
-    GameContinuedEvent = 'GameContinuedEvent'
+    GameContinuedEvent = 'GameContinuedEvent',
+    GamePauseEvent = "GamePauseEvent"
 } 

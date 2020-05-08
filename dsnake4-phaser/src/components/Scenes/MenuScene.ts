@@ -24,7 +24,7 @@ export class MenuScene extends TransformScene {
     cellHeight: number = 10;
 
     backgroundMusic!: Phaser.Sound.BaseSound
-    
+
     constructor(transform?: Transform) {
         super(sceneConfig, transform);
     }
@@ -110,11 +110,6 @@ export class MenuScene extends TransformScene {
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 
         // The mouse is fun, but the moon is calling us more. Agreed -Andrea
-        // this.input.on('pointermove', function (event: MouseEvent) {
-        //     light.x = event.x;
-        //     light.y = event.y;
-        // });
-
         this.events.on('snakeMovement', function (event: Snake[]) {
             for (let i = 0; i < 6; i++) {
                 snakeLights[i].x = event[i].x * 10;
@@ -233,6 +228,6 @@ export class MenuScene extends TransformScene {
         }
         else {
             part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
-        } 
+        }
     }
 }

@@ -5,9 +5,9 @@ import { Map } from './Map/Map';
 import { Wall } from '../Data/Map/Wall'
 import { MapLevel, CellType, Colors } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
-import { Food, MapCell, MapVector } from './Map/MapElements';
-import { MapLoader } from './Map/MapLoader';
-import { Vector2 } from '../Generics';
+import { Food, MapCell } from './Map/MapElements';
+import { ShopItem, ShopElement } from '../Data/Map/ShopElement';
+import { Vector2 } from '../Generics'
 
 export class MapController {
     private scene: Scene;
@@ -33,10 +33,10 @@ export class MapController {
      * @param offset 
      */
     constructor(
-        scene: Scene, 
-        cellWidth: number, 
-        cellHeight: number, 
-        level: MapLevel, 
+        scene: Scene,
+        cellWidth: number,
+        cellHeight: number,
+        level: MapLevel,
         beerCapsImage?: Phaser.GameObjects.Image
     ) {
         this.scene = scene;
@@ -52,14 +52,8 @@ export class MapController {
     }
 
     public renderCurrentMap() {
-        // this.loadLevelMap();
-
         this.renderMapCells();
     }
-
-    // public onSceneUpdate() {
-    //     this.updateRenderedMap();
-    // }
 
     public checkWallCollision(snakePosition: Vector2, throughWalls: boolean) {
         if (throughWalls) {
@@ -92,11 +86,18 @@ export class MapController {
         return undefined;
     }
 
+    public checkShopCollision(snakePosition: Vector2): ShopItem | undefined {
+        if (this.map.checkCollision(snakePosition) == CellType.Shop) {
+            return this.map.shopItemHit(snakePosition);
+        }
+        return undefined;
+    }
+
     public loadLevelMap(map: Map) {
         this.map = map;
         this.active = true;
         this.map.flattenMap();
-        
+
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);

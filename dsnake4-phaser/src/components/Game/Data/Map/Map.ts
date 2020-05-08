@@ -1,8 +1,10 @@
 import { MapElement, MapCell, Food } from './MapElements';
-import { Stair} from './Stair';
+import { Wall } from './Wall'
+import { Stair } from './Stair'
 import { CELLS_Y, CELLS_X, CellType, MapLevel, Colors, FoodType } from '../Common';
 import { ILevel } from './JsonInterfaces';
-import { Vector2 } from '../../Generics';
+import { ShopItem, ShopElement } from './ShopElement';
+import { Vector2 } from '../../Generics'
 
 
 export class Map {
@@ -63,9 +65,23 @@ export class Map {
 
     public stairClimbed(pos: Vector2): Stair | undefined {
         for (let el of this.childElements) {
-            for  (let cell of el.cells) {
+            for (let cell of el.cells) {
                 if (cell.position.x == pos.x && cell.position.y == pos.y && this.Map2D[cell.position.x][cell.position.y].type == CellType.Stairs) {
                     return el as Stair;
+                }
+            }
+        }
+        console.log('stairClimbed went wrong');
+        return undefined;
+    }
+
+    public shopItemHit(pos: Vector2): ShopItem | undefined {
+        for (let el of this.childElements) {
+            if (el instanceof ShopElement) {
+                for (let cell of el.cells) {
+                    if (cell.position.x == pos.x && cell.position.y == pos.y && this.Map2D[cell.position.x][cell.position.y].type == CellType.Shop) {
+                        return el?.item as ShopItem;
+                    }
                 }
             }
         }
@@ -177,11 +193,6 @@ export class Map {
             if (this.Map2D[elemCell.x] == null) {
                 this.Map2D[elemCell.x] = [];
             }
-
-            // If you want to handle the overwrite, be my guest:
-            // if (this.Map2D[elemCell.x][elemCell.y] != null) {
-            //     console.log("About to overwrite mapelement at", elemCell.x, elemCell.y);
-            // }
 
             this.Map2D[elemCell.x][elemCell.y] = elemCell.clone();
         })

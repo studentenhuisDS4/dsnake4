@@ -175,18 +175,18 @@ export class SnakeScene extends TransformScene {
         if (stair != undefined) {
             this.stairClimbing(stair);
             this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
-            if (this.throughWalls) {
-                this.deactivateThroughWalls();
-            } else {
-                this.activateThroughWalls();
-            }
         }
 
         let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position, this.throughWalls);
-
         if (wallCollision) {
             this.wallImpactSound.play({ volume: .5, loop: false });
             this.fatalCollision();
+        }
+
+        let shopItemHit = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkShopCollision(this.snake.position);
+        if (shopItemHit != undefined) {
+            this.shopBuying(shopItemHit);
+            this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
         }
 
         if (this.snake.selfCollision()) {
@@ -245,6 +245,9 @@ export class SnakeScene extends TransformScene {
         this.changeLevel(nextLevel);
     }
 
+    private shopBuying(item: ShopItem) {
+
+    }
     private getStairTo(identifier: string) {
         for (let mc of this.mapControllers) {
             if (mc.level != this.currentLevel) {

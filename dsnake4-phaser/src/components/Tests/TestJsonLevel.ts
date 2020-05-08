@@ -3,7 +3,7 @@ import { Scene, Loader } from 'phaser';
 import { assert as assertNotFalsy } from './Assertions';
 import { ILevel } from '../Data/Map/JsonInterfaces';
 import { MapLoader } from '../Data/Map/MapLoader';
-import { MapLevel, MapLevelAssets } from '../Data/Generics';
+import { MapLevel, MapLevelAssets } from '../Data/Common';
 
 export class TestJsonLevel extends TestBase {
     name: string = "Test - serve static .json data";
@@ -67,7 +67,7 @@ export class TestJsonLevel extends TestBase {
     private testStaticAssetLoader() {
         const level = MapLevel.FirstFloor;
         const key = level.toString();
-        
+
         // Explicitly refresh key in cache.json
         this.scene.cache.json.remove(key);
         MapLoader.cacheStaticJsonLevel(this.scene.cache, level);

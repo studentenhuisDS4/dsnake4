@@ -1,6 +1,6 @@
 import { Map } from './Map';
 import { ILevel } from './JsonInterfaces';
-import { MapLevel, MapLevelAssets } from '../Generics';
+import { MapLevel, MapLevelAssets } from '../Common';
 import { Wall } from './Wall';
 import { Stair } from './Stair';
 import { Loader, Cache } from 'phaser';

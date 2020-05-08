@@ -1,12 +1,15 @@
-import { Direction, CELLS_Y, CELLS_X, Vector2, MapLevel as Level } from './Generics';
+import { Direction, CELLS_Y, CELLS_X, MapLevel } from './Common';
+import { Vector2 } from '../Generics';
 type BodyPartType = 'Head' | 'Body' | 'Tail';
 
 export class BodyPart {
     public position: Vector2;
-    public level?: Level;
+    public level?: MapLevel;
     public type: BodyPartType;
     public direction: Direction;
     public gameObject!: Phaser.GameObjects.Sprite;
+    public gameObjectDirection!: Direction;
+    public gameObjectType!: BodyPartType;
     public foodStored: boolean;
 
     public floor!: number;
@@ -25,7 +28,12 @@ export class BodyPart {
         return this.position.y;
     }
 
-    constructor(position: Vector2, type: BodyPartType, direction: Direction, level?: Level) {
+    constructor(
+        position: Vector2, 
+        type: BodyPartType, 
+        direction: Direction, 
+        level?: MapLevel
+    ) {
         this.position = position;
         this.type = type;
         this.foodStored = false;
@@ -62,7 +70,7 @@ export class BodyPart {
 
 export class Snake {
     position: Vector2;
-    level?: Level;
+    level?: MapLevel;
     direction: Direction;
     bodyParts!: BodyPart[];
 
@@ -73,7 +81,12 @@ export class Snake {
         return this.position.y;
     }
 
-    constructor(position: Vector2, initialLength: number, initialDirection: Direction = 'Up', initialLevel?: Level) {
+    constructor(
+        position: Vector2, 
+        initialLength: number, 
+        initialDirection: Direction = 'Up', 
+        initialLevel?: MapLevel
+    ) {
         this.position = position;
         this.level = initialLevel;
         this.direction = initialDirection;
@@ -171,7 +184,7 @@ export class Snake {
         }
     }
 
-    public moveSnakeTo(pos: Vector2, level?: Level) {
+    public moveSnakeTo(pos: Vector2, level?: MapLevel) {
         this.position = pos;
         this.level = level;
 

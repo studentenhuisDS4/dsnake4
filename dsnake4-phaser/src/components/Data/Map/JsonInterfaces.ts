@@ -1,4 +1,5 @@
-import { Direction, MapLevel, Vector2 } from '../Generics';
+import { Direction, MapLevel } from '../Common';
+import { Vector2 } from '../../Generics';
 
 /**
  * Interface `IWall` defines 

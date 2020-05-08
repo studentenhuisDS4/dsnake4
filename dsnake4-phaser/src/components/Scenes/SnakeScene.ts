@@ -1,16 +1,18 @@
 import * as Phaser from 'phaser';
 import { SW, SH } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
+import { ShopElement, ShopItem } from '../Data/Map/ShopElement';
 import { MapController } from '../Data/MapController';
-import { BodyPart, Snake } from '../Data/Snake';
-import { snakeTextStyle, CELLS_X, CELLS_Y, MapLevel as Level, Vector2, MapLevel, CellType, Colors, Direction } from '../Data/Generics';
+import { CELLS_X, CELLS_Y, MapLevel, CellType, Colors } from '../Data/Common';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
 import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
 import { Wall } from '../Data/Map/Wall'
 import { MapLoader } from '../Data/Map/MapLoader';
-import { Vector } from 'matter';
+import { Transform, Vector2 } from '../Generics';
+import { TransformScene } from './TransformScene';
+import { Snake, BodyPart } from '../Data/Snake';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -20,24 +22,21 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 
 export const SnakeDelayMs: number = 75; // Snake speed
 
-export class SnakeScene extends Phaser.Scene {
+export class SnakeScene extends TransformScene {
     private cellWidth!: number;
     private cellHeight!: number;
 
-    shiftX!: number;
-    shiftY!: number;
-
     snake!: Snake;
 
-    currentLevel!: Level;
+    currentLevel!: MapLevel;
     mainObjects!: MainObject[];
+    shopItems!: ShopItem[];
 
     points!: number;
-    totalLives: number = 3;
-    livesObtained!: number;
-    livesUsed!: number;
+    lives!: number;
     throughWalls!: boolean;
 
+    // Snake game loop
     private mapControllers: MapController[];
     inputKeys!: KeyBindings;
 
@@ -47,25 +46,25 @@ export class SnakeScene extends Phaser.Scene {
     private movementSound!: Phaser.Sound.BaseSound;
     private eatingSound!: Phaser.Sound.BaseSound;
 
-    constructor(offset: Vector2) {
-        super(sceneConfig);
+    constructor(transform?: Transform) {
+        super(sceneConfig, transform);
 
         this.cellWidth = SW / CELLS_X;
         this.cellHeight = SH / CELLS_Y;
 
-        this.shiftX = offset.x;
-        this.shiftY = offset.y;
-
         this.mapControllers = [];
-        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.FirstFloor));
-        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.SecondFloor));
-        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.ThirdFloor));
-        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.Tropen));
-        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, offset, Level.Shop));
+        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.FirstFloor));
+        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.SecondFloor));
+        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.ThirdFloor));
+        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Tropen));
+        this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Shop));
 
         this.resetGame();
     }
 
+    /**
+     * Load assets dynamically or statically
+     */
     public preload() {
         // this.load.image('logo', 'img/assets/logo.png');
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
@@ -74,8 +73,11 @@ export class SnakeScene extends Phaser.Scene {
         this.load.audio('movement', '/audio/movement.ogg');
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
-        this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite2.png', { frameWidth: 20, frameHeight: 20 });
-        this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite20000.png', { frameWidth: 20, frameHeight: 20 });
+        // this.load.spritesheet('snake', 'img/assets/snake3.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snakeHead', 'img/assets/Snake/headSprite.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snakeBody', 'img/assets/Snake/bodySprite.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snakeTail', 'img/assets/Snake/tailSprite.png', { frameWidth: 10, frameHeight: 10 });
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
@@ -84,11 +86,13 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     public create() {
+        this.applyCameraTransform();
+
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT') as KeyBindings;
 
         this.add
-            .image(this.shiftX, this.shiftY, 'floor')
+            .image(0, 0, 'floor')
             .setOrigin(0, 0)
             .setAlpha(0.7)
             .setScale(0.24, 0.24)
@@ -99,10 +103,10 @@ export class SnakeScene extends Phaser.Scene {
 
         const snakeLight = this.lights.addLight(0, 0, 400, 0x42b983, 1);
 
-        this.events.on('gameSnakeMove', function (event: Snake, shiftX: number, shiftY: number) {
+        this.events.on('gameSnakeMove', function (event: Snake) {
             for (let i = 0; i < 6; i++) {
-                snakeLight.x = event.position.x * 10 + shiftX;
-                snakeLight.y = event.position.y * 10 + shiftY;
+                snakeLight.x = event.position.x * 10;
+                snakeLight.y = event.position.y * 10;
             }
         });
 
@@ -111,6 +115,15 @@ export class SnakeScene extends Phaser.Scene {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
             mc.renderCurrentMap();
         });
+
+        let shopEl: ShopElement[] = [];
+        shopEl[0] = new ShopElement(new Vector2(2, 2), 19, 34);
+        shopEl[1] = new ShopElement(new Vector2(37, 2), 19, 33);
+        shopEl[2] = new ShopElement(new Vector2(71, 2), 19, 34);
+        this.mapControllers[4].map.appendElement(shopEl[0], true);
+        this.mapControllers[4].map.appendElement(shopEl[1], true);
+        this.mapControllers[4].map.appendElement(shopEl[2], true);
+
         this.changeLevel(this.currentLevel);
         this.renderSnake();
 
@@ -130,11 +143,9 @@ export class SnakeScene extends Phaser.Scene {
     public update() {
         // Propagate input
         this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
-        // this.mapControllers.forEach(mc => mc.updateRenderedMap());
         this.renderSnake();
     }
 
-    // Control over MapController's updates
     private onTimedUpdate() {
         let direction = this.snake.direction;
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
@@ -164,14 +175,18 @@ export class SnakeScene extends Phaser.Scene {
         if (stair != undefined) {
             this.stairClimbing(stair);
             this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
-            this.activateThroughWalls();
         }
 
         let wallCollision = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkWallCollision(this.snake.position, this.throughWalls);
-
         if (wallCollision) {
             this.wallImpactSound.play({ volume: .5, loop: false });
             this.fatalCollision();
+        }
+
+        let shopItemHit = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkShopCollision(this.snake.position);
+        if (shopItemHit != undefined) {
+            this.shopBuying(shopItemHit);
+            this.stairSound.play({ volume: 0.1, loop: false, rate: 2 });
         }
 
         if (this.snake.selfCollision()) {
@@ -230,6 +245,9 @@ export class SnakeScene extends Phaser.Scene {
         this.changeLevel(nextLevel);
     }
 
+    private shopBuying(item: ShopItem) {
+
+    }
     private getStairTo(identifier: string) {
         for (let mc of this.mapControllers) {
             if (mc.level != this.currentLevel) {
@@ -244,7 +262,7 @@ export class SnakeScene extends Phaser.Scene {
         throw Error('Error finding the stair to climb to')
     }
 
-    private changeLevel(newLevel: Level) {
+    private changeLevel(newLevel: MapLevel) {
         this.mapControllers.forEach(mc => {
             if (mc.active) {
                 if (newLevel != mc.level) {
@@ -259,14 +277,14 @@ export class SnakeScene extends Phaser.Scene {
 
     private renderGrid() {
         this.add.grid(
-            SW / 2 + this.shiftX, SH / 2 + this.shiftY,
-            SW + 1, SH + 1,
+            this.width / 2, this.height / 2,
+            this.width + 1, this.height + 1,
             this.cellWidth, this.cellHeight,
             0x000000, 0, 0x222222, 0.9);
     }
 
     private renderSnake() {
-        this.events.emit('gameSnakeMove', this.snake, this.shiftX, this.shiftY);
+        this.events.emit('gameSnakeMove', this.snake);
         if (this.snake?.bodyParts != null) {
             this.snake.bodyParts.forEach(part => {
                 this.renderSnakePart(part);
@@ -275,29 +293,44 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     private renderSnakePart(part: BodyPart) {
-        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2 + this.shiftX;
-        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2 + this.shiftY;
+        const pixelX = (part.x - 1) * this.cellWidth + this.cellWidth / 2;
+        const pixelY = (part.y - 1) * this.cellHeight + this.cellHeight / 2;
         let rotation: number = 0;
         switch (part.direction) {
             case 'Right':
                 rotation = 0;
                 break;
             case 'Left':
-                rotation = Math.PI;
+                rotation = 1;
                 break;
             case 'Up':
-                rotation = - Math.PI / 2;
+                rotation = 2;
                 break;
             case 'Down':
-                rotation = Math.PI / 2;
+                rotation = 3;
                 break;
         }
-        if (part.gameObject == null) {
-            part.gameObject = this.add.sprite(pixelX, pixelY, 'snake', part.toInt()).setOrigin(0.5, 0.5).setRotation(rotation);
+        if (part.gameObject == null || part.gameObjectType != part.type || part.gameObjectDirection != part.direction) {
+            part.gameObject?.destroy();
+            if (part.level == this.currentLevel) {
+                switch (part.type) {
+                    case 'Head':
+                        part.gameObject = this.add.sprite(pixelX, pixelY, 'snakeHead', rotation).setOrigin(0.5, 0.5);
+                        break;
+                    case 'Body':
+                        part.gameObject = this.add.sprite(pixelX, pixelY, 'snakeBody', rotation).setOrigin(0.5, 0.5);
+                        break;
+                    case 'Tail':
+                        part.gameObject = this.add.sprite(pixelX, pixelY, 'snakeTail', rotation).setOrigin(0.5, 0.5);
+                        break;
+                }
+                part.gameObjectDirection = part.direction;
+                part.gameObjectType = part.type;
+            }
         }
         else {
             if (part.level == this.currentLevel) {
-                part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
+                part.gameObject.setPosition(pixelX, pixelY);
                 part.gameObject.visible = true;
             }
             else {
@@ -323,8 +356,11 @@ export class SnakeScene extends Phaser.Scene {
                     }));
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Food && elem.type == 'Beer' && elem.image == undefined) {
-                    let x = elem.TopLeftCell.x * this.cellWidth + this.shiftX;
-                    let y = elem.TopLeftCell.y * this.cellHeight + this.shiftY;
+                    elem.cells.forEach(cell => {
+                        mc.renderedCells[cell.x][cell.y].setAlpha(0);
+                    });
+                    let x = elem.TopLeftCell.x * this.cellWidth;
+                    let y = elem.TopLeftCell.y * this.cellHeight;
                     elem.image = this.add.sprite(x, y, 'beerCaps', Math.floor(Math.random() * 6));
                 }
             });
@@ -370,13 +406,27 @@ export class SnakeScene extends Phaser.Scene {
         this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 15), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Binnenplaats', MapLevel.FirstFloor));
     }
 
+    private generateShop() {
+        this.shopItems = [];
+
+        this.shopItems.push(new ShopItem('r10', 150))
+        this.shopItems.push(new ShopItem('r20', 250))
+        this.shopItems.push(new ShopItem('rhalf', 300))
+        this.shopItems.push(new ShopItem('life', 200))
+        this.shopItems.push(new ShopItem('joost', 150))
+        this.shopItems.push(new ShopItem('cm1', 300))
+        this.shopItems.push(new ShopItem('cm2', 300))
+        this.shopItems.push(new ShopItem('mb', 300))
+        this.shopItems.push(new ShopItem('wp', 300))
+    }
+
     private activateThroughWalls() {
         this.throughWalls = true;
         this.mapControllers.forEach(mc => {
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Wall && elem.removable) {
                     elem.cells.forEach(cell => {
-                        mc.renderedCells[cell.x][cell.y].setAlpha(0.4);
+                        mc.renderedCells[cell.x][cell.y].setAlpha(0.2);
                     });
                     elem.setStatus('seeThrough');
                 }
@@ -390,8 +440,6 @@ export class SnakeScene extends Phaser.Scene {
             mc.map.childElements.forEach(elem => {
                 if (elem instanceof Wall && elem.status == 'seeThrough') {
                     elem.cells.forEach(cell => {
-                        let x = cell.x * this.cellWidth - this.cellWidth / 2 - 1 + this.shiftX;
-                        let y = cell.y * this.cellHeight - this.cellHeight / 2 - 1 + this.shiftY;
                         mc.renderedCells[cell.x][cell.y].setAlpha(1);
                     });
                     elem.setStatus('visible');
@@ -401,8 +449,8 @@ export class SnakeScene extends Phaser.Scene {
     }
 
     public useLife(): boolean {
-        if (this.livesObtained - this.livesUsed > 0) {
-            this.livesUsed++;
+        if (this.lives > 0) {
+            this.lives--;
             return true;
         }
         return false;
@@ -415,7 +463,7 @@ export class SnakeScene extends Phaser.Scene {
             setTimeout(() => {
                 let snakeLength = this.snake.bodyParts.length;
                 this.snake.reset();
-                this.snake = new Snake(new Vector2(15, 16), snakeLength, 'Right', Level.FirstFloor);
+                this.snake = new Snake(new Vector2(15, 16), snakeLength, 'Right', MapLevel.FirstFloor);
                 useLife.destroy();
                 this.scene.resume();
             }, 1000);
@@ -434,12 +482,12 @@ export class SnakeScene extends Phaser.Scene {
     private resetGame() {
         this.snake?.reset();
         this.points = 0;
-        this.livesObtained = 0;
-        this.livesUsed = 0;
+        this.lives = 0;
         this.throughWalls = false;
         this.deactivateThroughWalls();
-        this.snake = new Snake(new Vector2(15, 16), 20, 'Right', Level.FirstFloor);
-        if (this.mapControllers[0].map) { this.changeLevel(Level.FirstFloor); }
+        this.generateShop();
+        this.snake = new Snake(new Vector2(15, 16), 20, 'Right', MapLevel.FirstFloor);
+        if (this.mapControllers[0].map) { this.changeLevel(MapLevel.FirstFloor); }
     }
 
     // temporary function

@@ -1,5 +1,6 @@
 import { MapVector, MapCell } from './MapElements';
-import { Direction, Vector2, CellType } from '../Generics';
+import { Direction, CellType } from '../Common';
+import { Vector2 } from '../../Generics';
 
 export class Wall extends MapVector {
     readonly removable: boolean = false;

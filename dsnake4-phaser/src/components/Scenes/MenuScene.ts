@@ -2,12 +2,13 @@ import * as Phaser from 'phaser';
 import { Snake, BodyPart } from '../Data/Snake';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
-import { SH, SW } from '../GameConfig';
 import { Button } from '@/components/GameObjects/Button';
 import { GameObjects } from 'phaser';
 import { MenuItem } from '@/components/GameObjects/MenuDefinition';
-import { defaultTextStyle, Vector2 } from '../Data/Generics';
+import { defaultTextStyle } from '../Data/Common';
+import { Vector2, Transform } from '../Generics';
 import { UnitTestScene } from './TestScene';
+import { TransformScene } from './TransformScene';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
@@ -15,10 +16,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     key: 'MainMenu',
 };
 
-export class MenuScene extends Phaser.Scene {
-    width: number;
-    height: number;
-
+export class MenuScene extends TransformScene {
     // Snake game loop
     inputKeys!: KeyBindings;
     snakes: Snake[] = [];
@@ -27,16 +25,14 @@ export class MenuScene extends Phaser.Scene {
 
     backgroundMusic!: Phaser.Sound.BaseSound
 
-    constructor() {
-        super(sceneConfig);
-        this.width = SW;
-        this.height = SH;
+    constructor(transform?: Transform) {
+        super(sceneConfig, transform);
     }
 
     preload() {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
-        this.load.spritesheet('snake', 'img/assets/snakeSprite2.png', { frameWidth: 10, frameHeight: 10 });
+        this.load.spritesheet('snake', 'img/assets/snake3.png', { frameWidth: 10, frameHeight: 10 });
     }
 
     public create() {
@@ -114,11 +110,6 @@ export class MenuScene extends Phaser.Scene {
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 
         // The mouse is fun, but the moon is calling us more. Agreed -Andrea
-        // this.input.on('pointermove', function (event: MouseEvent) {
-        //     light.x = event.x;
-        //     light.y = event.y;
-        // });
-
         this.events.on('snakeMovement', function (event: Snake[]) {
             for (let i = 0; i < 6; i++) {
                 snakeLights[i].x = event[i].x * 10;
@@ -238,6 +229,5 @@ export class MenuScene extends Phaser.Scene {
         else {
             part.gameObject.setPosition(pixelX, pixelY).setRotation(rotation);
         }
-        
     }
 }

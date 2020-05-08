@@ -1,23 +1,23 @@
-import { MapElement, MapCell } from './MapElements';
-import { Direction, Vector2, CellType, Colors } from '../Generics';
+import { MapCell, MapElement } from './MapElements';
+import { CellType, Colors } from '../Common';
+import { GameObjects } from 'phaser';
+import { Vector2 } from '../../Generics';
 
-export class Stair extends MapElement {
-    public identifier: string;
-    public position: Vector2;
-    public height: number;
-    public width: number;
-    public exitDirection: Direction;
+export class ShopElement extends MapElement {
+    position: Vector2;
+    width: number;
+    height: number;
+    item!: ShopItem;
 
-    constructor(identifier: string, position: Vector2, height: number, width: number, exitDir: Direction) {
+    constructor(position: Vector2, height: number, width: number) {
         super();
-        this.identifier = identifier;
         this.position = position;
         this.height = height;
         this.width = width;
-        this.exitDirection = exitDir;
 
         this.generateCells();
     }
+
 
     public generateCells(): void {
         this.resetCells();
@@ -27,7 +27,7 @@ export class Stair extends MapElement {
                 const newPos = new Vector2(this.position.x, this.position.y) // this.position.clone();
                 newPos.x += i;
                 newPos.y += j;
-                let newCell = new MapCell(newPos, CellType.Stairs, Colors['Stair']);
+                let newCell = new MapCell(newPos, CellType.Shop, Colors.purchasable);
                 if (newCell.validateCoordinates()) {
                     this.cells.push(newCell);
                 } else {
@@ -37,8 +37,25 @@ export class Stair extends MapElement {
             }
         }
     }
+
     public resetCells(): void {
         this.cells = [];
+    }
+
+    public addItem(item: ShopItem) {
+        this.item = item;
+    }
+}
+
+export class ShopItem {
+    description?: GameObjects.Sprite;
+    code: string;
+    cost: number;
+
+    constructor(code: string, cost: number, description?: GameObjects.Sprite) {
+        this.code = code;
+        this.cost = cost;
+        this.description = description;
     }
 
 }

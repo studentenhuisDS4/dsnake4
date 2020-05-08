@@ -3,43 +3,14 @@ import { default as level1 } from '@/assets/static_levels/Level1.json';
 import { default as level2 } from '@/assets/static_levels/Level2.json';
 import { default as level3 } from '@/assets/static_levels/Level3Shop.json';
 import { default as level4 } from '@/assets/static_levels/Level4Tropen.json';
-
-export class Vector2 {
-    x: number;
-    y: number;
-
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-    }
-
-    clone() {
-        return new Vector2(this.x, this.y);
-    }
-}
-
 export type Direction = 'Up' | 'Right' | 'Left' | 'Down';
-
-export function directionToVector2(direction: Direction | undefined): Vector2 | undefined {
-    switch (direction) {
-        case 'Up':
-            return new Vector2(0, -1);
-        case 'Right':
-            return new Vector2(1, 0);
-        case 'Left':
-            return new Vector2(-1, 0);
-        case 'Down':
-            return new Vector2(0, 1);
-        default:
-            return undefined;
-    }
-}
 
 export enum CellType {
     'Wall',
     'Pickup',
     'Stairs',
-    'Void'
+    'Void',
+    'Shop'
 }
 
 export enum MapLevel {
@@ -56,8 +27,8 @@ export const MapLevelAssets = [
     { 'MapLevel': MapLevel.FirstFloor, 'path': DynamicLevelPath + 'Level0.json', 'static': level0 },
     { 'MapLevel': MapLevel.SecondFloor, 'path': DynamicLevelPath + 'Level1.json', 'static': level1 },
     { 'MapLevel': MapLevel.ThirdFloor, 'path': DynamicLevelPath + 'Level2.json', 'static': level2 },
-    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
-    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
+    { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level3Shop.json', 'static': level3 },
+    { 'MapLevel': MapLevel.Shop, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
 ];
 
 export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject';
@@ -83,11 +54,14 @@ export const snakeTextStyle = {
 
 export const Colors = {
     'Coffie': 0x60381C,
-    'Beer': 0xf6c101,
+    'Beer': 0x000000,
     'Weed': 0x75AA45,
     'Krant': 0xCCCCCC,
     'MainObject': 0xFF0000,
     'Stair': 0x994C14,
     'Wall': 0xFFFFFF,
-    'seeThroughWall': 0x999999
+    'seeThroughWall': 0x999999,
+    'purchasable': 0x00ff00,
+    'nonPurchasable': 0xff0000,
+    'purchased': 0xf0f0f0
 };

@@ -2,22 +2,22 @@ import { Stair } from './Map/Stair';
 import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
-import { Wall } from '../Data/Map/Wall'
-import { MapLevel as Level, CellType, Vector2 } from './Generics';
+import { Wall } from './Map/Wall'
+import { MapLevel, CellType, Colors } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
 import { Food, MapCell } from './Map/MapElements';
+import { ShopItem, ShopElement } from './Map/ShopElement';
+import { Vector2 } from '../Generics'
 
 export class MapController {
     private scene: Scene;
     public map: Map;
-    public level: Level;
+    public level: MapLevel;
 
     public active: boolean = false;
 
     cellHeight: number;
     cellWidth: number;
-    shiftX!: number;
-    shiftY!: number;
     inputKeys!: KeyBindings;
 
     renderedCells!: Phaser.GameObjects.Rectangle[][];
@@ -30,8 +30,15 @@ export class MapController {
      * @param scene 
      * @param cellWidth 
      * @param cellHeight 
+     * @param offset 
      */
-    constructor(scene: Scene, cellWidth: number, cellHeight: number, shift: Vector2, level: Level, beerCapsImage?: Phaser.GameObjects.Image) {
+    constructor(
+        scene: Scene,
+        cellWidth: number,
+        cellHeight: number,
+        level: MapLevel,
+        beerCapsImage?: Phaser.GameObjects.Image
+    ) {
         this.scene = scene;
 
         this.cellHeight = cellHeight;
@@ -39,23 +46,14 @@ export class MapController {
         this.map = new Map({} as ILevel);
         this.level = level;
 
-        this.shiftX = shift.x;
-        this.shiftY = shift.y;
-
         this.beerCapsImage = beerCapsImage;
 
         console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
 
     public renderCurrentMap() {
-        // this.loadLevelMap();
-
         this.renderMapCells();
     }
-
-    // public onSceneUpdate() {
-    //     this.updateRenderedMap();
-    // }
 
     public checkWallCollision(snakePosition: Vector2, throughWalls: boolean) {
         if (throughWalls) {
@@ -88,6 +86,13 @@ export class MapController {
         return undefined;
     }
 
+    public checkShopCollision(snakePosition: Vector2): ShopItem | undefined {
+        if (this.map.checkCollision(snakePosition) == CellType.Shop) {
+            return this.map.shopItemHit(snakePosition);
+        }
+        return undefined;
+    }
+
     public loadLevelMap(map: Map) {
         this.map = map;
         this.active = true;
@@ -96,10 +101,6 @@ export class MapController {
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);
         this.map.addRandomFood('Beer', 2, 2);
-    }
-
-    public reset() {
-
     }
 
     public getStairs() {
@@ -121,8 +122,8 @@ export class MapController {
                         this.renderedCells[cell.x] = [];
                     }
                     this.renderedCells[cell.x][cell.y] = this.scene.add.rectangle(
-                        cell.x * this.cellWidth - this.cellWidth / 2 + this.shiftX,
-                        cell.y * this.cellHeight - this.cellHeight / 2 + this.shiftY,
+                        cell.x * this.cellWidth - this.cellWidth / 2,
+                        cell.y * this.cellHeight - this.cellHeight / 2,
                         this.cellWidth, this.cellHeight,
                         cell.color);
                 }));

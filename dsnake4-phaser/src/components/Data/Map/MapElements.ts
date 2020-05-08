@@ -1,4 +1,5 @@
-import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel, Vector2 } from '../Generics';
+import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel } from '../Common';
+import { Vector2 } from '../../Generics';
 
 /**
  * Class `MapCell` represents a single cell on the grid with a certain type.

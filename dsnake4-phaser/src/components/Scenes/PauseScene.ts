@@ -1,4 +1,4 @@
-import { Snake, BodyPart } from '../Data/Snake';
+import { Snake } from '../Data/Snake';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Button } from '@/components/GameObjects/Button';
@@ -7,7 +7,7 @@ import { MenuItem } from '@/components/GameObjects/MenuDefinition';
 import { defaultTextStyle } from '../Data/Common';
 import { SceneEvents } from './Events';
 import { TransformScene } from './TransformScene';
-import { Transform, Vector2 } from '../Generics';
+import { Transform } from '../Generics';
 
 const sceneConfig: Types.Scenes.SettingsConfig = {
     active: false,

@@ -1,0 +1,5 @@
+// stylelint-disable declaration-no-important
+
+@each $color, $value in $theme-colors {
+  @include bg-hover-variant(".bg-#{$color}-hover", $value, true);
+}

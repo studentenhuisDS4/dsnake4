@@ -1,4 +1,4 @@
-import { Snake, BodyPart } from '../Data/Snake';
+import { Snake } from '../Data/Snake';
 import { JustDown } from '../imports';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Button } from '@/components/GameObjects/Button';
@@ -7,7 +7,7 @@ import { MenuItem } from '@/components/GameObjects/MenuDefinition';
 import { defaultTextStyle } from '../Data/Common';
 import { SceneEvents } from './Events';
 import { TransformScene } from './TransformScene';
-import { Transform, Vector2 } from '../Generics';
+import { Transform } from '../Generics';
 
 const sceneConfig: Types.Scenes.SettingsConfig = {
     active: false,
@@ -37,7 +37,7 @@ export class PauseScene extends TransformScene {
         this.add
             .rectangle(0, 0, this.width, this.height)
             .setOrigin(0, 0)
-            .setFillStyle(0xDEDEDE, 0.5);
+            .setFillStyle(0x000000, 0.5);
 
         this.createLogo('logo');
         const offset = 60;
@@ -49,8 +49,14 @@ export class PauseScene extends TransformScene {
                 }
             },
             {
-                text: "Main Menu",
-            }
+                text: "RESTART",
+                onClick: () => {
+                    this.game.events.emit(SceneEvents.GameRestartEvent);
+                }
+            },
+            // {
+            //     text: "Main Menu",
+            // }
         ]);
         this.createTitle(this.width / 2, this.height * 1 / 2 + offset + 30, "--- PAUSED ---");
 
@@ -59,9 +65,8 @@ export class PauseScene extends TransformScene {
 
     createLogo(imageName: string) {
         const x = this.width / 2;
-        const y = this.height / 4;
+        const y = this.height / 4 + 40;
 
-        this.add.circle(x, y - 5, 30, 0x999999, 1);
         this.add
             .image(x, y, imageName)
             .setOrigin(0.5, 0.5)
@@ -70,17 +75,21 @@ export class PauseScene extends TransformScene {
             .setPipeline('Light2D');
 
         this.lights.enable();
-        // 0x42b983 color of the light before
-        const snakeLight1: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
-        const snakeLight2: GameObjects.Light = this.lights.addLight(x, y, 400, 0x00ff00, 1);
-        this.lights.setAmbientColor(0x313339);
+
+        const snakeLights: GameObjects.Light[] = [];
+        for (let i = 0; i < 6; i++) {
+            snakeLights[i] = this.lights.addLight(x, y, 400, 0x42b983, 1);
+        }
+        this.lights.setAmbientColor(0x414349);
         const moonLight: GameObjects.Light = this.lights.addLight(x, y, 200, 0xffffff, 1);
 
-        this.events.on('snakeMovement', function (event: number[]) {
-            snakeLight1.x = event[0] * 10;
-            snakeLight1.y = event[1] * 10;
-            snakeLight2.x = event[2] * 10;
-            snakeLight2.y = event[3] * 10;
+        // The mouse is fun, but the moon is calling us more. Agreed -Andrea
+        this.events.on('snakeMovement', function (event: Snake[]) {
+            for (let i = 0; i < 6; i++) {
+                snakeLights[i].x = event[i].x * 10;
+                snakeLights[i].y = event[i].y * 10;
+            }
+            moonLight.intensity = Math.max(Math.min(moonLight.intensity + (Math.random() * 0.05 - 0.025), 1), 0);
         });
     }
 

@@ -2,11 +2,11 @@ import { Stair } from './Map/Stair';
 import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
-import { Wall } from '../Data/Map/Wall'
+import { Wall } from './Map/Wall'
 import { MapLevel, CellType, Colors } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
 import { Food, MapCell } from './Map/MapElements';
-import { ShopItem, ShopElement } from '../Data/Map/ShopElement';
+import { ShopItem, ShopElement } from './Map/ShopElement';
 import { Vector2 } from '../Generics'
 
 export class MapController {

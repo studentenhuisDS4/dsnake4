@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { SW, SH } from '../GameConfig';
+import { SW, SH, FPS } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
 import { ShopElement, ShopItem } from '../Data/Map/ShopElement';
 import { MapController } from '../Data/MapController';
@@ -133,7 +133,7 @@ export class SnakeScene extends TransformScene {
         this.mapControllers[4].map.appendElement(this.shopEl[2], true);
 
 
-        this.time.addEvent({ delay: SnakeDelayMs, callback: this.onTimedUpdate, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 3000 / FPS, callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
         this.backgroundMusic = this.sound.add('background');
         this.stairSound = this.sound.add('stair');
@@ -181,6 +181,9 @@ export class SnakeScene extends TransformScene {
         if (direction != this.snake.direction) {
             this.movementSound.play({ volume: 0.1, loop: false });
         }
+        // Propagate input
+        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
+        this.renderSnake();
         this.snake.moveSnake();
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);

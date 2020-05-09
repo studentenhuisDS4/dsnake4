@@ -63,5 +63,5 @@ export const Colors = {
     'seeThroughWall': 0x999999,
     'purchasable': 0x00ff00,
     'nonPurchasable': 0xff0000,
-    'purchased': 0xf0f0f0
+    'purchased': 0x999999
 };

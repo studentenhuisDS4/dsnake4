@@ -4,6 +4,22 @@
         {
             "type": "chrome",
             "request": "launch",
+            "name": "Brave-Dev React (David)",
+            "runtimeExecutable": "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser-Dev\\Application\\brave.exe",
+            "url": "http://localhost:3000/",
+            "webRoot": "${workspaceRoot}/dsnake4-react/src/",
+            "preLaunchTask": "npmServeReact",
+            "timeout": 5000, // Allow the browser to spawn
+            "sourceMaps": true,
+            "breakOnLoad": true,
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*",
+                "webpack:///./src/*": "${webRoot}/*"
+            }
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
             "name": "Brave-Dev (David)",
             "runtimeExecutable": "C:\\Program Files (x86)\\BraveSoftware\\Brave-Browser-Dev\\Application\\brave.exe",
             "url": "http://localhost:8080/#/snake",

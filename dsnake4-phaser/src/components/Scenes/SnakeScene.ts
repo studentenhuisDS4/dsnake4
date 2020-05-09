@@ -20,8 +20,6 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     key: 'Game',
 };
 
-export const SnakeDelayMs: number = 50; // Snake speed
-
 export class SnakeScene extends TransformScene {
     private cellWidth!: number;
     private cellHeight!: number;
@@ -51,6 +49,8 @@ export class SnakeScene extends TransformScene {
     private eatingSound!: Phaser.Sound.BaseSound;
 
     private renderCount: number = 0;
+    moveTime: number = 0;
+    deltaTime: number = 50;
 
     constructor(transform?: Transform) {
         super(sceneConfig, transform);
@@ -64,14 +64,12 @@ export class SnakeScene extends TransformScene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.ThirdFloor));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Tropen));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Shop));
-
     }
 
     /**
      * Load assets dynamically or statically
      */
     public preload() {
-        // this.load.image('logo', 'img/assets/logo.png');
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
         this.load.audio('stair', '/audio/stair_sound.mp3');
         this.load.audio('wall', '/audio/impactWall.ogg');
@@ -79,7 +77,6 @@ export class SnakeScene extends TransformScene {
         this.load.audio('eating', '/audio/handleCoins.ogg');
         this.load.image('floor', ['img/assets/floor.png', 'img/assets/floor_n.png']);
         this.load.spritesheet('beerCaps', 'img/assets/beerCaps/sprite20000.png', { frameWidth: 20, frameHeight: 20 });
-        // this.load.spritesheet('snake', 'img/assets/snake3.png', { frameWidth: 10, frameHeight: 10 });
         this.load.spritesheet('snakeHead', 'img/assets/Snake/headSprite.png', { frameWidth: 10, frameHeight: 10 });
         this.load.spritesheet('snakeBody', 'img/assets/Snake/bodySprite.png', { frameWidth: 10, frameHeight: 10 });
         this.load.spritesheet('snakeTail', 'img/assets/Snake/tailSprite.png', { frameWidth: 10, frameHeight: 10 });
@@ -129,8 +126,6 @@ export class SnakeScene extends TransformScene {
 
 
         this.changeLevel(this.currentLevel);
-        // this.renderSnake();
-
 
         this.backgroundMusic = this.sound.add('background');
         this.stairSound = this.sound.add('stair');
@@ -166,7 +161,7 @@ export class SnakeScene extends TransformScene {
                 this.joostPotionCounter = this.joostPotionDuration;
                 this.activateThroughWalls();
             } else {
-                console.log('Can\'t use potion right now')
+                console.log('Can\'t use potion right now');
             }
         }
 
@@ -177,15 +172,12 @@ export class SnakeScene extends TransformScene {
         if (time > this.moveTime) {
             // Propagate input
             this.onTimedUpdate();
-            this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
             this.renderSnake();
-
             this.moveTime = time + this.deltaTime;
         }
     }
 
     private onTimedUpdate() {
-
         this.snake.moveSnake();
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
@@ -308,7 +300,6 @@ export class SnakeScene extends TransformScene {
 
             this.updateShop(false);
         }
-
     }
 
     private updateShop(refreshItems: boolean) {
@@ -378,7 +369,7 @@ export class SnakeScene extends TransformScene {
             }
         });
         this.currentLevel = newLevel;
-      
+
         if (lastLevel == MapLevel.Shop) { this.updateShop(false); }
 
     }
@@ -410,8 +401,8 @@ export class SnakeScene extends TransformScene {
                 rotation = 3;
                 break;
         }
-        
-        // This function gets called... a lot.
+
+        // This function gets called... a lot (although 4x times should be enough, it's called for each bodypart).
         if (part.gameObject == null || part.gameObjectType != part.type || part.gameObjectDirection != part.direction) {
             part.gameObject?.destroy();
             if (part.level == this.currentLevel) {

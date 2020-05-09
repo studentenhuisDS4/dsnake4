@@ -3,7 +3,7 @@ import { Scene } from 'phaser';
 import { KeyBindings } from './KeyBindings';
 import { Map } from './Map/Map';
 import { Wall } from './Map/Wall'
-import { MapLevel, CellType, Colors } from './Common';
+import { MapLevel, CellType, Colors, CELLS_X, CELLS_Y } from './Common';
 import { ILevel } from './Map/JsonInterfaces';
 import { Food, MapCell } from './Map/MapElements';
 import { ShopItem, ShopElement } from './Map/ShopElement';

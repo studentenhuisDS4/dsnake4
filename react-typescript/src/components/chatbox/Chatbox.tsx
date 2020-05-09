@@ -1,4 +1,4 @@
-import React, {Component, createRef} from 'react';
+import React, { Component, createRef } from 'react';
 import ChatMessageModel from './Models';
 import Language from "../../language/Language";
 import SingleInputForm from '../global/SingleInputForm';
@@ -30,18 +30,22 @@ export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
             message,
             playerName: this.props.playerName,
         });
-        this.setState({chats});
+        this.setState({ chats });
     }
 
-    componentDidUpdate () {
+    componentDidUpdate() {
         this.scrollToBottom();
     }
 
     scrollToBottom() {
-        this.messagesEnd.current!.scrollIntoView({ behavior: "smooth" });
+        if (this.messagesEnd.current != null) {
+            this.messagesEnd.current!.scrollIntoView({ behavior: "auto" });
+        } else {
+            throw new Error("The current, last message is null or undefined!");
+        }
     }
 
-    render () {
+    render() {
         return (
             <div className="d-flex flex-column h-100 bg-seagreen border border-2x border-dashed border-teal">
                 <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.playerName}</h2>

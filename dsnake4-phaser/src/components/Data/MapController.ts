@@ -86,7 +86,7 @@ export class MapController {
         return undefined;
     }
 
-    public checkShopCollision(snakePosition: Vector2): ShopItem | undefined {
+    public checkShopCollision(snakePosition: Vector2): ShopElement | undefined {
         if (this.map.checkCollision(snakePosition) == CellType.Shop) {
             return this.map.shopItemHit(snakePosition);
         }

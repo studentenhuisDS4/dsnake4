@@ -8,6 +8,7 @@ export class ShopElement extends MapElement {
     width: number;
     height: number;
     item!: ShopItem;
+    status!: string;
 
     constructor(position: Vector2, height: number, width: number) {
         super();
@@ -51,6 +52,7 @@ export class ShopItem {
     description?: GameObjects.Sprite;
     code: string;
     cost: number;
+    bought: boolean = false;
 
     constructor(code: string, cost: number, description?: GameObjects.Sprite) {
         this.code = code;
@@ -58,4 +60,5 @@ export class ShopItem {
         this.description = description;
     }
 
+    public buy() { this.bought = true; }
 }

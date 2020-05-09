@@ -1,0 +1,13 @@
+{
+    "global": {
+        "selectItem": "Selecteer een item..."
+    },
+    "chatbox": {
+        "inputPlaceholder": "Type and press [Enter] to chat",
+        "noChats": "No chats yet",
+        "title": "Chat with players"
+    },
+    "playerForm": {
+        "inputPlaceholder": "Enter your name and press [Enter]"
+    }
+}

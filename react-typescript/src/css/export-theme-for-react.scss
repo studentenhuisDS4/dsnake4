@@ -1,0 +1,20 @@
+@import 'theme-scss/project-colors';
+
+//
+// Exporting colors for usage in ReactJS / Javascript
+//
+// Import in Javascript using:
+// import * as colors from 'export-theme-for-react.scss';
+//
+// Then use colors.[colorname] in Javascript
+//
+
+@mixin exportColors() {
+    :export {
+        @each $color, $value in $colors {
+            #{$color}: $value;
+        }
+    }
+}
+
+@include exportColors();

@@ -44,6 +44,9 @@ export class SnakeScene extends TransformScene {
     private movementSound!: Phaser.Sound.BaseSound;
     private eatingSound!: Phaser.Sound.BaseSound;
 
+    deltaTime: number = 50;
+    moveTime: number = 0;
+
     constructor(transform?: Transform) {
         super(sceneConfig, transform);
 
@@ -79,8 +82,6 @@ export class SnakeScene extends TransformScene {
 
         // Choose to load assets dynamically or statically
         MapLoader.cacheLevelsStatic(this.cache);
-        // MapLoader.preloadJsonLevels(this.load);
-        // MapLoader.preloadLevelsDynamic(this.load, MapLevel.FirstFloor);
     }
 
     public create() {
@@ -95,19 +96,16 @@ export class SnakeScene extends TransformScene {
             .setAlpha(0.7)
             .setScale(0.24, 0.24)
             .setPipeline('Light2D');
+
         this.lights.enable();
         this.lights.setAmbientColor(0x313339);
-        // this.lights.addLight(500, 300, 200, 0xffffff, 1);
-
         const snakeLight = this.lights.addLight(0, 0, 400, 0x42b983, 1);
-
         this.events.on('gameSnakeMove', function (event: Snake) {
             for (let i = 0; i < 6; i++) {
                 snakeLight.x = event.position.x * 10;
                 snakeLight.y = event.position.y * 10;
             }
         });
-
 
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
@@ -123,9 +121,7 @@ export class SnakeScene extends TransformScene {
         this.mapControllers[4].map.appendElement(shopEl[2], true);
 
         this.changeLevel(this.currentLevel);
-        this.renderSnake();
-
-        this.time.addEvent({ delay: 3000 / FPS, callback: this.onTimedUpdate, callbackScope: this, loop: true });
+        // this.renderSnake();
 
         this.backgroundMusic = this.sound.add('background');
         this.stairSound = this.sound.add('stair');
@@ -138,7 +134,7 @@ export class SnakeScene extends TransformScene {
         this.addAllMainObjects();
     }
 
-    public update() {
+    public update(time: number) {
         let direction = this.snake.direction;
         if (JustDown(this.inputKeys.W) || JustDown(this.inputKeys.UP)) {
             this.snake.rotateUp();
@@ -152,9 +148,15 @@ export class SnakeScene extends TransformScene {
         if (direction != this.snake.direction) {
             this.movementSound.play({ volume: 0.1, loop: false });
         }
-        // Propagate input
-        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
-        this.renderSnake();
+
+        if (time > this.moveTime) {
+            // Propagate input
+            this.onTimedUpdate();
+            this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
+            this.renderSnake();
+
+            this.moveTime = time + this.deltaTime;
+        }
     }
 
     private onTimedUpdate() {
@@ -190,8 +192,6 @@ export class SnakeScene extends TransformScene {
             this.wallImpactSound.play({ volume: .5, loop: false });
             this.fatalCollision();
         }
-
-
     }
 
     private stairClimbing(stair: Stair) {
@@ -272,14 +272,6 @@ export class SnakeScene extends TransformScene {
         this.currentLevel = newLevel;
     }
 
-    private renderGrid() {
-        this.add.grid(
-            this.width / 2, this.height / 2,
-            this.width + 1, this.height + 1,
-            this.cellWidth, this.cellHeight,
-            0x000000, 0, 0x222222, 0.9);
-    }
-
     private renderSnake() {
         this.events.emit('gameSnakeMove', this.snake);
         if (this.snake?.bodyParts != null) {
@@ -307,6 +299,8 @@ export class SnakeScene extends TransformScene {
                 rotation = 3;
                 break;
         }
+        
+        // This function gets called... a lot.
         if (part.gameObject == null || part.gameObjectType != part.type || part.gameObjectDirection != part.direction) {
             part.gameObject?.destroy();
             if (part.level == this.currentLevel) {

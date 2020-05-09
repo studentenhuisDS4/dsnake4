@@ -13,10 +13,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     scene: [MenuScene, HubScene, TestRunnerScene],
     width: SW,
     height: SH + 50,
-    fps: {
-        target: FPS,
-        forceSetTimeOut: true
-    },
+    // fps: {
+    //     target: FPS,
+    //     forceSetTimeOut: true
+    // },
     backgroundColor: '#000000',
     parent: undefined
 };

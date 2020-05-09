@@ -24,8 +24,7 @@ export class Stair extends MapElement {
         this.resetCells();
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.height; j++) {
-                // console.log(this.position);
-                const newPos = new Vector2(this.position.x, this.position.y) // this.position.clone();
+                const newPos = new Vector2(this.position.x, this.position.y);
                 newPos.x += i;
                 newPos.y += j;
                 let newCell = new MapCell(newPos, CellType.Stairs, Colors['Stair']);

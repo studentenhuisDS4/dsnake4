@@ -6,8 +6,4 @@ export class Vector2 {
         this.x = x;
         this.y = y;
     }
-
-    clone(): Vector2 {
-        return new Vector2(this.x, this.y);
-    }
 }

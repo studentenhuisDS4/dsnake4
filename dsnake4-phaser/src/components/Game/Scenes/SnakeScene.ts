@@ -20,7 +20,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     key: 'Game',
 };
 
-export const SnakeDelayMs: number = 75; // Snake speed
+export const SnakeDelayMs: number = 50; // Snake speed
 
 export class SnakeScene extends TransformScene {
     private cellWidth!: number;
@@ -49,6 +49,8 @@ export class SnakeScene extends TransformScene {
     private wallImpactSound!: Phaser.Sound.BaseSound;
     private movementSound!: Phaser.Sound.BaseSound;
     private eatingSound!: Phaser.Sound.BaseSound;
+
+    private renderCount: number = 0;
 
     constructor(transform?: Transform) {
         super(sceneConfig, transform);
@@ -119,6 +121,7 @@ export class SnakeScene extends TransformScene {
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
             mc.renderCurrentMap();
+            this.updateRenderedMap(mc);
         });
 
         this.shopEl = [];
@@ -142,6 +145,8 @@ export class SnakeScene extends TransformScene {
         this.generateMainObjects();
         this.addAllMainObjects();
 
+        this.mapControllers.forEach(mc => { this.updateRenderedMap(mc); });
+
         this.resetGame();
 
         this.changeLevel(this.currentLevel);
@@ -150,7 +155,6 @@ export class SnakeScene extends TransformScene {
 
     public update() {
         // Propagate input
-        this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
         this.renderSnake();
     }
 
@@ -186,6 +190,7 @@ export class SnakeScene extends TransformScene {
             this.updateShop(false);
             this.snake.addUndigestedFood(foodEaten.blocksAdded);
             this.eatingSound.play({ volume: 0.5, loop: false });
+            this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
             // boost charge
         }
 
@@ -428,6 +433,8 @@ export class SnakeScene extends TransformScene {
     }
 
     public updateRenderedMap(mc: MapController | undefined) {
+        this.renderCount++;
+        console.log(this.renderCount);
         if (mc != undefined) {
             mc.map.Map2D
                 .forEach(row => row
@@ -498,7 +505,6 @@ export class SnakeScene extends TransformScene {
     private generateShop() {
         this.shopItems?.forEach(item => {
             item.description?.destroy();
-            console.log('Stuff')
         });
         this.shopItems = [];
 

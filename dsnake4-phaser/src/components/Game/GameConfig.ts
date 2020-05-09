@@ -13,7 +13,7 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     width: SW,
     height: SH + 50,
     fps: {
-        target: 25,
+        target: 60,
         forceSetTimeOut: true
     },
     render: {

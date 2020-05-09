@@ -42,7 +42,6 @@ export default class App extends Component<AppProps, AppState> {
                                 <div className="row h-100">
                                     <div className="col-md-8 h-100">
                                         <div className="card card-body border-0 h-100 bg-seagreen border border-2x border-dashed border-teal">
-                                            <p>insert ze game pls</p>
                                             <GameCanvas></GameCanvas>
                                         </div>
                                     </div>

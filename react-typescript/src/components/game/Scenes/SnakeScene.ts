@@ -88,6 +88,7 @@ export class SnakeScene extends TransformScene {
     }
 
     public create() {
+        console.log("Starting Snake scene");
         this.applyCameraTransform();
 
         // Priority of drawing matters!

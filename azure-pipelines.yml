@@ -28,15 +28,15 @@ jobs:
         npm install
         npm run build
       displayName: 'npm install and build'
-      workingDirectory: dsnake4-phaser
+      workingDirectory: react-typescript
     - task: CopyFiles@2
       inputs:
-        Contents: 'dsnake4-phaser/dist/**' # Pull the build directory (React)
+        Contents: 'react-typescript/dist/**' # Pull the build directory (React)
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs: 
         pathtoPublish: $(Build.ArtifactStagingDirectory) # dist or build files
-        ArtifactName: 'dsnake4-phaser' # output artifact named snake-app
+        ArtifactName: 'dsnake4-react-phaser' # output artifact named snake-app
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     - task: UniversalPackages@0
       inputs:
@@ -44,7 +44,7 @@ jobs:
         publishDirectory: '$(Build.ArtifactStagingDirectory)'
         feedsToUsePublish: 'internal'
         vstsFeedPublish: '1ec9d425-a99e-48b2-983f-b31bc9281b63/1a0470b0-ee13-4441-b6a5-42df5b2d73e7'
-        vstsFeedPackagePublish: 'dsnake4-phaser'
+        vstsFeedPackagePublish: 'dsnake4-react-phaser'
         versionOption: 'patch'
         verbosity: 'Warning'
       condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))

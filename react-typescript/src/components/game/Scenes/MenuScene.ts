@@ -37,7 +37,6 @@ export class MenuScene extends TransformScene {
         this.load.spritesheet('snake', 'img/assets/Snake/snake3.png', { frameWidth: 10, frameHeight: 10 });
 
         this.game.scene.add("Hub", HubScene);
-        this.game.scene.add("Snake", SnakeScene);
     }
 
     public create() {
@@ -54,7 +53,7 @@ export class MenuScene extends TransformScene {
                     this.scene.transition({
                         target: "Hub",
                         duration: 500,
-                        allowInput: false,
+                        allowInput: false
                     });
                     this.backgroundMusic.pause();
                 }

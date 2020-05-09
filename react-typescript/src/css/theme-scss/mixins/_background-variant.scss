@@ -1,0 +1,37 @@
+// stylelint-disable declaration-no-important
+
+// Contextual backgrounds
+
+@mixin bg-variant($parent, $color, $ignore-warning: false) {
+    #{$parent} {
+        background-color: $color !important;
+        &, h3, p {
+            color: color-yiq($color, $seagreen, $white);
+        }
+    }
+    a#{$parent},
+    button#{$parent} {
+        @include hover-focus() {
+            background-color: darken($color, 10%) !important;
+        }
+    }
+    #{$parent} {
+        &.bg-hover {
+            @include transition($transition-base);
+            @include hover-focus() {
+                background-color: darken($color, 7%) !important;
+            }
+        }
+    }
+    @include deprecate("The `bg-variant` mixin", "v4.4.0", "v5", $ignore-warning);
+}
+
+@mixin bg-hover-variant($parent, $color, $ignore-warning: false) {
+    #{$parent} {
+        @include transition($transition-base);
+        @include hover-focus() {
+            background-color: $color !important;
+        }
+    }
+    @include deprecate("The `bg-variant` mixin", "v4.4.0", "v5", $ignore-warning);
+}

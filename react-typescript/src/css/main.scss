@@ -1,0 +1,51 @@
+// Override default variables before the import
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+// Import Bootstrap and its default variables
+// and add your own overrides
+@import 'theme-scss/fontawesome';
+@import '~bootstrap/scss/functions.scss';
+@import '~bootstrap/scss/variables.scss';
+@import 'theme-scss/variables';
+@import '~bootstrap/scss/mixins.scss';
+@import 'theme-scss/mixins';
+@import '~bootstrap/scss/root.scss';
+@import '~bootstrap/scss/reboot.scss';
+@import '~bootstrap/scss/type.scss';
+@import '~bootstrap/scss/images.scss';
+@import '~bootstrap/scss/code.scss';
+@import '~bootstrap/scss/grid.scss';
+@import 'theme-scss/grid.scss';
+@import '~bootstrap/scss/tables.scss';
+@import '~bootstrap/scss/forms.scss';
+@import '~bootstrap/scss/buttons.scss';
+@import '~bootstrap/scss/transitions.scss';
+@import '~bootstrap/scss/dropdown.scss';
+@import '~bootstrap/scss/button-group.scss';
+@import '~bootstrap/scss/input-group.scss';
+@import '~bootstrap/scss/custom-forms.scss';
+@import '~bootstrap/scss/nav.scss';
+@import '~bootstrap/scss/navbar.scss';
+@import 'theme-scss/navbar';
+@import '~bootstrap/scss/card.scss';
+@import '~bootstrap/scss/breadcrumb.scss';
+@import '~bootstrap/scss/pagination.scss';
+@import '~bootstrap/scss/badge.scss';
+@import '~bootstrap/scss/jumbotron.scss';
+@import '~bootstrap/scss/alert.scss';
+@import '~bootstrap/scss/progress.scss';
+@import '~bootstrap/scss/media.scss';
+@import '~bootstrap/scss/list-group.scss';
+@import '~bootstrap/scss/close.scss';
+@import '~bootstrap/scss/toasts.scss';
+@import '~bootstrap/scss/modal.scss';
+@import '~bootstrap/scss/tooltip.scss';
+@import '~bootstrap/scss/popover.scss';
+@import '~bootstrap/scss/carousel.scss';
+@import '~bootstrap/scss/spinners.scss';
+@import '~bootstrap/scss/utilities.scss';
+@import 'theme-scss/utilities';
+@import '~bootstrap/scss/print.scss';
+
+// Import your own stuff
+@import 'theme-scss/misc';

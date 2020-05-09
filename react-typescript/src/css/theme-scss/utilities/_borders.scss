@@ -1,0 +1,15 @@
+//
+// Border
+//
+
+.border-2x        { border-width: $border-width * 2 !important; }
+.border-top-2x    { border-top-width: $border-width * 2 !important; }
+.border-right-2x  { border-right-width: $border-width * 2 !important; }
+.border-bottom-2x { border-bottom-width: $border-width * 2 !important; }
+.border-left-2x   { border-left-width: $border-width * 2 !important; }
+
+.border-dashed        { border-style: dashed !important; }
+.border-dashed-top    { border-top-style: dashed !important; }
+.border-dashed-right  { border-right-style: dashed !important; }
+.border-dashed-bottom { border-bottom-style: dashed !important; }
+.border-dashed-left   { border-left-style: dashed !important; }

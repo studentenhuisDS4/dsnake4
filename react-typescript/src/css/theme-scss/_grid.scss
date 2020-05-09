@@ -1,0 +1,16 @@
+//
+// Grid
+//
+
+// Apply to .row
+$grid-width-muliplier: 2;
+.gutter-2 {
+    margin-left: $grid-gutter-width * -$grid-width-muliplier;
+    margin-right: $grid-gutter-width * -$grid-width-muliplier;
+
+    > .col,
+    > [class*="col-"] {
+        padding-left: $grid-gutter-width * $grid-width-muliplier;
+        padding-right: $grid-gutter-width * $grid-width-muliplier;
+    }
+}

@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
 import Language from "../../language/Language";
+import SingleInputFormProps, {SingleInputFormState} from "src/components/global/Models";
 
-type SingleInputFormProps = {
-    centerContent: boolean,
-    inputPlaceholder: string,
-    submitValue: (msg: string) => void,
-};
-type SingleInputFormState = {
-    value: string,
-};
 export default class SingleInputForm extends Component<SingleInputFormProps, SingleInputFormState> {
     constructor(props: SingleInputFormProps) {
         super(props);

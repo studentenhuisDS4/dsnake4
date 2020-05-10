@@ -1,14 +1,8 @@
 import React, { Component, createRef } from 'react';
-import ChatMessageModel from './Models';
+import ChatMessageModel, {ChatboxProps, ChatboxState} from './Models';
 import Language from "../../language/Language";
 import SingleInputForm from '../global/SingleInputForm';
 
-type ChatboxProps = {
-    playerName: string,
-};
-type ChatboxState = {
-    chats: ChatMessageModel[],
-};
 export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
     private messagesEnd = createRef<HTMLDivElement>();
 
@@ -48,7 +42,7 @@ export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
     render() {
         return (
             <div className="d-flex flex-column h-100 bg-seagreen border border-2x border-dashed border-teal">
-                <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.playerName}</h2>
+                <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.playerName} <span className="ml-1 fa fa-xs fa-pencil text-teal-dark cursor-pointer" onClick={this.props.changePlayerName} /></h2>
                 <div className="chatbox flex-grow-1 overflow-auto">
                     {this.state.chats.length > 0
                         ? this.state.chats.map(chat => <ChatMessage {...chat} key={chat.id} />)

@@ -13,8 +13,7 @@
             "sourceMaps": true,
             "breakOnLoad": true,
             "sourceMapPathOverrides": {
-                "webpack:///src/*": "${webRoot}/*",
-                "webpack:///./src/*": "${webRoot}/*"
+                "webpack:///src/*": "${webRoot}/*"
             }
         },
         {

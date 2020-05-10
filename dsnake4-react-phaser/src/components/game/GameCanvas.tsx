@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import Phaser from 'phaser'
-import { IonPhaser, GameInstance } from '@ion-phaser/react'
+import { IonPhaser } from '@ion-phaser/react'
 import { GameCanvasProps, GameCanvasState } from "src/components/game/Models";
 import { BootScene } from './Scenes';
 import { SceneEvents } from './Events';
@@ -31,7 +31,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                         console.log("Game started");
                     }
                 }
-            } as GameInstance
+            }
         };
     }
 

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { defaultTextStyle } from '../Data/Common';
+import { defaultTextStyle, CELLS_X, CELLS_Y } from '../Data/Common';
 import { SceneEvents } from '../Events';
 import { Vector2, Transform } from '../Generics';
 import { SceneMap, SnakeScene, PauseScene } from './';
@@ -26,20 +26,12 @@ export class HubScene extends BaseScene {
     }
 
     public init() {
-        this.childTransform = new Transform(this.verticalOffset, this.scale.width, this.scale.height);
+        this.childTransform = new Transform(this.verticalOffset, this.scale.width, this.scale.width / (CELLS_X / CELLS_Y));
         this.defaultSceneData = {
             transform: this.childTransform
         };
         this.gameScene = this.getScene(SceneMap.GAME.name) as SnakeScene;
         this.pauseMenuScene = this.getScene(SceneMap.PAUSE.name) as PauseScene;
-
-        console.log(this.scale.width);
-    }
-
-    public onUpdateGameSize(transform: Transform) {
-        console.log("new size");
-        this.gameScene.applyCameraTransform(transform);
-        this.pauseMenuScene.applyCameraTransform(transform);
     }
 
     public preload() {

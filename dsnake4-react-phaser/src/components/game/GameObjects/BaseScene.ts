@@ -2,8 +2,6 @@ import { Transform } from '../Generics';
 
 export abstract class BaseScene extends Phaser.Scene {
 
-    public abstract onUpdateGameSize(transform: Transform): void;
-
     protected getScene(key: Phaser.Scene | string) {
         return this.game.scene.getScene(key);
     }

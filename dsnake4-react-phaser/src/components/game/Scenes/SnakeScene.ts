@@ -58,7 +58,7 @@ export class SnakeScene extends TransformScene {
 
     public init() {
         this.cellWidth = this.game.scale.width / CELLS_X;
-        this.cellHeight = this.game.scale.width / CELLS_Y;
+        this.cellHeight = this.game.scale.width / (CELLS_X / CELLS_Y) / CELLS_Y;
 
         this.mapControllers = [];
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.FirstFloor));
@@ -68,10 +68,8 @@ export class SnakeScene extends TransformScene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Shop));
 
         this.game.events.addListener(SceneEvents.UpdatedGameSize, () => {
-            console.log("Update size");
-            console.log(this.game.scale.width);
             this.cellWidth = this.game.scale.width / CELLS_X;
-            this.cellHeight = this.game.scale.height / CELLS_Y;
+            this.cellHeight = this.game.scale.width / (CELLS_X / CELLS_Y) / CELLS_Y;
         });
     }
 
@@ -113,12 +111,13 @@ export class SnakeScene extends TransformScene {
         this.lights.enable();
         this.lights.setAmbientColor(0x313339);
         const snakeLight = this.lights.addLight(0, 0, 400, 0x42b983, 1);
-        this.events.on('gameSnakeMove', function (event: Snake) {
+
+        this.events.on('gameSnakeMove', function (scene: SnakeScene) {
             for (let i = 0; i < 6; i++) {
-                snakeLight.x = event.position.x * 10;
-                snakeLight.y = event.position.y * 10;
+                snakeLight.x = scene.snake.position.x * scene.cellWidth;
+                snakeLight.y = scene.snake.position.y * scene.cellHeight;
             }
-        });
+        }, this);
 
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
@@ -385,7 +384,7 @@ export class SnakeScene extends TransformScene {
     }
 
     private renderSnake() {
-        this.events.emit('gameSnakeMove', this.snake);
+        this.events.emit('gameSnakeMove', this);
         if (this.snake?.bodyParts != null) {
             this.snake.bodyParts.forEach(part => {
                 this.renderSnakePart(part);

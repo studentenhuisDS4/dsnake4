@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import Phaser from 'phaser'
 import { IonPhaser, GameInstance } from '@ion-phaser/react'
 import { GameCanvasProps, GameCanvasState } from "src/components/game/Models";
-import { BootScene } from '../game/Scenes';
-export const FPS: number = 40;
+import { BootScene } from './Scenes';
+import { SceneEvents } from './Events';
 
 export default class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
+    gameReady: boolean = false;
+
     constructor(props: GameCanvasProps) {
         super(props);
 
@@ -22,8 +24,25 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                     forceSetTimeOut: true
                 },
                 backgroundColor: '#000000',
-            } as GameInstance,
+                callbacks: {
+                    postBoot: (game) => {
+                        console.log("Game started");
+                        this.gameReady = true;
+                    }
+                }
+            } as GameInstance
         };
+    }
+
+    onGameResize() {
+        const game = this.state.game.instance;
+        if (this.gameReady && game != null) {
+            game.events.emit(SceneEvents.UpdatedGameSize, {
+                width: 100,
+                height: 150
+            });
+            console.log(game?.scale.parentSize);
+        }
     }
 
     render() {

@@ -16,7 +16,7 @@ export class TransformScene extends Phaser.Scene {
         this.setTransform(transform);
     }
 
-    protected applyCameraTransform(transform?: Transform) {
+    public applyCameraTransform(transform?: Transform) {
         if (transform != null) {
             this.setTransform(transform);
         }

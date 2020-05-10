@@ -39,6 +39,13 @@ export class HubScene extends BaseScene {
     public init() {
         this.gameScene = this.getScene(SceneMap.GAME.name) as SnakeScene;
         this.pauseMenuScene = this.getScene(SceneMap.PAUSE.name) as PauseScene;
+
+        console.log(this.scale.width);
+    }
+
+    public onUpdateGameSize(transform: Transform) {
+        this.gameScene.applyCameraTransform(transform);
+        this.pauseMenuScene.applyCameraTransform(transform);
     }
 
     public preload() {

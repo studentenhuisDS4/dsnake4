@@ -1,7 +1,7 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Setup
-1. Run `npm install` in the folder `react-typescript` (this folder)
+1. Run `npm install` in the folder `dsnake4-react-phaser` (this folder)
 2. Copy the default `.prod.env` to `.env`
 
 ## Available Scripts

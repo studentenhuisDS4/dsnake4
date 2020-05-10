@@ -10,7 +10,7 @@ trigger:
       - master
   paths:
     include: 
-      - react-typescript/*
+      - dsnake4-react-phaser/*
 
 jobs:
 - job:
@@ -26,16 +26,16 @@ jobs:
         versionSpec: $(node_version)
     # Copy files
     - script: cp .prod.env .env
-      workingDirectory: react-typescript
+      workingDirectory: dsnake4-react-phaser
       displayName: Transform .env file for Production
     - script: |
         npm install
         npm run build
       displayName: 'npm install and build'
-      workingDirectory: react-typescript
+      workingDirectory: dsnake4-react-phaser
     - task: CopyFiles@2
       inputs:
-        Contents: 'react-typescript/build/**' # Pull the build directory (React)
+        Contents: 'dsnake4-react-phaser/build/**' # Pull the build directory (React)
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs: 

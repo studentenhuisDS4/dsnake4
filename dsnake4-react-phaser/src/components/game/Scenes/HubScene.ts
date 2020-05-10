@@ -2,7 +2,6 @@ import * as Phaser from 'phaser';
 import { defaultTextStyle } from '../Data/Common';
 import { SceneEvents } from '../Events';
 import { Vector2, Transform } from '../Generics';
-import { SW, SH } from '../GameConfig';
 import { SceneMap, SnakeScene, PauseScene } from './';
 import { BaseScene, Button } from '../GameObjects';
 
@@ -11,32 +10,26 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     visible: false
 };
 export class HubScene extends BaseScene {
-    width: number;
-    height: number;
-
     defaultSceneData: any;
     nicknameText!: Phaser.GameObjects.Text;
     pointsText!: Phaser.GameObjects.Text;
     menuLink!: Phaser.GameObjects.Text;
 
     verticalOffset = new Vector2(0, 50);
-    childTransform: Transform;
+    childTransform!: Transform;
 
     gameScene!: SnakeScene;
     pauseMenuScene!: PauseScene;
 
     constructor() {
         super(sceneConfig);
-        this.width = SW;
-        this.height = SH;
-
-        this.childTransform = new Transform(this.verticalOffset, this.width, this.height);
-        this.defaultSceneData = {
-            transform: this.childTransform
-        };
     }
 
     public init() {
+        this.childTransform = new Transform(this.verticalOffset, this.scale.width, this.scale.height);
+        this.defaultSceneData = {
+            transform: this.childTransform
+        };
         this.gameScene = this.getScene(SceneMap.GAME.name) as SnakeScene;
         this.pauseMenuScene = this.getScene(SceneMap.PAUSE.name) as PauseScene;
 
@@ -44,6 +37,7 @@ export class HubScene extends BaseScene {
     }
 
     public onUpdateGameSize(transform: Transform) {
+        console.log("new size");
         this.gameScene.applyCameraTransform(transform);
         this.pauseMenuScene.applyCameraTransform(transform);
     }
@@ -52,10 +46,10 @@ export class HubScene extends BaseScene {
         this.nicknameText = this.add.text(10, 20, 'Nickname Here', defaultTextStyle);
         this.pointsText = this.add.text(10 + this.nicknameText.width + 20, 20, '0', defaultTextStyle);
         this.menuLink = this.add
-            .text(this.width - 20, 20, 'MENU', defaultTextStyle)
+            .text(this.scale.width - 20, 20, 'MENU', defaultTextStyle)
             .setOrigin(1, 0);
 
-        const button = Button.create(this, this.width - 20, 20, 'MENU', defaultTextStyle).setOrigin(1, 0);
+        const button = Button.create(this, this.scale.width - 20, 20, 'MENU', defaultTextStyle).setOrigin(1, 0);
         this.add.existing(button);
         button.on('pointerup', () => {
             this.game.events.emit(SceneEvents.GamePauseEvent);

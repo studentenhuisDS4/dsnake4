@@ -13,6 +13,7 @@ import { MapLoader } from '../Data/Map/MapLoader';
 import { Transform, Vector2 } from '../Generics';
 import { TransformScene } from '../GameObjects/TransformScene';
 import { Snake, BodyPart } from '../Data/Snake';
+import { SceneEvents } from '../Events';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -37,7 +38,7 @@ export class SnakeScene extends TransformScene {
     throughWalls!: boolean;
 
     // Snake game loop
-    private mapControllers: MapController[];
+    private mapControllers!: MapController[];
     private shopEl!: ShopElement[];
     inputKeys!: KeyBindings;
 
@@ -53,9 +54,11 @@ export class SnakeScene extends TransformScene {
 
     constructor(transform?: Transform) {
         super(sceneConfig, transform);
+    }
 
-        this.cellWidth = SW / CELLS_X;
-        this.cellHeight = SH / CELLS_Y;
+    public init() {
+        this.cellWidth = this.game.scale.width / CELLS_X;
+        this.cellHeight = this.game.scale.width / CELLS_Y;
 
         this.mapControllers = [];
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.FirstFloor));
@@ -63,6 +66,13 @@ export class SnakeScene extends TransformScene {
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.ThirdFloor));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Tropen));
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.Shop));
+
+        this.game.events.addListener(SceneEvents.UpdatedGameSize, () => {
+            console.log("Update size");
+            console.log(this.game.scale.width);
+            this.cellWidth = this.game.scale.width / CELLS_X;
+            this.cellHeight = this.game.scale.height / CELLS_Y;
+        });
     }
 
     /**
@@ -112,7 +122,7 @@ export class SnakeScene extends TransformScene {
 
         this.mapControllers.forEach(mc => {
             mc.loadLevelMap(MapLoader.loadLevel(this.cache, mc.level));
-            mc.renderCurrentMap();
+            mc.renderMapCells();
             this.updateRenderedMap(mc);
         });
 

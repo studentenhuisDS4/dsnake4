@@ -37,7 +37,7 @@ export class MenuScene extends TransformScene {
     public create() {
         this.createLogo('logo');
         const offset = 60;
-        this.createMenu(this.width / 2, this.height / 2 + offset + 60, 30, [
+        this.createMenu(this.scale.width / 2, this.scale.height / 2 + offset + 60, 30, [
             {
                 text: "PLAY GAME",
                 onClick: () => {
@@ -66,7 +66,7 @@ export class MenuScene extends TransformScene {
                 text: "HELP",
             }
         ]);
-        this.createTitle(this.width / 2, this.height * 1 / 2 + offset + 30, "--- MENU ---");
+        this.createTitle(this.scale.width / 2, this.scale.height * 1 / 2 + offset + 30, "--- MENU ---");
         this.createSnakes();
         this.renderSnakes();
 
@@ -86,8 +86,8 @@ export class MenuScene extends TransformScene {
     }
 
     createLogo(imageName: string) {
-        const x = this.width / 2;
-        const y = this.height / 4 + 40;
+        const x = this.scale.width / 2;
+        const y = this.scale.height / 4 + 40;
 
         this.add.circle(x, y - 15, 35, 0x999999, 1);
         this.add.circle(x + 15, y - 25, 30, 0x000000, 1);
@@ -157,10 +157,10 @@ export class MenuScene extends TransformScene {
     }
 
     private limitSnake(snake: Snake) {
-        const DISTANCE_MIN_X = 30 - Math.random() * 5;
-        const DISTANCE_MAX_X = 75 + Math.random() * 5;
-        const DISTANCE_MIN_Y = 0 + Math.random() * 5;
-        const DISTANCE_MAX_Y = 55 + Math.random() * 5;
+        const DISTANCE_MIN_X = 10 - Math.random() * 5;
+        const DISTANCE_MAX_X = 55 + Math.random() * 5;
+        const DISTANCE_MIN_Y = 5 + Math.random() * 5;
+        const DISTANCE_MAX_Y = 75 + Math.random() * 5;
         switch (snake.direction) {
             case 'Left':
                 if (snake.x < DISTANCE_MIN_X) {

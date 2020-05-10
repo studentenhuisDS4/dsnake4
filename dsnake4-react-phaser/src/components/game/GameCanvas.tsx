@@ -26,8 +26,9 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                 backgroundColor: '#000000',
                 callbacks: {
                     postBoot: (game) => {
-                        console.log("Game started");
                         this.gameReady = true;
+                        this.onGameResize();
+                        console.log("Game started");
                     }
                 }
             } as GameInstance
@@ -38,10 +39,9 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
         const game = this.state.game.instance;
         if (this.gameReady && game != null) {
             game.events.emit(SceneEvents.UpdatedGameSize, {
-                width: 100,
-                height: 150
+                width: this.props.gameCanvasSize.width,
+                height: this.props.gameCanvasSize.height
             });
-            console.log(game?.scale.parentSize);
         }
     }
 

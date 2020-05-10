@@ -85,7 +85,6 @@ $chatbox-padding: 1.25rem;
         outline-width: 0;
     }
     &:focus, &:hover {
-        background-color: lighten($seagreen-dark, 3%);
-        border-bottom-color: lighten($seagreen, 6%);
+        border-bottom-color: lighten($seagreen, 8%);
     }
 }

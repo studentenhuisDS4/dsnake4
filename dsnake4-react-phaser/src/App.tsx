@@ -1,11 +1,11 @@
-import React, {Component, createRef} from 'react';
+import React, { Component, createRef } from 'react';
 import './css/main.scss';
 import config from './config/config.json';
 import Chatbox from './components/chatbox/Chatbox';
 import GameCanvas from './components/game/GameCanvas';
 import Language from "./language/Language";
 import SingleInputForm from "./components/global/SingleInputForm";
-import AppState, {AppProps} from "src/AppModel";
+import AppState, { AppProps } from "src/AppModel";
 
 export default class App extends Component<AppProps, AppState> {
     private canvasContainer = createRef<HTMLDivElement>();
@@ -17,7 +17,7 @@ export default class App extends Component<AppProps, AppState> {
         this.setGameCanvasSize = this.setGameCanvasSize.bind(this);
         document.title = config.siteName;
 
-        const playerName = this.loadPlayerName();
+        // const playerName = this.loadPlayerName();
 
         this.state = {
             activeLanguage: Language.getLanguage(),
@@ -70,7 +70,6 @@ export default class App extends Component<AppProps, AppState> {
     }
 
     setGameCanvasSize() {
-        console.log('canvas', this.canvasContainer);
         if (!this.state.initializeGame && this.canvasContainer.current != null) {
             this.setState({
                 gameCanvasSize: {
@@ -94,17 +93,17 @@ export default class App extends Component<AppProps, AppState> {
                                 </div>
                             </div>
                         ) : (
-                            <div className="row h-100">
-                                <div className="col-md-8 h-100">
-                                    <div className="w-100 h-100 bg-seagreen border border-2x border-dashed border-teal" ref={this.canvasContainer}>
-                                        {this.state.initializeGame && <GameCanvas gameCanvasSize={this.state.gameCanvasSize} />}
+                                <div className="row h-100">
+                                    <div className="col-md-8 h-100">
+                                        <div className="w-100 h-100 bg-seagreen border border-2x border-dashed border-teal" ref={this.canvasContainer}>
+                                            {this.state.initializeGame && <GameCanvas gameCanvasSize={this.state.gameCanvasSize} />}
+                                        </div>
+                                    </div>
+                                    <div className="col-md-4 h-100">
+                                        <Chatbox changePlayerName={this.changePlayerName} playerName={this.state.playerName} />
                                     </div>
                                 </div>
-                                <div className="col-md-4 h-100">
-                                    <Chatbox changePlayerName={this.changePlayerName} playerName={this.state.playerName} />
-                                </div>
-                            </div>
-                        )}
+                            )}
                     </div>
                 </div>
             </main>

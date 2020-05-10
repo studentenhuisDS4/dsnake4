@@ -7,15 +7,12 @@ import { GameObjects } from 'phaser';
 import { MenuItem } from '../GameObjects/MenuDefinition';
 import { defaultTextStyle } from '../Data/Common';
 import { Vector2, Transform } from '../Generics';
-import { UnitTestScene } from './TestScene';
-import { TransformScene } from './TransformScene';
-import { HubScene } from './HubScene';
-import { SnakeScene } from './SnakeScene';
+import { TransformScene } from '../GameObjects/TransformScene';
+import * as Scenes from '.';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
-    visible: false,
-    key: 'MainMenu',
+    visible: false
 };
 
 export class MenuScene extends TransformScene {
@@ -35,8 +32,6 @@ export class MenuScene extends TransformScene {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
         this.load.spritesheet('snake', 'img/assets/Snake/snake3.png', { frameWidth: 10, frameHeight: 10 });
-
-        this.game.scene.add("Hub", HubScene);
     }
 
     public create() {
@@ -51,7 +46,7 @@ export class MenuScene extends TransformScene {
                     // Fade-out camera
                     this.cameras.main.fade(400, 0, 0, 0);
                     this.scene.transition({
-                        target: "Hub",
+                        target: Scenes.SceneMap.HUB.name,
                         duration: 500,
                         allowInput: false
                     });
@@ -64,7 +59,7 @@ export class MenuScene extends TransformScene {
             {
                 text: "DEBUG // TEST",
                 onClick: () => {
-                    this.game.scene.start(UnitTestScene);
+                    this.game.scene.start(Scenes.SceneMap.TEST.name);
                 }
             },
             {

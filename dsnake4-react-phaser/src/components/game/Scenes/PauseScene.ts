@@ -5,8 +5,9 @@ import { Button } from '../GameObjects/Button';
 import { GameObjects, Types } from 'phaser';
 import { MenuItem } from '../GameObjects/MenuDefinition';
 import { defaultTextStyle } from '../Data/Common';
-import { SceneEvents } from './Events';
-import { TransformScene } from './TransformScene';
+import { SceneData } from '../Data/SceneData';
+import { SceneEvents } from '../Events';
+import { TransformScene } from '../GameObjects/TransformScene';
 import { Transform } from '../Generics';
 
 const sceneConfig: Types.Scenes.SettingsConfig = {
@@ -26,12 +27,18 @@ export class PauseScene extends TransformScene {
         super(sceneConfig, transform);
     }
 
+    init(data: SceneData) {
+        console.log(data);
+        super.applyCameraTransform(data?.transform);
+    }
+
     preload() {
         this.load.setPath('img/assets/');
         this.load.image('logo', ['menu.png', 'menu_n.png']);
     }
 
-    public create() {
+    public create(data: any) {
+        console.log("Pause scene started", data);
         this.applyCameraTransform();
 
         this.add

@@ -2,12 +2,20 @@ import { TestJsonLevel } from '../Tests/TestJsonLevel';
 import { TestBase } from '../Tests/TestBase';
 
 export const UnitTestScene = "UnitTests";
-
+export const snakeTextStyle = {
+    fontSize: 14,
+    fontStyle: 'normal',
+    // fontFamily: 'Consolas',
+    color: "#42FF83",
+    backgroundColor: 'rgba(0,0,0,0)'
+};
 export class TestRunnerScene extends Phaser.Scene {
     testSuites: TestBase[];
 
     constructor() {
-        super(UnitTestScene);
+        super({
+            key: UnitTestScene
+        } as Phaser.Types.Scenes.SettingsConfig);
 
         // Change this to auto-discovery with possibly class or decorators
         this.testSuites = [
@@ -31,6 +39,9 @@ export class TestRunnerScene extends Phaser.Scene {
         this.testSuites.forEach(suite => {
             console.log(suite.name);
             console.log('%c > Completed a test suite! ', 'color: lime');
+            this.add
+                .text(50, 50, 'MENU', snakeTextStyle)
+                .setOrigin(1, 0);
         });
         this.scene.stop();
     }

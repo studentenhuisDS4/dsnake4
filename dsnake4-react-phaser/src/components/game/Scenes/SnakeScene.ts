@@ -11,13 +11,12 @@ import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
 import { Wall } from '../Data/Map/Wall'
 import { MapLoader } from '../Data/Map/MapLoader';
 import { Transform, Vector2 } from '../Generics';
-import { TransformScene } from './TransformScene';
+import { TransformScene } from '../GameObjects/TransformScene';
 import { Snake, BodyPart } from '../Data/Snake';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
-    visible: true,
-    key: 'Game',
+    visible: true
 };
 
 export class SnakeScene extends TransformScene {
@@ -87,9 +86,9 @@ export class SnakeScene extends TransformScene {
         MapLoader.cacheLevelsStatic(this.cache);
     }
 
-    public create() {
+    public create(data: any) {
         console.log("Starting Snake scene");
-        this.applyCameraTransform();
+        this.applyCameraTransform(data?.transform);
 
         // Priority of drawing matters!
         this.inputKeys = this.input.keyboard.addKeys('W,UP,S,DOWN,A,LEFT,D,RIGHT,J') as KeyBindings;

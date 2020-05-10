@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
 import Phaser from 'phaser'
-import { IonPhaser } from '@ion-phaser/react'
-import { MenuScene } from './Scenes/MenuScene';
-import {GameCanvasProps, GameCanvasState} from "src/components/game/Models";
-
+import { IonPhaser, GameInstance } from '@ion-phaser/react'
+import { GameCanvasProps, GameCanvasState } from "src/components/game/Models";
+import { BootScene } from '../game/Scenes';
 export const FPS: number = 40;
 
 export default class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
@@ -15,7 +14,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
             game: {
                 title: 'DSnake4',
                 type: Phaser.AUTO,
-                scene: [MenuScene],
+                scene: [BootScene],
                 width: this.props.gameCanvasSize.width,
                 height: this.props.gameCanvasSize.height,
                 fps: {
@@ -23,7 +22,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                     forceSetTimeOut: true
                 },
                 backgroundColor: '#000000',
-            },
+            } as GameInstance,
         };
     }
 

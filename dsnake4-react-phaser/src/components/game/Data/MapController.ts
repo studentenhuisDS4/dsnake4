@@ -48,7 +48,7 @@ export class MapController {
 
         this.beerCapsImage = beerCapsImage;
 
-        console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
+        // console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
     }
 
     public renderCurrentMap() {

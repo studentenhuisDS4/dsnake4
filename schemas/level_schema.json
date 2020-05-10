@@ -54,16 +54,6 @@
             },
             "type": "object"
         },
-        "MapLevel": {
-            "enum": [
-                0,
-                1,
-                2,
-                3,
-                4
-            ],
-            "type": "number"
-        },
         "Vector2": {
             "additionalProperties": false,
             "properties": {
@@ -78,12 +68,6 @@
         }
     },
     "properties": {
-        "level": {
-            "$ref": "#/definitions/MapLevel"
-        },
-        "name": {
-            "type": "string"
-        },
         "stairs": {
             "items": {
                 "$ref": "#/definitions/IStairs"

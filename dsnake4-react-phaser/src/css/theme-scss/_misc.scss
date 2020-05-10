@@ -69,22 +69,57 @@ $chatbox-padding: 1.25rem;
     color: $teal-light;
     font-size: $font-size-lg;
     transition: all .25s ease-in-out;
-    ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
         color: $teal-dark;
         opacity: 1; /* Firefox */
     }
-
-    :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    &:-ms-input-placeholder { /* Internet Explorer 10-11 */
         color: $teal-dark;
     }
-
-    ::-ms-input-placeholder { /* Microsoft Edge */
+    &::-ms-input-placeholder { /* Microsoft Edge */
         color: $teal-dark;
     }
     &:focus {
         outline-width: 0;
     }
-    &:focus, &:hover {
-        border-bottom-color: lighten($seagreen, 8%);
+}
+
+// Speech bubbles
+.speech-bubble {
+    position: relative;
+    margin-top: .5rem;
+    padding: .25rem .5rem;
+    background: $teal-dark;
+    border-radius: .4em;
+
+    &.left {
+        margin-right: 40px;
+    }
+    &.right {
+        margin-left: 40px;
+    }
+
+    &:after {
+        content: '';
+        position: absolute;
+        margin-top: -0.422em;
+        width: 0;
+        height: 0;
+        border: 0.844em solid transparent;
+        border-bottom: 0;
+    }
+    &.left:after {
+        left: 0;
+        top: 50%;
+        margin-left: -0.844em;
+        border-right-color: $teal-dark;
+        border-left: 0;
+    }
+    &.right:after {
+        right: 0;
+        top: 50%;
+        margin-right: -0.844em;
+        border-left-color: $teal-dark;
+        border-right: 0;
     }
 }

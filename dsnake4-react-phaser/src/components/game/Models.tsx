@@ -1,11 +1,11 @@
-import {GameInstance} from "@ion-phaser/react";
+import { GameInstance } from "@ion-phaser/react";
 
 export default interface GameCanvasSize {
     height: number,
     width: number,
 }
 export interface GameCanvasProps {
-    gameCanvasSize: GameCanvasSize,
+    gameCanvasSize: GameCanvasSize
 }
 export interface GameCanvasState {
     initialize: boolean,

@@ -16,6 +16,15 @@ export class TransformScene extends Phaser.Scene {
         this.setTransform(transform);
     }
 
+    public applyCameraTransform(transform?: Transform) {
+        if (transform != null) {
+            this.setTransform(transform);
+        }
+        this.cameras.main.setPosition(this.origin.x, this.origin.y);
+        this.cameras.main.width = this.width;
+        this.cameras.main.height = this.height;
+    }
+
     private setTransform(newTransform?: Transform) {
         if (newTransform != null) {
             if (newTransform.origin != null) {
@@ -24,11 +33,5 @@ export class TransformScene extends Phaser.Scene {
             this.width = newTransform.width;
             this.height = newTransform.height;
         }
-    }
-
-    protected applyCameraTransform() {
-        this.cameras.main.setPosition(this.origin.x, this.origin.y);
-        this.cameras.main.width = this.width;
-        this.cameras.main.height = this.height;
     }
 }

@@ -29,9 +29,9 @@ export class BodyPart {
     }
 
     constructor(
-        position: Vector2, 
-        type: BodyPartType, 
-        direction: Direction, 
+        position: Vector2,
+        type: BodyPartType,
+        direction: Direction,
         level?: MapLevel
     ) {
         this.position = position;
@@ -82,9 +82,9 @@ export class Snake {
     }
 
     constructor(
-        position: Vector2, 
-        initialLength: number, 
-        initialDirection: Direction = 'Up', 
+        position: Vector2,
+        initialLength: number,
+        initialDirection: Direction = 'Up',
         initialLevel?: MapLevel
     ) {
         this.position = position;
@@ -295,6 +295,7 @@ export class Snake {
                 part.foodStored = false;
                 return true;
             }
+            return null;
         }) != null;
     }
 
@@ -331,6 +332,7 @@ export class Snake {
             if (part.type == 'Head') {
                 return part;
             }
+            return null;
         });
 
         if (part != null) {
@@ -346,6 +348,7 @@ export class Snake {
             if (part.type != 'Head' && part.position.x == this.position.x && part.position.y == this.position.y && part.level == this.level) {
                 return true;
             }
+            return null;
         }) != null;
     }
 

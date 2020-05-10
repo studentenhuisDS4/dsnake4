@@ -21,8 +21,6 @@ export interface IStairs {
 }
 
 export interface ILevel {
-    name: string;
-    level: MapLevel;
     walls: IWall[];
     stairs: IStairs[];
 }

@@ -22,11 +22,16 @@
         "react-scroll-to": "^3.0.0-beta.6",
         "typescript": "^3.7.5"
     },
+    "devDependencies": {
+        "typescript-plugin-css-modules": "^2.3.0",
+        "typescript-json-schema": "^0.42.0"
+    },
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test",
-        "eject": "react-scripts eject"
+        "eject": "react-scripts eject",
+        "schemas": "@powershell -NoProfile -ExecutionPolicy Unrestricted -Command ./utils/generate-schemas.ps1"
     },
     "eslintConfig": {
         "extends": "react-app",
@@ -46,8 +51,5 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
-    },
-    "devDependencies": {
-        "typescript-plugin-css-modules": "^2.3.0"
     }
 }

@@ -1,10 +1,9 @@
 import { MapElement, MapCell, Food } from './MapElements';
-import { Wall } from './Wall'
 import { Stair } from './Stair'
-import { CELLS_Y, CELLS_X, CellType, MapLevel, Colors, FoodType } from '../Common';
+import { CELLS_Y, CELLS_X, CellType, Colors, FoodType } from '../Common';
 import { ILevel } from './JsonInterfaces';
-import { ShopItem, ShopElement } from './ShopElement';
-import { Vector2 } from '../../Generics'
+import { ShopElement } from './ShopElement';
+import { Vector2 } from '../../Generics';
 
 
 export class Map {
@@ -14,7 +13,6 @@ export class Map {
     
     Also note that calculating the final map should be done once (or at least not a lot) with `flattenMap`.
     */
-    readonly mapLevel: MapLevel;
     readonly jsonData: ILevel;
     public childElements: MapElement[];
     public Map2D!: MapCell[][];
@@ -24,7 +22,6 @@ export class Map {
      * @param originalData 
      */
     constructor(originalData: ILevel) {
-        this.mapLevel = originalData.level;
         this.jsonData = originalData;
         this.childElements = [];
     }

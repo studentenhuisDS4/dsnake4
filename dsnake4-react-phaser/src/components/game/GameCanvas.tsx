@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import Phaser from 'phaser'
-import { IonPhaser } from '@ion-phaser/react'
-import { MenuScene } from './Scenes/MenuScene';
-import {GameCanvasProps, GameCanvasState} from "src/components/game/Models";
-
-export const FPS: number = 40;
+import { IonPhaser, GameInstance } from '@ion-phaser/react'
+import { GameCanvasProps, GameCanvasState } from "src/components/game/Models";
+import { BootScene } from './Scenes';
+import { SceneEvents } from './Events';
 
 export default class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
+    gameReady: boolean = false;
+
     constructor(props: GameCanvasProps) {
         super(props);
 
@@ -15,7 +16,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
             game: {
                 title: 'DSnake4',
                 type: Phaser.AUTO,
-                scene: [MenuScene],
+                scene: [BootScene],
                 width: this.props.gameCanvasSize.width,
                 height: this.props.gameCanvasSize.height,
                 fps: {
@@ -23,8 +24,25 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                     forceSetTimeOut: true
                 },
                 backgroundColor: '#000000',
-            },
+                callbacks: {
+                    postBoot: (game) => {
+                        this.gameReady = true;
+                        this.onGameResize();
+                        console.log("Game started");
+                    }
+                }
+            } as GameInstance
         };
+    }
+
+    onGameResize() {
+        const game = this.state.game.instance;
+        if (this.gameReady && game != null) {
+            game.events.emit(SceneEvents.UpdatedGameSize, {
+                width: this.props.gameCanvasSize.width,
+                height: this.props.gameCanvasSize.height
+            });
+        }
     }
 
     render() {

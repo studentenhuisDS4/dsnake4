@@ -47,12 +47,6 @@ export class MapController {
         this.level = level;
 
         this.beerCapsImage = beerCapsImage;
-
-        console.log("MapController constructed with cell size", this.cellHeight, this.cellWidth);
-    }
-
-    public renderCurrentMap() {
-        this.renderMapCells();
     }
 
     public checkWallCollision(snakePosition: Vector2, throughWalls: boolean) {
@@ -113,7 +107,7 @@ export class MapController {
         return stairs;
     }
 
-    private renderMapCells() {
+    public renderMapCells() {
         this.renderedCells = [];
         this.map.Map2D
             .forEach(row => row

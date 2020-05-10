@@ -1,52 +1,55 @@
 import * as Phaser from 'phaser';
 import { defaultTextStyle } from '../Data/Common';
-import { Scene } from 'phaser';
-import { SnakeScene } from './SnakeScene';
-import { PauseScene as PauseTFScene } from './PauseScene';
-import { SceneEvents } from './Events';
+import { SceneEvents } from '../Events';
 import { Vector2, Transform } from '../Generics';
-import { Button } from '../GameObjects/Button';
-import { SW, SH } from '../GameConfig';
+import { SceneMap, SnakeScene, PauseScene } from './';
+import { BaseScene, Button } from '../GameObjects';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
-    visible: false,
-    key: 'Hub',
+    visible: false
 };
-
-export class HubScene extends Phaser.Scene {
-    width: number;
-    height: number;
-
-    gameScene: SnakeScene;
-    gameSceneObject!: Scene;
-    pauseScene: PauseTFScene;
-    pauseSceneObject!: Scene;
-
+export class HubScene extends BaseScene {
+    defaultSceneData: any;
     nicknameText!: Phaser.GameObjects.Text;
     pointsText!: Phaser.GameObjects.Text;
     menuLink!: Phaser.GameObjects.Text;
 
+    verticalOffset = new Vector2(0, 50);
+    childTransform!: Transform;
+
+    gameScene!: SnakeScene;
+    pauseMenuScene!: PauseScene;
+
     constructor() {
         super(sceneConfig);
+    }
 
-        this.width = SW;
-        this.height = SH;
+    public init() {
+        this.childTransform = new Transform(this.verticalOffset, this.scale.width, this.scale.height);
+        this.defaultSceneData = {
+            transform: this.childTransform
+        };
+        this.gameScene = this.getScene(SceneMap.GAME.name) as SnakeScene;
+        this.pauseMenuScene = this.getScene(SceneMap.PAUSE.name) as PauseScene;
 
-        const verticalOffset = new Vector2(0, 50);
-        const childTransform = new Transform(verticalOffset, this.width, this.height);
-        this.gameScene = new SnakeScene(childTransform);
-        this.pauseScene = new PauseTFScene(childTransform);
+        console.log(this.scale.width);
+    }
+
+    public onUpdateGameSize(transform: Transform) {
+        console.log("new size");
+        this.gameScene.applyCameraTransform(transform);
+        this.pauseMenuScene.applyCameraTransform(transform);
     }
 
     public preload() {
         this.nicknameText = this.add.text(10, 20, 'Nickname Here', defaultTextStyle);
         this.pointsText = this.add.text(10 + this.nicknameText.width + 20, 20, '0', defaultTextStyle);
         this.menuLink = this.add
-            .text(this.width - 20, 20, 'MENU', defaultTextStyle)
+            .text(this.scale.width - 20, 20, 'MENU', defaultTextStyle)
             .setOrigin(1, 0);
 
-        const button = Button.create(this, this.width - 20, 20, 'MENU', defaultTextStyle).setOrigin(1, 0);
+        const button = Button.create(this, this.scale.width - 20, 20, 'MENU', defaultTextStyle).setOrigin(1, 0);
         this.add.existing(button);
         button.on('pointerup', () => {
             this.game.events.emit(SceneEvents.GamePauseEvent);
@@ -54,35 +57,35 @@ export class HubScene extends Phaser.Scene {
     }
 
     public create() {
-        this.gameSceneObject = this.game.scene.add('GameScene', this.gameScene, false);
-        this.pauseSceneObject = this.game.scene.add('PauseScene', this.pauseScene, false);
+        this.gameScene.scene.start('Game', this.defaultSceneData);
 
+        // TODO just create an event and addListener/emit it.
         this.time.addEvent({ callback: this.onTimedUpdate, callbackScope: this, loop: true });
 
         this.game.events
             .addListener(SceneEvents.GameRestartEvent, () => {
-                if (this.gameSceneObject.scene.isActive() == false) {
+                if (this.gameScene.scene.isActive() == false) {
                     console.log('Resuming. Continuing game.');
-                    this.gameSceneObject.scene.restart();
-                    this.pauseScene.scene.stop();
+                    this.gameScene.scene.restart(this.defaultSceneData);
+                    this.pauseMenuScene.scene.stop();
                 } else {
                     throw Error("Cannot pause an already paused scene");
                 }
             })
             .addListener(SceneEvents.GameContinuedEvent, () => {
-                if (this.gameSceneObject.scene.isActive() == false) {
+                if (this.gameScene.scene.isActive() == false) {
                     console.log('Resuming. Continuing game.');
-                    this.pauseSceneObject.scene.stop();
-                    this.gameSceneObject.scene.resume();
+                    this.pauseMenuScene.scene.stop();
+                    this.gameScene.scene.resume();
                 } else {
                     throw Error("Cannot pause an already paused scene");
                 }
             })
             .addListener(SceneEvents.GamePauseEvent, () => {
-                if (this.gameSceneObject.scene.isActive()) {
+                if (this.gameScene.scene.isActive()) {
                     console.log('Pause called. Pausing game.');
-                    this.gameSceneObject.scene.pause();
-                    this.pauseSceneObject.scene.start();
+                    this.pauseScene(this.gameScene);
+                    this.runScene(this.pauseMenuScene, this.defaultSceneData);
                 } else {
                     throw Error("Cannot pause an already paused scene");
                 }

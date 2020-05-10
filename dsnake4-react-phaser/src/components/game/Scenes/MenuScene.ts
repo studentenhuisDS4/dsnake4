@@ -7,15 +7,12 @@ import { GameObjects } from 'phaser';
 import { MenuItem } from '../GameObjects/MenuDefinition';
 import { defaultTextStyle } from '../Data/Common';
 import { Vector2, Transform } from '../Generics';
-import { UnitTestScene } from './TestScene';
-import { TransformScene } from './TransformScene';
-import { HubScene } from './HubScene';
-import { SnakeScene } from './SnakeScene';
+import { TransformScene } from '../GameObjects/TransformScene';
+import * as Scenes from '.';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: false,
-    visible: false,
-    key: 'MainMenu',
+    visible: false
 };
 
 export class MenuScene extends TransformScene {
@@ -35,14 +32,12 @@ export class MenuScene extends TransformScene {
         this.load.image('logo', ['img/assets/menu.png', 'img/assets/menu_n.png']);
         this.load.audio('background', '/audio/DSnake4_mixdown.mp3');
         this.load.spritesheet('snake', 'img/assets/Snake/snake3.png', { frameWidth: 10, frameHeight: 10 });
-
-        this.game.scene.add("Hub", HubScene);
     }
 
     public create() {
         this.createLogo('logo');
         const offset = 60;
-        this.createMenu(this.width / 2, this.height / 2 + offset + 60, 30, [
+        this.createMenu(this.scale.width / 2, this.scale.height / 2 + offset + 60, 30, [
             {
                 text: "PLAY GAME",
                 onClick: () => {
@@ -51,7 +46,7 @@ export class MenuScene extends TransformScene {
                     // Fade-out camera
                     this.cameras.main.fade(400, 0, 0, 0);
                     this.scene.transition({
-                        target: "Hub",
+                        target: Scenes.SceneMap.HUB.name,
                         duration: 500,
                         allowInput: false
                     });
@@ -64,14 +59,14 @@ export class MenuScene extends TransformScene {
             {
                 text: "DEBUG // TEST",
                 onClick: () => {
-                    this.game.scene.start(UnitTestScene);
+                    this.game.scene.start(Scenes.SceneMap.TEST.name);
                 }
             },
             {
                 text: "HELP",
             }
         ]);
-        this.createTitle(this.width / 2, this.height * 1 / 2 + offset + 30, "--- MENU ---");
+        this.createTitle(this.scale.width / 2, this.scale.height * 1 / 2 + offset + 30, "--- MENU ---");
         this.createSnakes();
         this.renderSnakes();
 
@@ -91,8 +86,8 @@ export class MenuScene extends TransformScene {
     }
 
     createLogo(imageName: string) {
-        const x = this.width / 2;
-        const y = this.height / 4 + 40;
+        const x = this.scale.width / 2;
+        const y = this.scale.height / 4 + 40;
 
         this.add.circle(x, y - 15, 35, 0x999999, 1);
         this.add.circle(x + 15, y - 25, 30, 0x000000, 1);
@@ -162,10 +157,10 @@ export class MenuScene extends TransformScene {
     }
 
     private limitSnake(snake: Snake) {
-        const DISTANCE_MIN_X = 30 - Math.random() * 5;
-        const DISTANCE_MAX_X = 75 + Math.random() * 5;
-        const DISTANCE_MIN_Y = 0 + Math.random() * 5;
-        const DISTANCE_MAX_Y = 55 + Math.random() * 5;
+        const DISTANCE_MIN_X = 10 - Math.random() * 5;
+        const DISTANCE_MAX_X = 55 + Math.random() * 5;
+        const DISTANCE_MIN_Y = 5 + Math.random() * 5;
+        const DISTANCE_MAX_Y = 75 + Math.random() * 5;
         switch (snake.direction) {
             case 'Left':
                 if (snake.x < DISTANCE_MIN_X) {

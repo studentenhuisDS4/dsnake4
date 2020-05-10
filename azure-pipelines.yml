@@ -24,6 +24,10 @@ jobs:
     - task: NodeTool@0 
       inputs:
         versionSpec: $(node_version)
+    # Copy files
+    - script: cp .prod.env .env
+      workingDirectory: react-typescript
+      displayName: Transform .env file for Production
     - script: |
         npm install
         npm run build
@@ -31,7 +35,7 @@ jobs:
       workingDirectory: react-typescript
     - task: CopyFiles@2
       inputs:
-        Contents: 'react-typescript/dist/**' # Pull the build directory (React)
+        Contents: 'react-typescript/build/**' # Pull the build directory (React)
         TargetFolder: '$(Build.ArtifactStagingDirectory)'
     - task: PublishBuildArtifacts@1
       inputs: 
@@ -77,4 +81,3 @@ jobs:
 #       pip install pytest pytest-azurepipelines
 #       pytest
 #     displayName: 'pytest'
-

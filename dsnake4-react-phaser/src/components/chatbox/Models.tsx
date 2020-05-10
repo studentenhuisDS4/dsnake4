@@ -7,6 +7,9 @@ export default interface ChatMessageModel {
 export interface ReplyChatMessageModel extends ChatMessageModel {
     replyMsgId: number;
 }
+export interface ChatMessageComponentModel extends ChatMessageModel {
+    position: 'left' | 'right',
+}
 
 export interface ChatboxProps {
     changePlayerName: () => void,

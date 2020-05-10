@@ -96,7 +96,7 @@ export default class App extends Component<AppProps, AppState> {
                         ) : (
                             <div className="row h-100">
                                 <div className="col-md-8 h-100">
-                                    <div className="w-100 h-100 bg-seagreen border border-2x border-dashed border-teal" ref={this.canvasContainer}>
+                                    <div className="w-100 h-100 bg-black border border-2x border-dashed border-teal" ref={this.canvasContainer}>
                                         {this.state.initializeGame && <GameCanvas gameCanvasSize={this.state.gameCanvasSize} />}
                                     </div>
                                 </div>

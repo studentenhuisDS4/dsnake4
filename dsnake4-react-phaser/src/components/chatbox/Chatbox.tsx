@@ -1,5 +1,5 @@
 import React, { Component, createRef } from 'react';
-import ChatMessageModel, {ChatboxProps, ChatboxState} from './Models';
+import {ChatboxProps, ChatboxState, ChatMessageComponentModel} from './Models';
 import Language from "../../language/Language";
 import SingleInputForm from '../global/SingleInputForm';
 
@@ -41,11 +41,11 @@ export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
 
     render() {
         return (
-            <div className="d-flex flex-column h-100 bg-seagreen border border-2x border-dashed border-teal">
+            <div className="d-flex flex-column h-100 bg-black border border-2x border-dashed border-teal">
                 <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.playerName} <span className="ml-1 fa fa-xs fa-pencil text-teal-dark cursor-pointer" onClick={this.props.changePlayerName} /></h2>
                 <div className="chatbox flex-grow-1 overflow-auto">
                     {this.state.chats.length > 0
-                        ? this.state.chats.map(chat => <ChatMessage {...chat} key={chat.id} />)
+                        ? this.state.chats.map(chat => <ChatMessage {...chat} position="right" key={chat.id} />)
                         : <p className="text-muted">{Language.getTranslation('noChats', 'chatbox')}</p>
                     }
                     <div className="float-left clearfix" ref={this.messagesEnd} />
@@ -58,11 +58,11 @@ export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
     }
 }
 
-const ChatMessage: React.FunctionComponent<ChatMessageModel> = props => {
+const ChatMessage: React.FunctionComponent<ChatMessageComponentModel> = props => {
     return (
-        <p>
+        <div className={'speech-bubble ' + props.position}>
             <strong>{props.playerName}</strong><br />
             <small className="text-uppercase text-teal-xlight">{props.dateAdded.toLocaleTimeString()}</small> {props.message}
-        </p>
+        </div>
     );
 };

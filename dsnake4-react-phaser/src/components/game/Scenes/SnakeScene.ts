@@ -3,7 +3,7 @@ import { SW, SH } from '../GameConfig';
 import { Stair } from '../Data/Map/Stair';
 import { ShopElement, ShopItem } from '../Data/Map/ShopElement';
 import { MapController } from '../Data/MapController';
-import { CELLS_X, CELLS_Y, MapLevel, CellType, Colors } from '../Data/Common';
+import { CELLS_X, MapLevel, CellType, Colors, CELLS_Y } from '../Data/Common';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
@@ -58,7 +58,7 @@ export class SnakeScene extends TransformScene {
 
     public init() {
         this.cellWidth = this.game.scale.width / CELLS_X;
-        this.cellHeight = this.game.scale.width / (CELLS_X / CELLS_Y) / CELLS_Y;
+        this.cellHeight = this.cellWidth;
 
         this.mapControllers = [];
         this.mapControllers.push(new MapController(this as Scene, this.cellWidth, this.cellHeight, MapLevel.FirstFloor));
@@ -69,7 +69,7 @@ export class SnakeScene extends TransformScene {
 
         this.game.events.addListener(SceneEvents.UpdatedGameSize, () => {
             this.cellWidth = this.game.scale.width / CELLS_X;
-            this.cellHeight = this.game.scale.width / (CELLS_X / CELLS_Y) / CELLS_Y;
+            this.cellHeight = this.cellWidth;
         });
     }
 
@@ -95,7 +95,6 @@ export class SnakeScene extends TransformScene {
     }
 
     public create(data: any) {
-        console.log("Starting Snake scene");
         this.applyCameraTransform(data?.transform);
 
         // Priority of drawing matters!
@@ -105,7 +104,7 @@ export class SnakeScene extends TransformScene {
             .image(0, 0, 'floor')
             .setOrigin(0, 0)
             .setAlpha(0.7)
-            .setScale(0.24, 0.24)
+            .setDisplaySize(this.game.scale.width, this.game.scale.width / CELLS_X * CELLS_Y)
             .setPipeline('Light2D');
 
         this.lights.enable();
@@ -133,7 +132,6 @@ export class SnakeScene extends TransformScene {
         this.mapControllers[4].map.appendElement(this.shopEl[1], true);
         this.mapControllers[4].map.appendElement(this.shopEl[2], true);
 
-
         this.changeLevel(this.currentLevel);
 
         this.backgroundMusic = this.sound.add('background');
@@ -147,9 +145,7 @@ export class SnakeScene extends TransformScene {
         this.addAllMainObjects();
 
         this.mapControllers.forEach(mc => { this.updateRenderedMap(mc); });
-
         this.resetGame();
-
         this.changeLevel(this.currentLevel);
         this.renderSnake();
     }
@@ -170,7 +166,7 @@ export class SnakeScene extends TransformScene {
                 this.joostPotionCounter = this.joostPotionDuration;
                 this.activateThroughWalls();
             } else {
-                console.log('Can\'t use potion right now');
+                console.warn('Can\'t use potion right now');
             }
         }
 
@@ -228,8 +224,6 @@ export class SnakeScene extends TransformScene {
             this.joostPotionCounter--;
             if (this.joostPotionCounter == 0) { this.deactivateThroughWalls(); }
         }
-
-
     }
 
     private stairClimbing(stair: Stair) {

@@ -1,5 +1,3 @@
-import { Transform } from '../Generics';
-
 export abstract class BaseScene extends Phaser.Scene {
 
     protected getScene(key: Phaser.Scene | string) {

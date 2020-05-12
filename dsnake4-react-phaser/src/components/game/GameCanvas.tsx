@@ -35,13 +35,16 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                     postBoot: (game) => {
                         this.gameReady = true;
                         this.onCanvasSizeChange(canvasSize);
-                        console.log("Game started");
                     }
                 }
             },
         };
 
         window.addEventListener('resize', this.setGameCanvasSize);
+    }
+
+    componentDidMount() {
+        this.setGameCanvasSize();
     }
 
     onCanvasSizeChange(canvasSize: GameCanvasSize) {
@@ -54,8 +57,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
     }
 
     setGameCanvasSize() {
-        console.log('set new size');
-        if (this.state.loadGame && this.canvasContainer.current != null) {
+        if (this.canvasContainer.current != null) {
             const canvasSize: GameCanvasSize = {
                 height: this.canvasContainer.current!.clientHeight,
                 width: this.canvasContainer.current!.clientWidth,
@@ -73,7 +75,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
     render() {
         const { initialize, game } = this.state;
         return (
-            <div className="w-100 h-100" ref={this.canvasContainer}>
+            <div className="w-100 h-100 bg-black border border-2x border-dashed border-teal" ref={this.canvasContainer}>
                 {this.state.loadGame && <IonPhaser game={game} initialize={initialize} />}
             </div>
         );

@@ -77,9 +77,7 @@ export default class App extends Component<AppProps, AppState> {
                         ) : (
                             <div className="row h-100">
                                 <div className="col-md-8 h-100">
-                                    <div className="w-100 h-100 bg-black border border-2x border-dashed border-teal">
-                                        <GameCanvas />
-                                    </div>
+                                    <GameCanvas />
                                 </div>
                                 <div className="col-md-4 h-100">
                                     <ChatContext.Provider value={this.chat}>

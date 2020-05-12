@@ -9,10 +9,6 @@ import {SocketService} from "src/components/chatbox/SocketService";
 export default class ChatboxContainer extends Component<ChatboxProps> {
     private chat = new SocketService();
 
-    constructor(props: ChatboxProps) {
-        super(props);
-    }
-
     render() {
         return (
             <ChatContext.Provider value={this.chat}>
@@ -99,7 +95,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
                     <div className="float-left clearfix" ref={this.messagesEnd} />
                 </div>
                 <div className="chatbox-form">
-                    <SingleInputForm centerContent={false} inputPlaceholder="chatbox" submitValue={this.sendMessage} />
+                    <SingleInputForm centerContent={false} hideHelpText={true} inputPlaceholder="chatbox" submitValue={this.sendMessage} />
                 </div>
             </div>
         );

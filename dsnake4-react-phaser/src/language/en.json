@@ -1,6 +1,7 @@
 {
     "global": {
-        "selectItem": "Selecteer een item..."
+        "selectItem": "Selecteer een item...",
+        "pressEnterToSubmit": "Press [Enter] to save and continue"
     },
     "chatbox": {
         "inputPlaceholder": "Type and press [Enter] to chat",
@@ -8,6 +9,17 @@
         "title": "Chat with players"
     },
     "playerForm": {
-        "inputPlaceholder": "Enter your name and press [Enter]"
+        "inputPlaceholder": "Choose a player name"
+    },
+    "usernameForm": {
+        "inputLabel": "Username",
+        "inputPlaceholder": "Enter your DS4 username"
+    },
+    "passwordForm": {
+        "inputLabel": "Password",
+        "inputPlaceholder": "Enter your password"
+    },
+    "loginForm": {
+        "loadingMessage": "Logging in..."
     }
 }

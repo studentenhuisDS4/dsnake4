@@ -37,7 +37,7 @@ export default class GameCanvas extends Component<GameCanvasProps, GameCanvasSta
                         this.onCanvasSizeChange(canvasSize);
                     }
                 }
-            },
+            }
         };
 
         window.addEventListener('resize', this.setGameCanvasSize);

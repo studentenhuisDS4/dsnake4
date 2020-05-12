@@ -4,6 +4,7 @@ export interface ChatMessage {
     dateAdded: Date,
     message: string;
 }
+
 interface PlayerModel {
     id: string,
     name: string,

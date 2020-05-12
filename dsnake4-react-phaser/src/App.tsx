@@ -5,19 +5,26 @@ import Chatbox from './components/chatbox/Chatbox';
 import GameCanvas from './components/game/GameCanvas';
 import Language from "./language/Language";
 import SingleInputForm from "./components/global/SingleInputForm";
-import AppState, { AppProps } from "src/AppModel";
+import AppState, { AppProps } from "./AppModel";
+import { ChatContext } from './components/chatbox/ChatContext';
+import { SocketService } from './components/chatbox/SocketService';
+import {PlayerModel} from "src/components/chatbox/Models";
+import HelperFunctions from "src/components/global/HelperFunctions";
 
 export default class App extends Component<AppProps, AppState> {
+    private chat = new SocketService();
+
     constructor(props: AppProps) {
         super(props);
         this.changePlayerName = this.changePlayerName.bind(this);
         this.initializeGame = this.initializeGame.bind(this);
         document.title = config.siteName;
 
+        const player = this.loadPlayer();
         this.state = {
             activeLanguage: Language.getLanguage(),
-            initializeApp: true,
-            playerName: '',
+            initializeApp: player.name === '',
+            player,
         };
     }
 
@@ -27,31 +34,33 @@ export default class App extends Component<AppProps, AppState> {
         });
     }
 
-    componentDidMount() {
-        const playerName = this.loadPlayerName();
+    initializeGame(playerName: string) {
+        const player = {
+            id: HelperFunctions.generateUUID(),
+            name: playerName,
+        };
+        this.savePlayerName(player);
         this.setState({
             initializeApp: false,
-            playerName,
+            player,
         });
     }
 
-    initializeGame(playerName: string) {
-        if (playerName !== '') {
-            this.savePlayerName(playerName);
-            this.setState({
-                initializeApp: false,
-                playerName,
-            });
+    loadPlayer() :PlayerModel {
+        let playerJson = localStorage.getItem('player');
+
+        let player :PlayerModel = {
+            id: HelperFunctions.generateUUID(),
+            name: '',
+        };
+        if (playerJson != null) {
+            player = JSON.parse(playerJson);
         }
+        return player;
     }
 
-    loadPlayerName() {
-        const playerName = localStorage.getItem('playerName');
-        return playerName != null ? playerName : '';
-    }
-
-    savePlayerName(playerName: string) {
-        localStorage.setItem('playerName', playerName);
+    savePlayerName(player: PlayerModel) {
+        localStorage.setItem('player', JSON.stringify(player));
     }
 
     render() {
@@ -73,7 +82,9 @@ export default class App extends Component<AppProps, AppState> {
                                     </div>
                                 </div>
                                 <div className="col-md-4 h-100">
-                                    <Chatbox changePlayerName={this.changePlayerName} playerName={this.state.playerName} />
+                                    <ChatContext.Provider value={this.chat}>
+                                        <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
+                                    </ChatContext.Provider>
                                 </div>
                             </div>
                         )}

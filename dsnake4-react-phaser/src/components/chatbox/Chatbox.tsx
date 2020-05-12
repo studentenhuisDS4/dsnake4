@@ -4,8 +4,25 @@ import ChatMessageModel, {ChatboxProps, ChatboxState, ChatMessageComponentModel}
 import {ChatContext} from "./ChatContext";
 import SingleInputForm from '../global/SingleInputForm';
 import HelperFunctions from "../global/HelperFunctions";
+import {SocketService} from "src/components/chatbox/SocketService";
 
-export default class Chatbox extends Component<ChatboxProps, ChatboxState> {
+export default class ChatboxContainer extends Component<ChatboxProps> {
+    private chat = new SocketService();
+
+    constructor(props: ChatboxProps) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <ChatContext.Provider value={this.chat}>
+                <Chatbox changePlayerName={this.props.changePlayerName} player={this.props.player} />
+            </ChatContext.Provider>
+        );
+    };
+}
+
+export class Chatbox extends Component<ChatboxProps, ChatboxState> {
     private messagesEnd = createRef<HTMLDivElement>();
     static contextType = ChatContext;
 

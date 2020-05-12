@@ -6,14 +6,10 @@ import GameCanvas from './components/game/GameCanvas';
 import Language from "./language/Language";
 import SingleInputForm from "./components/global/SingleInputForm";
 import AppState, { AppProps } from "./AppModel";
-import { ChatContext } from './components/chatbox/ChatContext';
-import { SocketService } from './components/chatbox/SocketService';
 import {PlayerModel} from "src/components/chatbox/Models";
 import HelperFunctions from "src/components/global/HelperFunctions";
 
 export default class App extends Component<AppProps, AppState> {
-    private chat = new SocketService();
-
     constructor(props: AppProps) {
         super(props);
         this.changePlayerName = this.changePlayerName.bind(this);
@@ -80,9 +76,7 @@ export default class App extends Component<AppProps, AppState> {
                                     <GameCanvas />
                                 </div>
                                 <div className="col-md-4 h-100">
-                                    <ChatContext.Provider value={this.chat}>
                                         <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
-                                    </ChatContext.Provider>
                                 </div>
                             </div>
                         )}

@@ -20,8 +20,10 @@ export default class SingleInputForm extends Component<SingleInputFormProps, Sin
 
     handleSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
-        this.props.submitValue(this.state.value);
-        this.setMessage('');
+        if (this.state.value !== '') {
+            this.props.submitValue(this.state.value);
+            this.setMessage('');
+        }
     }
 
     setMessage(value: string) {

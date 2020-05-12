@@ -1,10 +1,8 @@
-import GameCanvasSize from "src/components/game/Models";
+import {PlayerModel} from "src/components/chatbox/Models";
 
 export interface AppProps {}
 export default interface AppState {
     activeLanguage: string,
-    gameCanvasSize: GameCanvasSize,
     initializeApp: boolean,
-    initializeGame: boolean,
-    playerName: string,
+    player: PlayerModel,
 }

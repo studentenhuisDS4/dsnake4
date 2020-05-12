@@ -89,15 +89,7 @@ $chatbox-padding: 1.25rem;
     position: relative;
     margin-top: .5rem;
     padding: .25rem .5rem;
-    background: $teal-dark;
     border-radius: .4em;
-
-    &.left {
-        margin-right: 40px;
-    }
-    &.right {
-        margin-left: 40px;
-    }
 
     &:after {
         content: '';
@@ -108,18 +100,28 @@ $chatbox-padding: 1.25rem;
         border: 0.844em solid transparent;
         border-bottom: 0;
     }
-    &.left:after {
-        left: 0;
-        top: 50%;
-        margin-left: -0.844em;
-        border-right-color: $teal-dark;
-        border-left: 0;
+
+    &.left {
+        margin-right: 40px;
+        background: $teal-dark;
+
+        &:after {
+            left: 0;
+            top: 50%;
+            margin-left: -0.844em;
+            border-right-color: $teal-dark;
+            border-left: 0;
+        }
     }
-    &.right:after {
-        right: 0;
-        top: 50%;
-        margin-right: -0.844em;
-        border-left-color: $teal-dark;
-        border-right: 0;
+    &.right {
+        margin-left: 40px;
+        background: $teal-darker;
+        &:after {
+            right: 0;
+            top: 50%;
+            margin-right: -0.844em;
+            border-left-color: $teal-darker;
+            border-right: 0;
+        }
     }
 }

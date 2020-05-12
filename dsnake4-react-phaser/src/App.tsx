@@ -1,4 +1,4 @@
-import React, { Component, createRef } from 'react';
+import React, { Component } from 'react';
 import './css/main.scss';
 import config from './config/config.json';
 import Chatbox from './components/chatbox/Chatbox';
@@ -8,25 +8,15 @@ import SingleInputForm from "./components/global/SingleInputForm";
 import AppState, { AppProps } from "src/AppModel";
 
 export default class App extends Component<AppProps, AppState> {
-    private canvasContainer = createRef<HTMLDivElement>();
-
     constructor(props: AppProps) {
         super(props);
         this.changePlayerName = this.changePlayerName.bind(this);
         this.initializeGame = this.initializeGame.bind(this);
-        this.setGameCanvasSize = this.setGameCanvasSize.bind(this);
         document.title = config.siteName;
-
-        // const playerName = this.loadPlayerName();
 
         this.state = {
             activeLanguage: Language.getLanguage(),
-            gameCanvasSize: {
-                height: 0,
-                width: 0,
-            },
             initializeApp: true,
-            initializeGame: false,
             playerName: '',
         };
     }
@@ -34,7 +24,6 @@ export default class App extends Component<AppProps, AppState> {
     changePlayerName() {
         this.setState({
             initializeApp: true,
-            initializeGame: false,
         });
     }
 
@@ -44,10 +33,6 @@ export default class App extends Component<AppProps, AppState> {
             initializeApp: false,
             playerName,
         });
-    }
-
-    componentDidUpdate() {
-        this.setGameCanvasSize();
     }
 
     initializeGame(playerName: string) {
@@ -69,18 +54,6 @@ export default class App extends Component<AppProps, AppState> {
         localStorage.setItem('playerName', playerName);
     }
 
-    setGameCanvasSize() {
-        if (!this.state.initializeGame && this.canvasContainer.current != null) {
-            this.setState({
-                gameCanvasSize: {
-                    height: this.canvasContainer.current!.clientHeight,
-                    width: this.canvasContainer.current!.clientWidth,
-                },
-                initializeGame: true,
-            });
-        }
-    }
-
     render() {
         return (
             <main>
@@ -93,17 +66,17 @@ export default class App extends Component<AppProps, AppState> {
                                 </div>
                             </div>
                         ) : (
-                                <div className="row h-100">
-                                    <div className="col-md-8 h-100">
-                                        <div className="w-100 h-100 bg-black border border-2x border-dashed border-teal" ref={this.canvasContainer}>
-                                            {this.state.initializeGame && <GameCanvas gameCanvasSize={this.state.gameCanvasSize} />}
-                                        </div>
-                                    </div>
-                                    <div className="col-md-4 h-100">
-                                        <Chatbox changePlayerName={this.changePlayerName} playerName={this.state.playerName} />
+                            <div className="row h-100">
+                                <div className="col-md-8 h-100">
+                                    <div className="w-100 h-100 bg-black border border-2x border-dashed border-teal">
+                                        <GameCanvas />
                                     </div>
                                 </div>
-                            )}
+                                <div className="col-md-4 h-100">
+                                    <Chatbox changePlayerName={this.changePlayerName} playerName={this.state.playerName} />
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </main>

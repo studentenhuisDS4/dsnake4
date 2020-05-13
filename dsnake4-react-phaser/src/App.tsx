@@ -5,32 +5,32 @@ import Chatbox from './components/chatbox/Chatbox';
 import GameCanvas from './components/game/GameCanvas';
 import Language from "./language/Language";
 import SingleInputForm from "./components/global/SingleInputForm";
-import AppState, { AppProps } from "./AppModel";
-import { ChatContext } from './components/chatbox/ChatContext';
-import { SocketService } from './components/chatbox/SocketService';
+import AppState, {AppProps} from "./AppModel";
 import {PlayerModel} from "src/components/chatbox/Models";
 import HelperFunctions from "src/components/global/HelperFunctions";
+import LoginForm from "src/components/auth/LoginForm";
+import Auth from "src/components/auth/Auth";
 
 export default class App extends Component<AppProps, AppState> {
-    private chat = new SocketService();
-
     constructor(props: AppProps) {
         super(props);
         this.changePlayerName = this.changePlayerName.bind(this);
         this.initializeGame = this.initializeGame.bind(this);
+        this.setLoginStatus = this.setLoginStatus.bind(this);
         document.title = config.siteName;
 
         const player = this.loadPlayer();
         this.state = {
             activeLanguage: Language.getLanguage(),
-            initializeApp: player.name === '',
+            initializeGame: player.name === '',
+            isLoggedIn: Auth.checkLoginStatus(),
             player,
         };
     }
 
     changePlayerName() {
         this.setState({
-            initializeApp: true,
+            initializeGame: true,
         });
     }
 
@@ -41,7 +41,7 @@ export default class App extends Component<AppProps, AppState> {
         };
         this.savePlayerName(player);
         this.setState({
-            initializeApp: false,
+            initializeGame: false,
             player,
         });
     }
@@ -63,26 +63,36 @@ export default class App extends Component<AppProps, AppState> {
         localStorage.setItem('player', JSON.stringify(player));
     }
 
+    setLoginStatus(status: boolean) {
+        this.setState({isLoggedIn: status});
+    }
+
     render() {
         return (
             <main>
                 <div className="vh-100">
                     <div className="container h-100 py-5">
-                        {this.state.initializeApp ? (
+                        {this.state.isLoggedIn ? (
+                            this.state.initializeGame ? (
+                                <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
+                                    <div className="w-50">
+                                        <SingleInputForm centerContent={true} inputPlaceholder="playerForm" submitValue={this.initializeGame} />
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="row h-100">
+                                    <div className="col-md-8 h-100">
+                                        <GameCanvas />
+                                    </div>
+                                    <div className="col-md-4 h-100">
+                                        <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
+                                    </div>
+                                </div>
+                            )
+                        ) : (
                             <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
                                 <div className="w-50">
-                                    <SingleInputForm centerContent={true} inputPlaceholder="playerForm" submitValue={this.initializeGame} />
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="row h-100">
-                                <div className="col-md-8 h-100">
-                                    <GameCanvas />
-                                </div>
-                                <div className="col-md-4 h-100">
-                                    <ChatContext.Provider value={this.chat}>
-                                        <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
-                                    </ChatContext.Provider>
+                                    <LoginForm loginCallback={this.setLoginStatus} />
                                 </div>
                             </div>
                         )}

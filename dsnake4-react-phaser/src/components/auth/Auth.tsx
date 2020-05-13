@@ -1,15 +1,41 @@
+import {JwtToken, LoginFormModel} from "src/components/auth/Models";
+import ApiConnector from "src/components/global/ApiConnector";
+
 const Auth = {
-    checkLoginStatus() :boolean {
-        return checkAuthToken();
+    authenticate(loginForm: LoginFormModel) {
+        const data = {
+            'username-or-email': loginForm.username,
+            password: loginForm.password,
+        };
+        ApiConnector.connect('post', 'auth-jwt/', false, data)
+            .then((result: any) => {
+                const jwtToken: JwtToken = {
+                    token: result!.token,
+                    refresh: result!.refresh,
+                };
+                console.log('logged in', jwtToken);
+                saveAuthToken(jwtToken);
+            })
+            .catch(error => {
+                console.log('error logging in', error);
+            });
     },
-    saveAuthToken(token: string) {
-        localStorage.setItem('authToken', token);
+    checkLoginStatus() :boolean {
+        return !!this.getAuthToken();
+    },
+    getAuthToken() :string {
+        const token = localStorage.getItem('authToken');
+        if (token) {
+            return token;
+        } else {
+            return '';
+        }
     },
 };
 
-function checkAuthToken() :boolean {
-    const token = localStorage.getItem('authToken');
-    return !!token;
+function saveAuthToken(jwtToken: JwtToken) {
+    localStorage.setItem('authToken', jwtToken.token);
+    localStorage.setItem('refreshToken', jwtToken.refresh);
 }
 
 export default Auth;

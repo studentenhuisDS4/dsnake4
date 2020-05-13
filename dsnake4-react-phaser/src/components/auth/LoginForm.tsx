@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import LoginFormState, {LoginFormModel, LoginFormProps} from "./Models";
 import SingleInputForm from "../global/SingleInputForm";
 import LoadingSpinner from "../global/LoadingSpinner";
+import Auth from "src/components/auth/Auth";
 
 export default class LoginForm extends Component<LoginFormProps, LoginFormState> {
     constructor(props: LoginFormProps) {
@@ -22,6 +23,7 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
     }
 
     handleLogin() {
+        Auth.authenticate(this.state.loginForm);
         this.props.loginCallback(true);
     }
 
@@ -30,7 +32,7 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
             const loginForm :LoginFormModel = this.state.loginForm;
             loginForm.password = password;
             this.setState({
-                isLoggedIn: true,
+                isLoggedIn: Auth.checkLoginStatus(),
                 isLoggingIn: true,
                 loginForm,
             }, () => {
@@ -53,7 +55,7 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
                 if (this.state.loginForm.username === '') {
                     return <SingleInputForm centerContent={true} inputPlaceholder="usernameForm" submitValue={this.onSubmitUsername} />
                 } else {
-                    return <SingleInputForm centerContent={true} inputPlaceholder="passwordForm" submitValue={this.onSubmitPassword} />
+                    return <SingleInputForm centerContent={true} inputPlaceholder="passwordForm" inputType="password" submitValue={this.onSubmitPassword} />
                 }
             } else {
                 return <LoadingSpinner loadingMessage="loginForm" />

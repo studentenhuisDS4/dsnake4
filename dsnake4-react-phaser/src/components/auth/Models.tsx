@@ -11,3 +11,8 @@ export default interface LoginFormState {
     isLoggingIn: boolean,
     loginForm: LoginFormModel,
 }
+
+export interface JwtToken {
+    token: string,
+    refresh: string,
+}

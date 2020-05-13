@@ -13,7 +13,6 @@ const Auth = {
                     token: result!.token,
                     refresh: result!.refresh,
                 };
-                console.log('logged in', jwtToken);
                 saveAuthToken(jwtToken);
             })
             .catch(error => {

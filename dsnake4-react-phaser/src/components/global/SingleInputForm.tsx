@@ -33,7 +33,7 @@ export default class SingleInputForm extends Component<SingleInputFormProps, Sin
     render () {
         const centerContent = this.props.centerContent ? ' text-center' : '';
         return <form className="w-100" onSubmit={this.handleSubmit}>
-            <p><input className={'single-input-form' + centerContent} type="text" value={this.state.value} onChange={this.handleChange} placeholder={Language.getTranslation('inputPlaceholder', this.props.inputPlaceholder)} /></p>
+            <p><input className={'single-input-form' + centerContent} type={this.props.inputType ? this.props.inputType : 'text'} value={this.state.value} onChange={this.handleChange} placeholder={Language.getTranslation('inputPlaceholder', this.props.inputPlaceholder)} /></p>
             {!this.props.hideHelpText && <p className="text-center text-muted">{Language.getTranslation('pressEnterToSubmit',)}</p>}
         </form>;
     }

@@ -3,6 +3,7 @@ export default interface SingleInputFormProps {
     centerContent: boolean,
     hideHelpText?: boolean,
     inputPlaceholder: string,
+    inputType?: 'text' | 'password',
     submitValue: (msg: string) => void,
 }
 export interface SingleInputFormState {

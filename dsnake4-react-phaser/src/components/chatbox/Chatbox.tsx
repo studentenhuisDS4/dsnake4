@@ -5,6 +5,7 @@ import { ChatContext } from "./ChatContext";
 import SingleInputForm from '../global/SingleInputForm';
 import HelperFunctions from "../global/HelperFunctions";
 import { SocketService } from "src/components/chatbox/SocketService";
+import ChatService from './ChatService';
 
 export default class ChatboxContainer extends Component<ChatboxProps> {
     private chat = new SocketService();
@@ -22,37 +23,46 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
     private messagesEnd = createRef<HTMLDivElement>();
     static contextType = ChatContext;
 
+    private readonly botMessage: ChatMessageModel = {
+        uuid: HelperFunctions.generateRandomId(),
+        user_id: -1,
+        nickname: 'Bot',
+        time: new Date(),
+        message: 'Welcome! Type a message and press [Enter] to chat with other players.',
+    };
+
     constructor(props: ChatboxProps) {
         super(props);
         this.sendMessage = this.sendMessage.bind(this);
         this.scrollToBottom = this.scrollToBottom.bind(this);
 
         this.state = {
-            messages: [{
-                uuid: HelperFunctions.generateRandomId(),
-                user_id: -1,
-                nickname: 'Bot',
-                time: new Date(),
-                message: 'Welcome! Type a message and press [Enter] to chat with other players.',
-            }],
+            messages: [],
         };
     }
 
     componentDidMount() {
-        // connect to socket from our context
-        this.context.init();
+        ChatService.getChatHistory().then(result => {
+            result.forEach(message => {
+                this.state.messages.push(message);
+            });
+            this.state.messages.push(this.botMessage);
+            this.setState({ messages: this.state.messages });
 
-        // retrieve observable
-        const observable = this.context.onMessage();
+            // connect to socket from our context
+            this.context.init();
 
-        // subscribe to observable
-        observable.subscribe((m: ChatMessageModel) => {
-            // add incoming message to state
-            let messages = this.state.messages;
-            messages.push(m);
-            console.log('New message', m);
+            // retrieve observable
+            const observable = this.context.onMessage();
 
-            this.setState({ messages });
+            // subscribe to observable
+            observable.subscribe((m: ChatMessageModel) => {
+                // add incoming message to state
+                let messages = this.state.messages;
+                messages.push(m);
+
+                this.setState({ messages });
+            });
         });
     }
 

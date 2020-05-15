@@ -10,8 +10,7 @@ import { PlayerModel } from "src/components/chatbox/Models";
 import HelperFunctions from "src/components/global/HelperFunctions";
 import LoginForm from "src/components/auth/LoginForm";
 import Auth from "src/components/auth/Auth";
-
-export const PLAYER_STORAGE_KEY = 'player';
+import DataStore from './components/auth/DataStore';
 
 export default class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
@@ -24,7 +23,7 @@ export default class App extends Component<AppProps, AppState> {
         const player = this.loadPlayer();
         this.state = {
             activeLanguage: Language.getLanguage(),
-            initializeGame: !!player.nickname,
+            initializeGame: !player.nickname,
             isLoggedIn: Auth.checkLoginStatus(),
             player,
         };
@@ -50,22 +49,16 @@ export default class App extends Component<AppProps, AppState> {
     }
 
     loadPlayer(): PlayerModel {
-        let playerJson = localStorage.getItem(PLAYER_STORAGE_KEY);
-        console.log(playerJson);
-
         let player: PlayerModel = {
             uuid: HelperFunctions.generateUUID(),
             user_id: -1,
-            nickname: '',
+            nickname: DataStore.getNickname(),
         };
-        if (playerJson != null) {
-            player = JSON.parse(playerJson);
-        }
         return player;
     }
 
     savePlayerName(player: PlayerModel) {
-        localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
+        DataStore.storeNickname(player.nickname);
     }
 
     setLoginStatus(status: boolean) {

@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 import { ChatMessageModel } from './Models';
-import { Player, ChatMessage } from 'src/../../chatbox-backend/src/models/types';
+import { ChatMessage } from 'src/../../chatbox-backend/src/models/types';
 import { Auth } from 'src/../../chatbox-backend/src/models/types';
 import { fromEvent, Observable } from 'rxjs';
 import config from '../../config/config.json';
@@ -18,11 +18,11 @@ export class SocketService {
     public send(message: ChatMessageModel): void {
         const storedToken = this.loadToken();
         if (storedToken != null) {
-            const authChatMessage: Auth<ChatMessage> = {
+            const securedChatMessage: Auth<ChatMessage> = {
                 token: storedToken,
                 chatMessage: message
             };
-            this.socket.emit('message', authChatMessage);
+            this.socket.emit('message', securedChatMessage);
         } else {
             throw new Error("Auth token not set. Cant emit message.");
         }

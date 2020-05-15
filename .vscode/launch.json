@@ -2,6 +2,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "ts-node-dev",
+            "type": "node",
+            "request": "launch",
+            "protocol": "inspector",
+            "cwd": "${workspaceRoot}/chatbox-backend",
+            "runtimeExecutable": "${workspaceRoot}/chatbox-backend/node_modules/.bin/ts-node-dev",
+            "args": [
+                "--inspect",
+                "--no-notify",
+                "--transpileOnly",
+                "--respawn",
+                "${workspaceRoot}/chatbox-backend/src/server.ts"
+            ],
+            "console": "integratedTerminal",
+            "restart": true
+        },
+        {
             "type": "chrome",
             "request": "launch",
             "name": "Brave-Dev React (David)",

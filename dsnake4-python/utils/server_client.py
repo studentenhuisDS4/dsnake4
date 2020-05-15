@@ -11,7 +11,7 @@ class ServerClient(object):
     SERVER_API_BASE = 'https://ds4.nl/api/v1/'
 
     SERVER_LOGIN = SERVER_API_BASE + 'auth-jwt/'
-    SERVER_SNAKE_HIGHSCORES = SERVER_API_BASE + 'snake-highscore/'
+    SERVER_SNAKE_HIGHSCORES = SERVER_API_BASE + 'snake/highscore/'
     LOGIN_PICKLEFILE = "./data/token.pickle"
     LOGIN = None
 

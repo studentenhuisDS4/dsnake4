@@ -1,8 +1,9 @@
 import * as express from 'express';
 import * as SocketIO from 'socket.io';
+import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { ChatEvent } from './constants';
-import { ChatMessage } from './types';
-import { createServer, Server } from 'http';
+import { ChatMessage, Auth } from './models/types';
+import { createServer, Server, request, RequestOptions } from 'http';
 const cors = require('cors');
 
 export class ChatServer {
@@ -12,7 +13,7 @@ export class ChatServer {
     private io: SocketIO.Server;
     private port: string | number;
 
-    constructor () {
+    constructor() {
         this._app = express();
         this.port = process.env.PORT || ChatServer.PORT;
         this._app.use(cors());
@@ -22,11 +23,15 @@ export class ChatServer {
         this.listen();
     }
 
-    private initSocket (): void {
+    private initSocket(): void {
         this.io = SocketIO(this.server);
     }
 
-    private listen (): void {
+    private listen(): void {
+        const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkwNjk4OTg4LCJqdGkiOiI4MTQxYjI0NzkyNTg0ZjRkYjdjZDZkYjIyMjFlYTAxYiIsInVzZXJfaWQiOjE0LCJ1c2VybmFtZSI6ImRhdmlkIiwiZW1haWwiOiJkYXZpZHp3YUBnbWFpbC5jb20ifQ.XmbWGlMNVwaUvic7Fqc5o-ZCD76ka347N-v2N1CTJBM';
+        this.authUser(token);
+
+        // this.getHighscores();
         this.server.listen(this.port, () => {
             console.log('Running server on port %s', this.port);
         });
@@ -34,7 +39,9 @@ export class ChatServer {
         this.io.on(ChatEvent.CONNECT, (socket: any) => {
             console.log('Connected client on port %s.', this.port);
 
-            socket.on(ChatEvent.MESSAGE, (m: ChatMessage) => {
+            socket.on(ChatEvent.MESSAGE, (m: Auth<ChatMessage>) => {
+                // this.getHighscores();
+                this.pushMessage(m);
                 console.log('[server](message): %s', JSON.stringify(m));
                 this.io.emit('message', m);
             });
@@ -45,7 +52,63 @@ export class ChatServer {
         });
     }
 
-    get app (): express.Application {
+    get app(): express.Application {
         return this._app;
+    }
+
+    private authUser(token: string) {
+        const url_base = 'http://localhost:8000';
+        const url = url_base + '/api/v1/auth-jwt-verify/';
+        axios
+            .post(url, {
+                'token': token
+            })
+            .then((res: AxiosResponse<any>) => {
+                if (res.status === 200) {
+                    console.log('Token verified:', res.statusText);
+                } else {
+                    console.log('Error forwarding request');
+                }
+                // console.log(`statusCode: ${res}`)
+                // console.log(res.status)
+            })
+            .catch((error: AxiosError) => {
+                if (error.response) {
+                    console.log('Caught error:', error.response.status);
+                    console.log(error.response.data);
+                    // console.log(error.response.headers);
+                } else {
+                    console.log('Couldnt connect to server: ', error.message);
+                }
+            });
+    }
+
+    private pushMessage(authed_msg: Auth<ChatMessage>) {
+        const url_base = 'http://localhost:8000';
+        const url = url_base + '/api/v1/snake/chat/';
+        axios
+            .post(url, authed_msg.message, {
+                headers: {
+                    'Authorization': `Bearer ${authed_msg.token}`
+                }
+            })
+            .then((res: AxiosResponse<any>) => {
+                if (res.status === 200) {
+                    console.log('Token verified:', res.statusText);
+                } else {
+                    console.log('Error forwarding request');
+                }
+                // console.log(`statusCode: ${res}`)
+                // console.log(res.status)
+            })
+            .catch((error: AxiosError) => {
+                if (error.response) {
+                    console.log('Caught error:', error.response.status);
+                    console.log(error.response.data);
+                    // console.log(error.response.headers);
+                } else {
+                    console.log('Couldnt connect to server: ', error.message);
+                }
+            })
     }
 }

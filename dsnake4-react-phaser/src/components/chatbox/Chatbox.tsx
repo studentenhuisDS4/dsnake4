@@ -1,7 +1,7 @@
 import React, { Component, createRef } from 'react';
 import Language from "../../language/Language";
-import ChatMessageModel, {ChatboxProps, ChatboxState, ChatMessageComponentModel} from './Models';
-import {ChatContext} from "./ChatContext";
+import { ChatMessageModel, ChatboxProps, ChatboxState, ChatMessageComponentModel } from './Models';
+import { ChatContext } from "./ChatContext";
 import SingleInputForm from '../global/SingleInputForm';
 import HelperFunctions from "../global/HelperFunctions";
 import {SocketService} from "src/components/chatbox/SocketService";
@@ -30,11 +30,9 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
         this.state = {
             messages: [{
                 id: HelperFunctions.generateRandomId(),
-                author: {
-                    id: '0',
-                    name: 'Bot',
-                },
-                dateAdded: new Date().getTime(),
+                user_id: -1,
+                nickname: 'Bot',
+                time: new Date(),
                 message: 'Welcome! Type a message and press [Enter] to chat with other players.',
             }],
         };
@@ -53,7 +51,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
             let messages = this.state.messages;
             messages.push(m);
 
-            this.setState({messages});
+            this.setState({ messages });
         });
     }
 
@@ -61,7 +59,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
         this.scrollToBottom();
     }
 
-    componentWillUnmount () {
+    componentWillUnmount() {
         this.context.disconnect();
     }
 
@@ -89,7 +87,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
                 <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.player.name} <span className="ml-1 fa fa-xs fa-pencil text-teal-dark cursor-pointer" onClick={this.props.changePlayerName} /></h2>
                 <div className="chatbox flex-grow-1 overflow-auto">
                     {this.state.messages.length > 0
-                        ? this.state.messages.map((message :ChatMessageModel) => <ChatMessage {...message} player={this.props.player} key={message.id} />)
+                        ? this.state.messages.map((message: ChatMessageModel) => <ChatMessage {...message} player={this.props.player} key={message.id} />)
                         : <p className="text-muted">{Language.getTranslation('noChats', 'chatbox')}</p>
                     }
                     <div className="float-left clearfix" ref={this.messagesEnd} />

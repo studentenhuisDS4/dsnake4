@@ -11,6 +11,7 @@ import HelperFunctions from "src/components/global/HelperFunctions";
 import LoginForm from "src/components/auth/LoginForm";
 import Auth from "src/components/auth/Auth";
 
+
 export default class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
@@ -36,8 +37,9 @@ export default class App extends Component<AppProps, AppState> {
 
     initializeGame(playerName: string) {
         const player = {
-            id: HelperFunctions.generateUUID(),
-            name: playerName,
+            uuid: HelperFunctions.generateUUID(),
+            user_id: -1,
+            nickname: playerName,
         };
         this.savePlayerName(player);
         this.setState({
@@ -46,12 +48,13 @@ export default class App extends Component<AppProps, AppState> {
         });
     }
 
-    loadPlayer() :PlayerModel {
+    loadPlayer(): PlayerModel {
         let playerJson = localStorage.getItem('player');
 
-        let player :PlayerModel = {
-            id: HelperFunctions.generateUUID(),
-            name: '',
+        let player: PlayerModel = {
+            uuid: HelperFunctions.generateUUID(),
+            user_id: -1,
+            nickname: '',
         };
         if (playerJson != null) {
             player = JSON.parse(playerJson);

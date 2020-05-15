@@ -1,6 +1,6 @@
-import {PlayerModel} from "src/components/chatbox/Models";
+import { PlayerModel } from "src/components/chatbox/Models";
 
-export interface AppProps {}
+export interface AppProps { }
 export default interface AppState {
     activeLanguage: string,
     initializeGame: boolean,

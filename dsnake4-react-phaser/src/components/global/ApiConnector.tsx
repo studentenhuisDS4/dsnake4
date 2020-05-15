@@ -1,4 +1,4 @@
-import axios from "axios/index";
+import axios from "axios";
 import env from "src/config/env.json";
 import Auth from "src/components/auth/Auth";
 

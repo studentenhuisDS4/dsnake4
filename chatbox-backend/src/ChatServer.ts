@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as SocketIO from 'socket.io';
 import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
 import { ChatEvent } from './constants';
-import { ChatMessage, Auth } from './models/types';
+import { ChatMessage, Auth, ChatMessageCreate } from './models/types';
 import { createServer, Server, request, RequestOptions } from 'http';
 const cors = require('cors');
 
@@ -28,10 +28,6 @@ export class ChatServer {
     }
 
     private listen(): void {
-        const token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNTkwNjk4OTg4LCJqdGkiOiI4MTQxYjI0NzkyNTg0ZjRkYjdjZDZkYjIyMjFlYTAxYiIsInVzZXJfaWQiOjE0LCJ1c2VybmFtZSI6ImRhdmlkIiwiZW1haWwiOiJkYXZpZHp3YUBnbWFpbC5jb20ifQ.XmbWGlMNVwaUvic7Fqc5o-ZCD76ka347N-v2N1CTJBM';
-        this.authUser(token);
-
-        // this.getHighscores();
         this.server.listen(this.port, () => {
             console.log('Running server on port %s', this.port);
         });
@@ -39,11 +35,22 @@ export class ChatServer {
         this.io.on(ChatEvent.CONNECT, (socket: any) => {
             console.log('Connected client on port %s.', this.port);
 
-            socket.on(ChatEvent.MESSAGE, (m: Auth<ChatMessage>) => {
-                // this.getHighscores();
-                this.pushMessage(m);
-                console.log('[server](message): %s', JSON.stringify(m));
-                this.io.emit('message', m);
+            socket.on(ChatEvent.MESSAGE, (secureMessage: Auth<ChatMessage>) => {
+                if (secureMessage.token != null) {
+                    const unverifiedMessage: Auth<ChatMessageCreate> = {
+                        token: secureMessage.token,
+                        chatMessage: {
+                            message: secureMessage.chatMessage.message,
+                            nickname: secureMessage.chatMessage.nickname
+                        }
+                    }
+                    this.pushMessage(unverifiedMessage).then(() => {
+                        console.log('[server](message): %s', JSON.stringify(secureMessage));
+                        this.io.emit('message', secureMessage.chatMessage);
+                    }, (error) => {
+                        this.io.emit('failure', `Error while sending message: ${error}`);
+                    });
+                }
             });
 
             socket.on(ChatEvent.DISCONNECT, () => {
@@ -69,46 +76,45 @@ export class ChatServer {
                 } else {
                     console.log('Error forwarding request');
                 }
-                // console.log(`statusCode: ${res}`)
-                // console.log(res.status)
             })
             .catch((error: AxiosError) => {
                 if (error.response) {
-                    console.log('Caught error:', error.response.status);
-                    console.log(error.response.data);
-                    // console.log(error.response.headers);
+                    console.log('Couldnt forward message. Caught error:', error.response.status);
                 } else {
                     console.log('Couldnt connect to server: ', error.message);
                 }
             });
     }
 
-    private pushMessage(authed_msg: Auth<ChatMessage>) {
+    private pushMessage(authed_msg: Auth<ChatMessageCreate>): Promise<ChatMessage> {
         const url_base = 'http://localhost:8000';
         const url = url_base + '/api/v1/snake/chat/';
-        axios
-            .post(url, authed_msg.message, {
+        if (!authed_msg.token) {
+            console.warn("Auth token not found in given AuthChatMessage.");
+            return Promise.resolve(null);
+        }
+        return axios
+            .post(url, authed_msg.chatMessage, {
                 headers: {
                     'Authorization': `Bearer ${authed_msg.token}`
                 }
             })
-            .then((res: AxiosResponse<any>) => {
+            .then((res: AxiosResponse<ChatMessage>) => {
                 if (res.status === 200) {
                     console.log('Token verified:', res.statusText);
                 } else {
                     console.log('Error forwarding request');
                 }
-                // console.log(`statusCode: ${res}`)
-                // console.log(res.status)
+                return res.data;
             })
             .catch((error: AxiosError) => {
                 if (error.response) {
                     console.log('Caught error:', error.response.status);
-                    console.log(error.response.data);
-                    // console.log(error.response.headers);
+                    console.log(error.response.data, error.response.statusText);
                 } else {
                     console.log('Couldnt connect to server: ', error.message);
                 }
+                return null;
             })
     }
 }

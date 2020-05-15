@@ -4,7 +4,7 @@ import { ChatMessageModel, ChatboxProps, ChatboxState, ChatMessageComponentModel
 import { ChatContext } from "./ChatContext";
 import SingleInputForm from '../global/SingleInputForm';
 import HelperFunctions from "../global/HelperFunctions";
-import {SocketService} from "src/components/chatbox/SocketService";
+import { SocketService } from "src/components/chatbox/SocketService";
 
 export default class ChatboxContainer extends Component<ChatboxProps> {
     private chat = new SocketService();
@@ -29,7 +29,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
 
         this.state = {
             messages: [{
-                id: HelperFunctions.generateRandomId(),
+                uuid: HelperFunctions.generateRandomId(),
                 user_id: -1,
                 nickname: 'Bot',
                 time: new Date(),
@@ -50,6 +50,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
             // add incoming message to state
             let messages = this.state.messages;
             messages.push(m);
+            console.log('New message', m);
 
             this.setState({ messages });
         });
@@ -64,10 +65,11 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
     }
 
     sendMessage(message: string) {
-        const chatMessage = {
-            id: HelperFunctions.generateRandomId(),
-            author: this.props.player,
-            dateAdded: new Date().getTime(),
+        const chatMessage: ChatMessageModel = {
+            uuid: HelperFunctions.generateRandomId(),
+            nickname: this.props.player.nickname,
+            user_id: this.props.player.user_id,
+            time: new Date(),
             message,
         };
         this.context.send(chatMessage);
@@ -84,10 +86,14 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
     render() {
         return (
             <div className="d-flex flex-column h-100 bg-black border border-2x border-dashed border-teal">
-                <h2 className="chatbox-title">{Language.getTranslation('title', 'chatbox')}, {this.props.player.name} <span className="ml-1 fa fa-xs fa-pencil text-teal-dark cursor-pointer" onClick={this.props.changePlayerName} /></h2>
+                <h2 className="chatbox-title">
+                    {Language.getTranslation('title', 'chatbox')}, {this.props.player.nickname}
+                    <span className="ml-1 fa fa-xs fa-pencil text-teal-dark cursor-pointer" onClick={this.props.changePlayerName} />
+                </h2>
                 <div className="chatbox flex-grow-1 overflow-auto">
                     {this.state.messages.length > 0
-                        ? this.state.messages.map((message: ChatMessageModel) => <ChatMessage {...message} player={this.props.player} key={message.id} />)
+                        ? this.state.messages.map((message: ChatMessageModel) =>
+                            <ChatMessage {...message} player_id={this.props.player.user_id} key={message.uuid} />)
                         : <p className="text-muted">{Language.getTranslation('noChats', 'chatbox')}</p>
                     }
                     <div className="float-left clearfix" ref={this.messagesEnd} />
@@ -101,11 +107,12 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
 }
 
 const ChatMessage: React.FunctionComponent<ChatMessageComponentModel> = props => {
-    const position = props.author.id === props.player.id ? 'right' : 'left';
-    const dateAdded = new Date(props.dateAdded).toLocaleTimeString();
+    const position = props.user_id === props.player_id ? 'right' : 'left';
+    const dateAdded = new Date(props.time).toLocaleTimeString();
+
     return (
         <div className={'speech-bubble ' + position}>
-            <strong>{props.author.name}</strong> <small className="text-uppercase text-teal-xlight">{dateAdded}</small><br />
+            <strong>{props.nickname}</strong> <small className="text-uppercase text-teal-xlight">{dateAdded}</small><br />
             {props.message}
         </div>
     );

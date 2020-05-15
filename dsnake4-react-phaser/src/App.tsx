@@ -5,12 +5,13 @@ import Chatbox from './components/chatbox/Chatbox';
 import GameCanvas from './components/game/GameCanvas';
 import Language from "./language/Language";
 import SingleInputForm from "./components/global/SingleInputForm";
-import AppState, {AppProps} from "./AppModel";
-import {PlayerModel} from "src/components/chatbox/Models";
+import AppState, { AppProps } from "./AppModel";
+import { PlayerModel } from "src/components/chatbox/Models";
 import HelperFunctions from "src/components/global/HelperFunctions";
 import LoginForm from "src/components/auth/LoginForm";
 import Auth from "src/components/auth/Auth";
 
+export const PLAYER_STORAGE_KEY = 'player';
 
 export default class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
@@ -23,7 +24,7 @@ export default class App extends Component<AppProps, AppState> {
         const player = this.loadPlayer();
         this.state = {
             activeLanguage: Language.getLanguage(),
-            initializeGame: player.name === '',
+            initializeGame: !!player.nickname,
             isLoggedIn: Auth.checkLoginStatus(),
             player,
         };
@@ -36,7 +37,7 @@ export default class App extends Component<AppProps, AppState> {
     }
 
     initializeGame(playerName: string) {
-        const player = {
+        const player: PlayerModel = {
             uuid: HelperFunctions.generateUUID(),
             user_id: -1,
             nickname: playerName,
@@ -49,7 +50,8 @@ export default class App extends Component<AppProps, AppState> {
     }
 
     loadPlayer(): PlayerModel {
-        let playerJson = localStorage.getItem('player');
+        let playerJson = localStorage.getItem(PLAYER_STORAGE_KEY);
+        console.log(playerJson);
 
         let player: PlayerModel = {
             uuid: HelperFunctions.generateUUID(),
@@ -63,11 +65,11 @@ export default class App extends Component<AppProps, AppState> {
     }
 
     savePlayerName(player: PlayerModel) {
-        localStorage.setItem('player', JSON.stringify(player));
+        localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(player));
     }
 
     setLoginStatus(status: boolean) {
-        this.setState({isLoggedIn: status});
+        this.setState({ isLoggedIn: status });
     }
 
     render() {
@@ -83,22 +85,22 @@ export default class App extends Component<AppProps, AppState> {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="row h-100">
-                                    <div className="col-md-8 h-100">
-                                        <GameCanvas />
+                                    <div className="row h-100">
+                                        <div className="col-md-8 h-100">
+                                            <GameCanvas />
+                                        </div>
+                                        <div className="col-md-4 h-100">
+                                            <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
+                                        </div>
                                     </div>
-                                    <div className="col-md-4 h-100">
-                                        <Chatbox changePlayerName={this.changePlayerName} player={this.state.player} />
-                                    </div>
-                                </div>
-                            )
+                                )
                         ) : (
-                            <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
-                                <div className="w-50">
-                                    <LoginForm loginCallback={this.setLoginStatus} />
+                                <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
+                                    <div className="w-50">
+                                        <LoginForm loginCallback={this.setLoginStatus} />
+                                    </div>
                                 </div>
-                            </div>
-                        )}
+                            )}
                     </div>
                 </div>
             </main>

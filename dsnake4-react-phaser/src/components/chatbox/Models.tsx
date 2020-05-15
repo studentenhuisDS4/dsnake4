@@ -1,4 +1,4 @@
-import { Player, ChatMessage } from 'src/../../chatbox-backend/src/types';
+import { Player, ChatMessage } from 'src/../../chatbox-backend/src/models/types';
 
 // Extend the ChatMessage API by a model
 export interface PlayerModel extends Player {
@@ -17,7 +17,7 @@ export interface ReplyChatMessageModel extends ChatMessage {
 
 // The ChatMessage component props and/or state models
 export interface ChatMessageComponentModel extends ChatMessage {
-    player: PlayerModel,
+    player_id: number;
 }
 
 // The Chatbox component props and/or state models

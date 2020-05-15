@@ -1,6 +1,6 @@
 export interface Auth<T> {
     token: string;
-    message: T;
+    chatMessage: T;
 }
 
 export interface Player {
@@ -9,8 +9,13 @@ export interface Player {
 }
 
 export interface ChatMessage extends Player {
-    id: number;
+    uuid: number;
     time: Date;
+    message: string;
+}
+
+export interface ChatMessageCreate {
+    nickname: string;
     message: string;
 }
 

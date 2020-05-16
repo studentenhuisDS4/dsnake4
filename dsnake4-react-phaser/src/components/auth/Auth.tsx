@@ -1,5 +1,6 @@
 import { JwtToken, LoginFormModel } from "src/components/auth/Models";
 import ApiConnector from "src/components/global/ApiConnector";
+import { ITokenClaims } from "./Api.Model";
 
 export const AuthTokenStorageKey = 'authToken';
 export const RefreshTokenStorageKey = 'refreshToken';
@@ -34,6 +35,10 @@ const Auth = {
             return '';
         }
     },
+    decodeToken(): ITokenClaims {
+        const obj = JSON.parse(atob(this.getAuthToken().split('.')[1])) as ITokenClaims;
+        return obj;
+    }
 };
 
 function saveAuthToken(jwtToken: JwtToken) {

@@ -9,6 +9,7 @@ export interface Player {
 }
 
 export interface ChatMessage extends Player {
+    id?: number;
     uuid: number;
     time: Date;
     message: string;

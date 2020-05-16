@@ -1,8 +1,7 @@
 FROM node:12
 
 # Create app directory
-WORKDIR /app
-RUN chmod -R 775 /app
+WORKDIR /app/dsnake4-react-phaser/
 # Install app dependencies
 COPY package*.json ./
 

@@ -3,20 +3,25 @@ import * as SocketIO from 'socket.io';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 import { ChatEvent } from './constants';
 import { ChatMessage, Auth, ChatMessageCreate } from './models/types';
-import { createServer, Server, request, RequestOptions } from 'http';
+import { createServer, Server } from 'http';
 import * as config from './config/config.json';
+import { warn, info, error } from './utils/color';
 const cors = require('cors');
 
 export class ChatServer {
     public static readonly PORT: number = 8080;
+    public static readonly API_URL: string = 'http://localhost:8000';
     private _app: express.Application;
     private server: Server;
     private io: SocketIO.Server;
     private port: string | number;
+    private api_url: string | number;
 
     constructor() {
         this._app = express();
         this.port = process.env.PORT || ChatServer.PORT;
+        this.api_url = process.env.API_URL || config.ds4rebootServer || ChatServer.API_URL;
+        console.log(this.api_url);
         this._app.use(cors());
         this._app.options('*', cors());
         this.server = createServer(this._app);
@@ -30,11 +35,12 @@ export class ChatServer {
 
     private listen(): void {
         this.server.listen(this.port, () => {
-            console.log('Running server on port %s', this.port);
+            warn(`Running server on port ${this.port}`);
         });
 
         this.io.on(ChatEvent.CONNECT, (socket: any) => {
-            console.log('Connected client on port %s.', this.port);
+            info(`- New Client connected on port ${this.port}`);
+            // console.log('Connected client on port %s.', this.port);
 
             socket.on(ChatEvent.MESSAGE, (secureMessage: Auth<ChatMessage>) => {
                 if (secureMessage.token != null) {
@@ -45,8 +51,10 @@ export class ChatServer {
                             nickname: secureMessage.chatMessage.nickname
                         }
                     }
-                    this.pushMessage(unverifiedMessage).then(() => {
-                        console.log('[server](message): %s', JSON.stringify(secureMessage));
+                    this.pushMessage(unverifiedMessage).then((result) => {
+                        warn(JSON.stringify(result));
+                        info(`[server](message): ${JSON.stringify(secureMessage)}`)
+                        
                         this.io.emit('message', secureMessage.chatMessage);
                     }, (error) => {
                         this.io.emit('failure', `Error while sending message: ${error}`);
@@ -65,12 +73,13 @@ export class ChatServer {
     }
 
     private pushMessage(authed_msg: Auth<ChatMessageCreate>): Promise<ChatMessage> {
-        const url_base = config.ds4rebootServer;
+        const url_base = this.api_url;
         const url = url_base + '/api/v1/snake/chat/';
         if (!authed_msg.token) {
-            console.warn("Auth token not found in given AuthChatMessage.");
+            warn("Auth token not found in given AuthChatMessage.");
             return Promise.resolve(null);
         }
+        info(url);
         return axios
             .post(url, authed_msg.chatMessage, {
                 headers: {
@@ -79,18 +88,18 @@ export class ChatServer {
             })
             .then((res: AxiosResponse<ChatMessage>) => {
                 if (res.status === 200) {
-                    console.log('Token verified:', res.statusText);
+                    info('Token verified:', res.statusText);
                 } else {
-                    console.log('Error forwarding request');
+                    error('Error forwarding request');
                 }
                 return res.data;
             })
-            .catch((error: AxiosError) => {
-                if (error.response) {
-                    console.log('Caught error:', error.response.status);
-                    console.log(error.response.data, error.response.statusText);
+            .catch((errorResponse: AxiosError) => {
+                if (errorResponse.response) {
+                    error('Caught error:', errorResponse.response.status);
+                    error(errorResponse.response.statusText);
                 } else {
-                    console.log('Couldnt connect to server: ', error.message);
+                    error('Couldnt connect to server: ', errorResponse.message);
                 }
                 return null;
             })

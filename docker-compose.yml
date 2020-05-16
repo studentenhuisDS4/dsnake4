@@ -6,17 +6,27 @@ services:
     build:
       dockerfile: Dockerfile
       context: chatbox-backend
+    environment: 
+      - API_URL=http://django:8000
     volumes:
       - ./chatbox-backend/src:/app/src
+    networks: 
+      - ds4
     ports:
       - "8080:8080"
-  # react_phaser:
-  #   image: dsnake4-react-phaser
-  #   container_name: dsnake4-react-phaser
-  #   build:
-  #     dockerfile: Dockerfile
-  #     context: dsnake4-react-phaser
-  #   volumes:
-  #     - ./dsnake4-react-phaser/src:/app/src
-  #   ports:
-  #     - "3000:3000"
+  react_phaser:
+    image: dsnake4-react-phaser
+    container_name: dsnake4-react-phaser
+    build:
+      dockerfile: Dockerfile
+      context: dsnake4-react-phaser
+    stdin_open: true
+    volumes:
+      - ./dsnake4-react-phaser/src:/app/dsnake4-react-phaser/src
+      - ./chatbox-backend/src:/app/chatbox-backend/src
+    ports:
+      - "3000:3000"
+networks: 
+  ds4:
+    external:
+      name: ds4reboot_ds4

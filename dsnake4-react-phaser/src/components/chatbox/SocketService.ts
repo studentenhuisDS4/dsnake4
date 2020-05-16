@@ -1,29 +1,44 @@
 import io from 'socket.io-client';
-import ChatMessage from './Models';
+import { ChatMessageModel } from './Models';
+import { ChatMessage } from 'src/../../chatbox-backend/src/models/types';
+import { Auth } from 'src/../../chatbox-backend/src/models/types';
 import { fromEvent, Observable } from 'rxjs';
 import config from '../../config/config.json';
+import { AuthTokenStorageKey } from '../auth/Auth';
 
 export class SocketService {
     private socket: SocketIOClient.Socket = {} as SocketIOClient.Socket;
 
-    public init (): SocketService {
+    public init(): SocketService {
         this.socket = io(config.chatboxServer);
         return this;
     }
 
     // send a message for the server to broadcast
-    public send (message: ChatMessage): void {
-        console.log('emitting message: ' + message);
-        this.socket.emit('message', message);
+    public send(message: ChatMessageModel): void {
+        const storedToken = this.loadToken();
+        if (storedToken != null) {
+            const securedChatMessage: Auth<ChatMessage> = {
+                token: storedToken,
+                chatMessage: message
+            };
+            this.socket.emit('message', securedChatMessage);
+        } else {
+            throw new Error("Auth token not set. Cant emit message.");
+        }
     }
 
     // link message event to rxjs data source
-    public onMessage (): Observable<ChatMessage> {
+    public onMessage(): Observable<ChatMessageModel> {
         return fromEvent(this.socket, 'message');
     }
 
     // disconnect - used when unmounting
-    public disconnect (): void {
+    public disconnect(): void {
         this.socket.disconnect();
+    }
+
+    private loadToken(): string | null {
+        return localStorage.getItem(AuthTokenStorageKey);
     }
 }

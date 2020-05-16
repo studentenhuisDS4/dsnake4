@@ -1,4 +1,4 @@
-import axios from "axios/index";
+import axios from "axios";
 import env from "src/config/env.json";
 import Auth from "src/components/auth/Auth";
 
@@ -16,7 +16,7 @@ interface axiosConfig {
 
 const ApiConnector = {
     connect(method: apiMethod, apiUrlPath: string, authenticate?: boolean, data?: {}) {
-        authenticate = authenticate === undefined;
+        authenticate = !!authenticate;
         return new Promise((resolve, reject) => {
             const baseUrl = getApiBaseUrl();
             if (baseUrl) {

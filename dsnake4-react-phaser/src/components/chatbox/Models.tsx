@@ -1,23 +1,23 @@
-// A model describing the player object
-export interface PlayerModel {
-    id: string,
-    name: string,
+import { Player, ChatMessage } from 'src/../../chatbox-backend/src/models/types';
+
+// Extend the ChatMessage API by a model
+export interface PlayerModel extends Player {
+    uuid: string;
 }
 
-// The model describing a chat message
-export default interface ChatMessageModel {
-    id: number;
-    author: PlayerModel,
-    dateAdded: number,
-    message: string;
+// Mimic the ChatMessage API by a model
+export interface ChatMessageModel extends ChatMessage {
+    
 }
-export interface ReplyChatMessageModel extends ChatMessageModel {
+
+// Extend the API by a model
+export interface ReplyChatMessageModel extends ChatMessage {
     replyMsgId: number;
 }
 
 // The ChatMessage component props and/or state models
-export interface ChatMessageComponentModel extends ChatMessageModel {
-    player: PlayerModel,
+export interface ChatMessageComponentModel extends ChatMessage {
+    player_id: number;
 }
 
 // The Chatbox component props and/or state models

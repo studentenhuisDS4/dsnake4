@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import LoginFormState, {LoginFormModel, LoginFormProps} from "./Models";
+import React, { Component } from 'react';
+import LoginFormState, { LoginFormModel, LoginFormProps } from "./Models";
 import SingleInputForm from "../global/SingleInputForm";
 import LoadingSpinner from "../global/LoadingSpinner";
 import Auth from "src/components/auth/Auth";
@@ -11,25 +11,46 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
         this.onSubmitUsername = this.onSubmitUsername.bind(this);
         this.onSubmitPassword = this.onSubmitPassword.bind(this);
 
-        const loginForm :LoginFormModel = {
+        // Temporary data resulting in auth stored
+        const loginForm: LoginFormModel = {
             username: '',
-            password: '',
+            password: ''
         };
         this.state = {
             isLoggedIn: false,
             isLoggingIn: false,
-            loginForm,
+            loginForm
         }
     }
 
     handleLogin() {
-        Auth.authenticate(this.state.loginForm);
-        this.props.loginCallback(true);
+        Auth.authenticate(this.state.loginForm)
+            .then((success: boolean) => {
+                this.setState({
+                    isLoggedIn: success,
+                    isLoggingIn: false
+                }, () => {
+                    if (success) {
+                        this.props.loginCallback(success);
+                    } else {
+                        console.log("Auth not accepted.");
+                        this.resetLogin();
+                    }
+                });
+            }, (error) => {
+                this.setState({
+                    isLoggedIn: false,
+                    isLoggingIn: false
+                }, () => {
+                    console.log("Auth failed.");
+                    this.resetLogin();
+                });
+            });
     }
 
     onSubmitPassword(password: string) {
         if (password != null && password !== '') {
-            const loginForm :LoginFormModel = this.state.loginForm;
+            const loginForm: LoginFormModel = this.state.loginForm;
             loginForm.password = password;
             this.setState({
                 isLoggedIn: Auth.checkLoginStatus(),
@@ -43,10 +64,21 @@ export default class LoginForm extends Component<LoginFormProps, LoginFormState>
 
     onSubmitUsername(username: string) {
         if (username != null && username !== '') {
-            const loginForm :LoginFormModel = this.state.loginForm;
+            const loginForm: LoginFormModel = this.state.loginForm;
             loginForm.username = username;
-            this.setState({loginForm});
+            this.setState({ loginForm });
         }
+    }
+
+    resetLogin() {
+        this.setState({
+            isLoggedIn: false,
+            isLoggingIn: false,
+            loginForm: {
+                username: '',
+                password: '',
+            }
+        });
     }
 
     render() {

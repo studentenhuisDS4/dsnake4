@@ -9,7 +9,11 @@
         "title": "Chat with players"
     },
     "playerForm": {
-        "inputPlaceholder": "Choose a player name"
+        "inputPlaceholder": "Choose a PLAYER nickname"
+    },
+    "nicknameForm": {
+        "inputLabel": "Nickname",
+        "inputPlaceholder": "Choose a PLAYER nickname"
     },
     "usernameForm": {
         "inputLabel": "Username",

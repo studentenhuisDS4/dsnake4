@@ -1,0 +1,22 @@
+version: '3.0'
+services:
+  chatbox_backend:
+    image: chatbox_backend
+    container_name: chatbox_backend
+    build:
+      dockerfile: Dockerfile
+      context: chatbox-backend
+    volumes:
+      - ./chatbox-backend/src:/app/src
+    ports:
+      - "8080:8080"
+  # react_phaser:
+  #   image: dsnake4-react-phaser
+  #   container_name: dsnake4-react-phaser
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: dsnake4-react-phaser
+  #   volumes:
+  #     - ./dsnake4-react-phaser/src:/app/src
+  #   ports:
+  #     - "3000:3000"

@@ -1,9 +1,10 @@
 import * as express from 'express';
 import * as SocketIO from 'socket.io';
-import axios, { AxiosRequestConfig, AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { ChatEvent } from './constants';
 import { ChatMessage, Auth, ChatMessageCreate } from './models/types';
 import { createServer, Server, request, RequestOptions } from 'http';
+import * as config from './config/config.json';
 const cors = require('cors');
 
 export class ChatServer {
@@ -63,31 +64,8 @@ export class ChatServer {
         return this._app;
     }
 
-    private authUser(token: string) {
-        const url_base = 'http://localhost:8000';
-        const url = url_base + '/api/v1/auth-jwt-verify/';
-        axios
-            .post(url, {
-                'token': token
-            })
-            .then((res: AxiosResponse<any>) => {
-                if (res.status === 200) {
-                    console.log('Token verified:', res.statusText);
-                } else {
-                    console.log('Error forwarding request');
-                }
-            })
-            .catch((error: AxiosError) => {
-                if (error.response) {
-                    console.log('Couldnt forward message. Caught error:', error.response.status);
-                } else {
-                    console.log('Couldnt connect to server: ', error.message);
-                }
-            });
-    }
-
     private pushMessage(authed_msg: Auth<ChatMessageCreate>): Promise<ChatMessage> {
-        const url_base = 'http://localhost:8000';
+        const url_base = config.ds4rebootServer;
         const url = url_base + '/api/v1/snake/chat/';
         if (!authed_msg.token) {
             console.warn("Auth token not found in given AuthChatMessage.");

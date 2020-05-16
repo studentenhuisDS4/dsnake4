@@ -1,4 +1,3 @@
-import { JwtToken, LoginFormModel } from "src/components/auth/Models";
 import ApiConnector from "src/components/global/ApiConnector";
 import { ChatMessage } from "src/../../chatbox-backend/src/models/types";
 

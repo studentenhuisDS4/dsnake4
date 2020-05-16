@@ -17,8 +17,7 @@ export interface LoginFormProps {
 export default interface LoginFormState {
     isLoggedIn: boolean,
     isLoggingIn: boolean,
-    loginForm: LoginFormModel,
-    dataStoreForm: DataStoreModel,
+    loginForm: LoginFormModel
 }
 
 export interface JwtToken {

@@ -10,7 +10,6 @@ import { PlayerModel } from "src/components/chatbox/Models";
 import HelperFunctions from "src/components/global/HelperFunctions";
 import LoginForm from "src/components/auth/LoginForm";
 import Auth from "src/components/auth/Auth";
-import UserService from "src/components/auth/UserService";
 import DataStore from './components/auth/DataStore';
 import LoadingSpinner from './components/global/LoadingSpinner';
 

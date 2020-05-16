@@ -1,5 +1,4 @@
 {
     "siteName": "DSnake4",
-    "defaultLanguage": "en",
-    "chatboxServer": "localhost:8080"
+    "defaultLanguage": "en"
 }

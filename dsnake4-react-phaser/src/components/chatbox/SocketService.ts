@@ -3,14 +3,14 @@ import { ChatMessageModel } from './Models';
 import { ChatMessage } from 'src/../../chatbox-backend/src/models/types';
 import { Auth } from 'src/../../chatbox-backend/src/models/types';
 import { fromEvent, Observable } from 'rxjs';
-import config from '../../config/config.json';
+import { Configuration } from '../global/Configuration';
 import { AuthTokenStorageKey } from '../auth/Auth';
 
 export class SocketService {
     private socket: SocketIOClient.Socket = {} as SocketIOClient.Socket;
 
     public init(): SocketService {
-        this.socket = io(config.chatboxServer);
+        this.socket = io(Configuration.chatboxServer);
         return this;
     }
 

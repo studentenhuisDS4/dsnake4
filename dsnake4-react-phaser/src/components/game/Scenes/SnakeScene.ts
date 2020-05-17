@@ -7,7 +7,7 @@ import { CELLS_X, MapLevel, CellType, Colors, CELLS_Y } from '../Data/Common';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
-import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
+import { MainObject, MapCell, Food, PowerUp } from '../Data/Map/MapElements';
 import { Wall } from '../Data/Map/Wall'
 import { MapLoader } from '../Data/Map/MapLoader';
 import { Transform, Vector2 } from '../Generics';
@@ -160,15 +160,16 @@ export class SnakeScene extends TransformScene {
             this.snake.rotateDown();
         } else if (JustDown(this.inputKeys.D) || JustDown(this.inputKeys.RIGHT)) {
             this.snake.rotateRight();
-        } else if (JustDown(this.inputKeys.J)) {
-            if (this.joostPotions > 0 && this.throughWalls == false) {
-                this.joostPotions--;
-                this.joostPotionCounter = this.joostPotionDuration;
-                this.activateThroughWalls();
-            } else {
-                console.warn('Can\'t use potion right now');
-            }
         }
+        // else if (JustDown(this.inputKeys.J)) {
+        //     if (this.joostPotions > 0 && this.throughWalls == false) {
+        //         this.joostPotions--;
+        //         this.joostPotionCounter = this.joostPotionDuration;
+        //         this.activateThroughWalls();
+        //     } else {
+        //         console.warn('Can\'t use potion right now');
+        //     }
+        // }
 
         if (direction != this.snake.direction) {
             this.movementSound.play({ volume: 0.1, loop: false });
@@ -187,6 +188,20 @@ export class SnakeScene extends TransformScene {
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
         if (foodEaten != undefined) {
+            if (foodEaten.type == 'PowerUp' && foodEaten instanceof PowerUp) {
+                switch (foodEaten.PType) {
+                    case 'Joost':
+                        this.joostPotionCounter = this.joostPotionDuration;
+                        if (this.throughWalls == false) { this.activateThroughWalls(); }
+                        break;
+                    case 'Shrink':
+                        this.snake.reduce(10);
+                        break;
+                    case 'Life':
+                        this.lives++;
+
+                }
+            }
             if (foodEaten.type == 'MainObject') { this.updateShop(true); }
             this.points += foodEaten.points;
             this.updateShop(false);

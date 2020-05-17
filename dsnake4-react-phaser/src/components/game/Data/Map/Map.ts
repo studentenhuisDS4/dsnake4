@@ -46,14 +46,14 @@ export class Map {
             let el = this.childElements[i];
             if (el instanceof Food) {
                 if (el.TopLeftCell.x <= pos.x && el.TopLeftCell.x + el.width >= pos.x && el.TopLeftCell.y <= pos.y && el.TopLeftCell.y + el.height >= pos.y) {
-                    let properties = { 'points': el.points, 'blocksAdded': el.blocksAdded, 'boostCharge': el.boostCharge, 'type': el.type };
+                    let foodEaten = Object.assign({}, el);
                     if (el.image != undefined) {
                         el.image.destroy();
                     }
                     this.childElements.splice(i, 1);
                     this.flattenMap();
 
-                    return properties;
+                    return foodEaten;
                 }
 
             }

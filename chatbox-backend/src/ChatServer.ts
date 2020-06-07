@@ -6,6 +6,7 @@ import { ChatMessage, Auth, ChatMessageCreate } from './models/types';
 import { createServer, Server } from 'http';
 import * as config from './config/config.json';
 import { warn, info, error } from './utils/color';
+import { ApiResponse } from './models/api';
 const cors = require('cors');
 
 export class ChatServer {
@@ -21,7 +22,7 @@ export class ChatServer {
         this._app = express();
         this.port = process.env.PORT || ChatServer.PORT;
         this.api_url = process.env.API_URL || config.ds4rebootServer || ChatServer.API_URL;
-        console.log(this.api_url);
+
         this._app.use(cors());
         this._app.options('*', cors());
         this.server = createServer(this._app);
@@ -40,7 +41,6 @@ export class ChatServer {
 
         this.io.on(ChatEvent.CONNECT, (socket: any) => {
             info(`- New Client connected on port ${this.port}`);
-            // console.log('Connected client on port %s.', this.port);
 
             socket.on(ChatEvent.MESSAGE, (secureMessage: Auth<ChatMessage>) => {
                 if (secureMessage.token != null) {
@@ -52,10 +52,12 @@ export class ChatServer {
                         }
                     }
                     this.pushMessage(unverifiedMessage).then((result) => {
-                        warn(JSON.stringify(result));
-                        info(`[server](message): ${JSON.stringify(secureMessage)}`)
-                        
-                        this.io.emit('message', secureMessage.chatMessage);
+                        const message = result.result;
+                        if (!!message.id) {
+                            this.io.emit('message', message);
+                        } else {
+                            this.io.emit('rejected', message);
+                        }
                     }, (error) => {
                         this.io.emit('failure', `Error while sending message: ${error}`);
                     });
@@ -63,7 +65,7 @@ export class ChatServer {
             });
 
             socket.on(ChatEvent.DISCONNECT, () => {
-                console.log('Client disconnected');
+                info('- Client disconnected');
             });
         });
     }
@@ -72,7 +74,7 @@ export class ChatServer {
         return this._app;
     }
 
-    private pushMessage(authed_msg: Auth<ChatMessageCreate>): Promise<ChatMessage> {
+    private pushMessage(authed_msg: Auth<ChatMessageCreate>): Promise<ApiResponse<ChatMessage>> {
         const url_base = this.api_url;
         const url = url_base + '/api/v1/snake/chat/';
         if (!authed_msg.token) {

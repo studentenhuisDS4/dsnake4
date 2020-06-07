@@ -25,7 +25,7 @@ jobs:
       inputs:
         versionSpec: $(node_version)
     # Copy files
-    - script: cp .prod.env .env
+    - script: cp .env.prod .env
       workingDirectory: dsnake4-react-phaser
       displayName: Transform .env file for Production
     - script: |

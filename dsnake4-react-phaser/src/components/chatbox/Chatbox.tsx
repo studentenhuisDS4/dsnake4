@@ -103,7 +103,7 @@ export class Chatbox extends Component<ChatboxProps, ChatboxState> {
                 <div className="chatbox flex-grow-1 overflow-auto">
                     {this.state.messages.length > 0
                         ? this.state.messages.map((message: ChatMessageModel) =>
-                            <ChatMessage {...message} player_id={this.props.player.user_id} key={message.uuid} />)
+                            <ChatMessage {...message} player_id={this.props.player.user_id} key={message.id} />)
                         : <p className="text-muted">{Language.getTranslation('noChats', 'chatbox')}</p>
                     }
                     <div className="float-left clearfix" ref={this.messagesEnd} />

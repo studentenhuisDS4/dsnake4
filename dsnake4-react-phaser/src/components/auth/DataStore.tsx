@@ -1,4 +1,5 @@
 export const NicknameStorageKey = 'nickname';
+export const UserIdStorageKey = 'user_id';
 
 const DataStore = {
     storeNickname(nickname: string): Promise<boolean> {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import env from "src/config/env.json";
 import Auth from "src/components/auth/Auth";
+import { Configuration } from "./Configuration";
 
 type apiMethod = 'delete' | 'get' | 'patch' | 'post' | 'put';
 interface axiosParams {
@@ -52,7 +53,7 @@ const ApiConnector = {
 };
 
 function getApiBaseUrl() {
-    let baseUrl = env.apiBaseUrl;
+    let baseUrl = Configuration.apiBaseUrl;
     if (baseUrl === undefined) {
         return false;
     } else {

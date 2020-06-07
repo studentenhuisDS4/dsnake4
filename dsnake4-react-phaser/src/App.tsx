@@ -11,6 +11,7 @@ import HelperFunctions from "src/components/global/HelperFunctions";
 import LoginForm from "src/components/auth/LoginForm";
 import Auth from "src/components/auth/Auth";
 import DataStore from './components/auth/DataStore';
+import LoadingSpinner from './components/global/LoadingSpinner';
 
 export default class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
@@ -20,9 +21,15 @@ export default class App extends Component<AppProps, AppState> {
         this.setLoginStatus = this.setLoginStatus.bind(this);
         document.title = config.siteName;
 
-        const player = this.loadPlayer();
+        const player: PlayerModel = {
+            uuid: HelperFunctions.generateUUID(),
+            user_id: Auth.decodeToken()?.user_id,
+            nickname: DataStore.getNickname(),
+        };
+
         this.state = {
             activeLanguage: Language.getLanguage(),
+            loadingUserData: true,
             initializeGame: !player.nickname,
             isLoggedIn: Auth.checkLoginStatus(),
             player,
@@ -51,7 +58,7 @@ export default class App extends Component<AppProps, AppState> {
     loadPlayer(): PlayerModel {
         let player: PlayerModel = {
             uuid: HelperFunctions.generateUUID(),
-            user_id: -1,
+            user_id: Auth.decodeToken().user_id,
             nickname: DataStore.getNickname(),
         };
         return player;
@@ -72,11 +79,15 @@ export default class App extends Component<AppProps, AppState> {
                     <div className="container h-100 py-5">
                         {this.state.isLoggedIn ? (
                             this.state.initializeGame ? (
-                                <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
-                                    <div className="w-50">
-                                        <SingleInputForm centerContent={true} inputPlaceholder="playerForm" submitValue={this.initializeGame} />
+                                !!this.state.loadingUserData ? (
+                                    <div className="w-100 h-100 d-flex justify-content-center align-items-center bg-seagreen-dark border border-2x border-dashed border-teal">
+                                        <div className="w-50">
+                                            <SingleInputForm centerContent={true} inputPlaceholder="playerForm" submitValue={this.initializeGame} />
+                                        </div>
                                     </div>
-                                </div>
+                                ) : (
+                                        <LoadingSpinner loadingMessage="loginForm" />
+                                    )
                             ) : (
                                     <div className="row h-100">
                                         <div className="col-md-8 h-100">

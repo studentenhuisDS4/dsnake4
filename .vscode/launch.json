@@ -47,6 +47,20 @@
                 "webpack:///src/*": "${webRoot}/*",
                 "webpack:///./src/*": "${webRoot}/*"
             }
+        },{
+            "type": "chrome",
+            "request": "launch",
+            "name": "Chrome React (Andrea)",
+            "url": "http://localhost:3000/",
+            "webRoot": "${workspaceRoot}/dsnake4-react/src/",
+            "preLaunchTask": "npmServeReact",
+            "timeout": 5000, // Allow the browser to spawn
+            "port": 9222,
+            "sourceMaps": true,
+            "breakOnLoad": true,
+            "sourceMapPathOverrides": {
+                "webpack:///src/*": "${webRoot}/*",
+            }
         },
         {
             "name": "Python + DSnake4",

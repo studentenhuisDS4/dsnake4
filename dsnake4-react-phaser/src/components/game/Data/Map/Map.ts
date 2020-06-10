@@ -41,6 +41,20 @@ export class Map {
         return this.Map2D[pos.x][pos.y].type;
     }
 
+    public deleteAllFood() {
+        for (let i = 0; i < this.childElements.length; i++) {
+            let el = this.childElements[i];
+            if (el instanceof Food) {
+                if (el.image != undefined) {
+                    el.image.destroy();
+                }
+                this.childElements.splice(i, 1);
+                i--;
+            }
+        }
+        this.flattenMap();
+    }
+
     public eatFood(pos: Vector2) {
         for (let i = 0; i < this.childElements.length; i++) {
             let el = this.childElements[i];

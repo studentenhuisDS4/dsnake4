@@ -14,6 +14,7 @@ import { Transform, Vector2 } from '../Generics';
 import { TransformScene } from '../GameObjects/TransformScene';
 import { Snake, BodyPart } from '../Data/Snake';
 import { SceneEvents } from '../Events';
+import { threadId } from 'worker_threads';
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
     active: true,
@@ -28,6 +29,8 @@ export class SnakeScene extends TransformScene {
 
     currentLevel!: MapLevel;
     mainObjects!: MainObject[];
+    mainObjectsCollected!: number;
+    mainObjectsOrder!: number[];
     shopItems!: ShopItem[];
 
     points!: number;
@@ -142,10 +145,10 @@ export class SnakeScene extends TransformScene {
         this.backgroundMusic.play({ volume: 0, loop: true });
 
         this.generateMainObjects();
-        this.addAllMainObjects();
+        this.mainObjectsOrder = this.shuffleMainObjects(this.mainObjects.length);
 
-        this.mapControllers.forEach(mc => { this.updateRenderedMap(mc); });
         this.resetGame();
+        this.mapControllers.forEach(mc => { this.updateRenderedMap(mc); });
         this.changeLevel(this.currentLevel);
         this.renderSnake();
     }
@@ -187,7 +190,13 @@ export class SnakeScene extends TransformScene {
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
         if (foodEaten != undefined) {
-            if (foodEaten.type == 'MainObject') { this.updateShop(true); }
+            if (foodEaten.type == 'MainObject') {
+                this.updateShop(true);
+                this.mainObjectsCollected++;
+                this.addNextMainObject();
+            } else {
+                this.mapControllers.find(mc => mc.level == this.currentLevel)?.map.addRandomFood('Beer', 2, 2);
+            }
             this.points += foodEaten.points;
             this.updateShop(false);
             this.snake.addUndigestedFood(foodEaten.blocksAdded);
@@ -437,7 +446,7 @@ export class SnakeScene extends TransformScene {
 
     public updateRenderedMap(mc: MapController | undefined) {
         this.renderCount++;
-        console.log(this.renderCount);
+        // console.log(this.renderCount);
         if (mc != undefined) {
             mc.map.Map2D
                 .forEach(row => row
@@ -468,6 +477,15 @@ export class SnakeScene extends TransformScene {
     public getScore() {
         if (this.points != undefined) { return this.points; }
         else { return 0; }
+    }
+
+    public getNextLocation() {
+        if (this.mainObjects != undefined) {
+            let mo = this.mainObjects[this.mainObjectsOrder[this.mainObjectsCollected]];
+            return mo.location;
+        } else {
+            return '';
+        }
     }
 
     private generateMainObjects() {
@@ -503,6 +521,17 @@ export class SnakeScene extends TransformScene {
         this.mainObjects.push(new MainObject(new MapCell(new Vector2(50, 45), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Kitchen', MapLevel.FirstFloor));
         this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 55), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Front Yard', MapLevel.SecondFloor));
         this.mainObjects.push(new MainObject(new MapCell(new Vector2(53, 15), CellType.Pickup, Colors.MainObject), 'MainObject', 2, 2, 'the Binnenplaats', MapLevel.FirstFloor));
+    }
+
+    private shuffleMainObjects(totalObjects: Number) {
+        let order: number[] = [];
+        for (let i = 0; i < totalObjects; i++) {
+            order.push(i);
+        }
+        order.sort(function () {
+            return .5 - Math.random();
+        });
+        return order;
     }
 
     private generateShop() {
@@ -598,12 +627,27 @@ export class SnakeScene extends TransformScene {
         this.updateShop(true);
         this.snake = new Snake(new Vector2(15, 16), 20, 'Right', MapLevel.FirstFloor);
         if (this.mapControllers[0].map) { this.changeLevel(MapLevel.FirstFloor); }
+        this.mapControllers.forEach(mc => {
+            mc.map.deleteAllFood();
+            mc.map.flattenMap();
+            mc.map.addRandomFood('Beer', 2, 2);
+            mc.map.addRandomFood('Beer', 2, 2);
+            mc.map.addRandomFood('Beer', 2, 2);
+            mc.map.flattenMap();
+        });
+        this.mainObjectsCollected = 0;
+        this.mainObjectsOrder = this.shuffleMainObjects(this.mainObjects.length);
+        console.log(this.mainObjectsOrder);
+        this.addNextMainObject();
     }
 
-    // temporary function
-    private addAllMainObjects() {
-        for (let mo of this.mainObjects) {
-            this.mapControllers.find(mc => mc.level === mo.level)?.map.appendElement(mo, true);
-        }
+    private addNextMainObject() {
+        let mo = this.mainObjects[this.mainObjectsOrder[this.mainObjectsCollected]];
+        console.log(mo.location)
+        this.mapControllers.find(mc => mc.level === mo.level)?.map.appendElement(mo, true);
+        this.mapControllers.forEach(mc => {
+            this.updateRenderedMap(mc);
+        });
+        this.changeLevel(this.currentLevel);
     }
 }

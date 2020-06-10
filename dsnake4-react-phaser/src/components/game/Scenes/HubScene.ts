@@ -13,6 +13,7 @@ export class HubScene extends BaseScene {
     defaultSceneData: any;
     nicknameText!: Phaser.GameObjects.Text;
     pointsText!: Phaser.GameObjects.Text;
+    nextRoomText!: Phaser.GameObjects.Text;
     menuLink!: Phaser.GameObjects.Text;
 
     verticalOffset = new Vector2(0, 50);
@@ -37,6 +38,7 @@ export class HubScene extends BaseScene {
     public preload() {
         this.nicknameText = this.add.text(10, 20, 'Nickname Here', defaultTextStyle);
         this.pointsText = this.add.text(10 + this.nicknameText.width + 20, 20, '0', defaultTextStyle);
+        this.nextRoomText = this.add.text(this.pointsText.x + this.pointsText.width + 50, 20, 'Next Object is in ', defaultTextStyle);
         this.menuLink = this.add
             .text(this.scale.width - 20, 20, 'MENU', defaultTextStyle)
             .setOrigin(1, 0);
@@ -88,6 +90,7 @@ export class HubScene extends BaseScene {
     private onTimedUpdate() {
         if (this.gameScene instanceof SnakeScene) {
             this.pointsText.text = this.gameScene.getScore().toString();
+            this.nextRoomText.text = 'Next Object is in ' + this.gameScene.getNextLocation();
         }
     }
 }

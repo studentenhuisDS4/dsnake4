@@ -91,10 +91,6 @@ export class MapController {
         this.map = map;
         this.active = true;
         this.map.flattenMap();
-
-        this.map.addRandomFood('Beer', 2, 2);
-        this.map.addRandomFood('Beer', 2, 2);
-        this.map.addRandomFood('Beer', 2, 2);
     }
 
     public getStairs() {

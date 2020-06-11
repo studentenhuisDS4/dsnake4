@@ -1,6 +1,6 @@
-import { MapElement, MapCell, Food } from './MapElements';
+import { MapElement, MapCell, Food, PowerUp } from './MapElements';
 import { Stair } from './Stair'
-import { CELLS_Y, CELLS_X, CellType, Colors, FoodType } from '../Common';
+import { CELLS_Y, CELLS_X, CellType, Colors, FoodType, PowerUpType } from '../Common';
 import { ILevel } from './JsonInterfaces';
 import { ShopElement } from './ShopElement';
 import { Vector2 } from '../../Generics';
@@ -58,9 +58,9 @@ export class Map {
     public eatFood(pos: Vector2) {
         for (let i = 0; i < this.childElements.length; i++) {
             let el = this.childElements[i];
-            if (el instanceof Food) {
+            if (el instanceof Food || el instanceof PowerUp) {
                 if (el.TopLeftCell.x <= pos.x && el.TopLeftCell.x + el.width >= pos.x && el.TopLeftCell.y <= pos.y && el.TopLeftCell.y + el.height >= pos.y) {
-                    let foodEaten = Object.assign({}, el);
+                    let foodEaten = el;
                     if (el.image != undefined) {
                         el.image.destroy();
                     }
@@ -104,6 +104,10 @@ export class Map {
         this.appendElement(food, true);
     }
 
+    public addPowerUp(powerup: PowerUp) {
+        this.appendElement(powerup, true);
+    }
+
     public addRandomFood(type?: FoodType, width?: number, height?: number) {
         let foodValidation: boolean = false;
 
@@ -143,6 +147,45 @@ export class Map {
             foodValidation = this.validateFoodLocation(x, y, height, width);
         }
         this.addFood(new Food(new MapCell(new Vector2(x, y), CellType.Pickup, Colors[type]), type, height, width));
+
+    }
+
+    public addRandomPowerUp(type?: PowerUpType, width?: number, height?: number) {
+        let foodValidation: boolean = false;
+
+        if (type == undefined) {
+            let t = Math.floor(Math.random() * 3);
+            switch (t) {
+                case 0:
+                    type = 'Joost';
+                    break;
+                case 1:
+                    type = 'Shrink';
+                    break;
+                case 2:
+                    type = 'Life';
+                    break;
+                default:
+                    type = 'Joost';
+                    break;
+            }
+        }
+        if (height == undefined) {
+            height = 1;
+        }
+        if (width == undefined) {
+            width = 1;
+        }
+
+        let x: number = 0;
+        let y: number = 0;
+        while (!foodValidation) {
+            x = Math.floor(Math.random() * CELLS_X) + 1;
+            y = Math.floor(Math.random() * CELLS_Y) + 1;
+
+            foodValidation = this.validateFoodLocation(x, y, height, width);
+        }
+        this.addPowerUp(new PowerUp(new MapCell(new Vector2(x, y), CellType.Pickup, Colors['PowerUp']), 'PowerUp', height, width, type));
 
     }
 

@@ -39,6 +39,7 @@ export class SnakeScene extends TransformScene {
     joostPotionCounter!: number;
     readonly joostPotionDuration: number = 105;
     throughWalls!: boolean;
+    readonly powerupsSpawnRate: number = 1000;
 
     // Snake game loop
     private mapControllers!: MapController[];
@@ -191,6 +192,7 @@ export class SnakeScene extends TransformScene {
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
         if (foodEaten != undefined) {
             if (foodEaten.type == 'PowerUp' && foodEaten instanceof PowerUp) {
+                console.log(foodEaten.PType);
                 switch (foodEaten.PType) {
                     case 'Joost':
                         this.joostPotionCounter = this.joostPotionDuration;
@@ -203,20 +205,21 @@ export class SnakeScene extends TransformScene {
                         this.lives++;
 
                 }
-            }
-            if (foodEaten.type == 'MainObject') {
-                this.updateShop(true);
-                this.mainObjectsCollected++;
-                this.addNextMainObject();
             } else {
-                this.mapControllers.find(mc => mc.level == this.currentLevel)?.map.addRandomFood('Beer', 2, 2);
+                if (foodEaten.type == 'MainObject') {
+                    this.updateShop(true);
+                    this.mainObjectsCollected++;
+                    this.addNextMainObject();
+                } else {
+                    this.mapControllers.find(mc => mc.level == this.currentLevel)?.map.addRandomFood('Beer', 2, 2);
+                }
+                this.points += foodEaten.points;
+                this.updateShop(false);
+                this.snake.addUndigestedFood(foodEaten.blocksAdded);
+                this.eatingSound.play({ volume: 0.5, loop: false });
+                this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
+                // boost charge
             }
-            this.points += foodEaten.points;
-            this.updateShop(false);
-            this.snake.addUndigestedFood(foodEaten.blocksAdded);
-            this.eatingSound.play({ volume: 0.5, loop: false });
-            this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
-            // boost charge
         }
 
         let stair = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkStairCollision(this.snake.position);
@@ -246,6 +249,11 @@ export class SnakeScene extends TransformScene {
         if (this.joostPotionCounter > 0) {
             this.joostPotionCounter--;
             if (this.joostPotionCounter == 0) { this.deactivateThroughWalls(); }
+        }
+
+        if (Math.random() * this.powerupsSpawnRate < 1) {
+            this.mapControllers.find(mc => mc.level == this.currentLevel)?.map.addRandomPowerUp();
+            this.updateRenderedMap(this.mapControllers.find(mc => mc.level == this.currentLevel));
         }
     }
 

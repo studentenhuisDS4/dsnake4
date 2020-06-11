@@ -7,7 +7,7 @@ import { CELLS_X, MapLevel, CellType, Colors, CELLS_Y } from '../Data/Common';
 import { KeyBindings } from '../Data/KeyBindings';
 import { Scene } from 'phaser';
 import { JustDown } from '../imports';
-import { MainObject, MapCell, Food } from '../Data/Map/MapElements';
+import { MainObject, MapCell, Food, PowerUp } from '../Data/Map/MapElements';
 import { Wall } from '../Data/Map/Wall'
 import { MapLoader } from '../Data/Map/MapLoader';
 import { Transform, Vector2 } from '../Generics';
@@ -190,6 +190,20 @@ export class SnakeScene extends TransformScene {
 
         let foodEaten = this.mapControllers.find(mc => mc.level == this.currentLevel)?.checkSnakeEating(this.snake.position);
         if (foodEaten != undefined) {
+            if (foodEaten.type == 'PowerUp' && foodEaten instanceof PowerUp) {
+                switch (foodEaten.PType) {
+                    case 'Joost':
+                        this.joostPotionCounter = this.joostPotionDuration;
+                        if (this.throughWalls == false) { this.activateThroughWalls(); }
+                        break;
+                    case 'Shrink':
+                        this.snake.reduce(10);
+                        break;
+                    case 'Life':
+                        this.lives++;
+
+                }
+            }
             if (foodEaten.type == 'MainObject') {
                 this.updateShop(true);
                 this.mainObjectsCollected++;
@@ -637,13 +651,11 @@ export class SnakeScene extends TransformScene {
         });
         this.mainObjectsCollected = 0;
         this.mainObjectsOrder = this.shuffleMainObjects(this.mainObjects.length);
-        console.log(this.mainObjectsOrder);
         this.addNextMainObject();
     }
 
     private addNextMainObject() {
         let mo = this.mainObjects[this.mainObjectsOrder[this.mainObjectsCollected]];
-        console.log(mo.location)
         this.mapControllers.find(mc => mc.level === mo.level)?.map.appendElement(mo, true);
         this.mapControllers.forEach(mc => {
             this.updateRenderedMap(mc);

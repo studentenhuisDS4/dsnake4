@@ -31,7 +31,8 @@ export const MapLevelAssets = [
     { 'MapLevel': MapLevel.Tropen, 'path': DynamicLevelPath + 'Level4Tropen.json', 'static': level4 }
 ];
 
-export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject';
+export type FoodType = 'Coffie' | 'Beer' | 'Weed' | 'Krant' | 'MainObject' | 'PowerUp';
+export type PowerUpType = 'Joost' | 'Shrink' | 'Life';
 
 export const CELLS_X: number = 105;
 export const CELLS_Y: number = 60;

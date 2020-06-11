@@ -1,4 +1,4 @@
-import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, MapLevel } from '../Common';
+import { Direction, CELLS_X, CELLS_Y, CellType, FoodType, PowerUpType, MapLevel } from '../Common';
 import { Vector2 } from '../../Generics';
 
 /**
@@ -215,5 +215,14 @@ export class MainObject extends Food {
         super(TopLeftCell, type, height, width);
         this.location = location;
         this.level = level;
+    }
+}
+
+export class PowerUp extends Food {
+    public PType: PowerUpType;
+
+    constructor(TopLeftCell: MapCell, type: FoodType, height: number, width: number, PowerupType: PowerUpType) {
+        super(TopLeftCell, type, height, width);
+        this.PType = PowerupType;
     }
 }
